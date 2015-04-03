@@ -7,12 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3327A6071ACEF11A00B71853 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3327A6061ACEF11A00B71853 /* Sparkle.framework */; };
+		3327A6091ACEF15D00B71853 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3327A6061ACEF11A00B71853 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		33942F9D1A2AE7F700E6D361 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33942F9C1A2AE7F700E6D361 /* AppDelegate.swift */; };
 		33942F9F1A2AE7F700E6D361 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33942F9E1A2AE7F700E6D361 /* Images.xcassets */; };
 		33942FA21A2AE7F700E6D361 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33942FA01A2AE7F700E6D361 /* MainMenu.xib */; };
 		33942FB81A2AE8AA00E6D361 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33942FB71A2AE8AA00E6D361 /* WebKit.framework */; };
 		33C741E01A2B02840072D81E /* NotificationScriptMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33C741DF1A2B02840072D81E /* NotificationScriptMessageHandler.swift */; };
-		33CBDB421ACB621600A926B6 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33CBDB411ACB621600A926B6 /* Sparkle.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,12 +33,14 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				3327A6091ACEF15D00B71853 /* Sparkle.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3327A6061ACEF11A00B71853 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		33942F971A2AE7F700E6D361 /* Goofy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Goofy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		33942F9B1A2AE7F700E6D361 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		33942F9C1A2AE7F700E6D361 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -46,7 +49,6 @@
 		33942FA71A2AE7F700E6D361 /* GoofyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GoofyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		33942FB71A2AE8AA00E6D361 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		33C741DF1A2B02840072D81E /* NotificationScriptMessageHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationScriptMessageHandler.swift; sourceTree = "<group>"; };
-		33CBDB411ACB621600A926B6 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,7 +57,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				33942FB81A2AE8AA00E6D361 /* WebKit.framework in Frameworks */,
-				33CBDB421ACB621600A926B6 /* Sparkle.framework in Frameworks */,
+				3327A6071ACEF11A00B71853 /* Sparkle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -111,7 +113,7 @@
 		DF75007D11E0E9DB18327EF8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				33CBDB411ACB621600A926B6 /* Sparkle.framework */,
+				3327A6061ACEF11A00B71853 /* Sparkle.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

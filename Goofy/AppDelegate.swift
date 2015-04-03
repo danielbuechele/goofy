@@ -14,7 +14,7 @@ import QuartzCore
 class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDelegate {
     
     @IBOutlet var window : NSWindow!
-    @IBOutlet var webView : WKWebView!
+    var webView : WKWebView!
     @IBOutlet var view : NSView!
     @IBOutlet var loadingView : NSImageView!
     @IBOutlet var spinner : NSProgressIndicator!
@@ -42,8 +42,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
             let path = NSBundle.mainBundle().objectForInfoDictionaryKey("PROJECT_DIR") as String!
             var source = String(contentsOfFile: path+"/server/dist/fb.js", encoding: NSUTF8StringEncoding, error: nil)!+"init();"
         #else
+            var jsurl = "https://goofyapp.s3.amazonaws.com/fb.js"
+            if (NSBundle.mainBundle().objectForInfoDictionaryKey("GoofyJavaScriptURL") != nil) {
+                jsurl = NSBundle.mainBundle().objectForInfoDictionaryKey("GoofyJavaScriptURL") as String!
+            }
             let source = "function getScript(url,success){ var script = document.createElement('script'); script.src = url; var head = document.getElementsByTagName('head')[0], done=false; script.onload = script.onreadystatechange = function(){ if (!done && (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete')) { done=true; success(); script.onload = script.onreadystatechange = null; head.removeChild(script); } }; head.appendChild(script); }" +
-            "getScript('https://goofyapp.s3.amazonaws.com/fb.js', function() {init();});"
+            "getScript('" + jsurl + "', function() {init();});"
         #endif
         
         var reactivationToggle : Bool? = NSUserDefaults.standardUserDefaults().objectForKey("reactivationToggle") as? Bool
