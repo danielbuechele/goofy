@@ -1,3 +1,11 @@
+body {
+  -webkit-user-select: none;
+}
+
+.uiScrollableAreaContent {
+  -webkit-user-select: text;
+}
+
 #pagelet_bluebar, #pagelet_dock, #pagelet_sidebar, #rightCol, #pageFooter {
     display: none
 }
