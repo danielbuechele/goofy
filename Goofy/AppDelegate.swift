@@ -83,12 +83,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         webView.loadRequest(req);
         
         
-        
+        /*
         statusBarItem = statusBar.statusItemWithLength(-1)
         statusBarItem.image = NSImage(named: "StatusItem")
         statusBarItem.target = self
         statusBarItem.action = Selector("statusBarItemClicked")
-        
+        */
         /*
         var contents : [String] = NSFileManager.defaultManager().contentsOfDirectoryAtPath("~/Library/Preferences/ByHost/".stringByExpandingTildeInPath, error: nil) as [String];
         contents = contents.filter( { (file: String) -> Bool in

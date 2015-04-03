@@ -51,7 +51,7 @@ csssetup = function() {
 function init() {
 
     csssetup();
-	
+
 	setInterval(function() {
 		window.dispatchEvent(new Event('resize'));
 		dockCount();
@@ -85,8 +85,10 @@ function init() {
 
 }
 
-function reactivation() {
-	if (new Date().getTime() < lastNotificationTime + 1000*60*2) {
+function reactivation(userid) {
+	if (userid) {
+		document.getElementById(userid).querySelector('._k_').click();
+	} else if (new Date().getTime() < lastNotificationTime + 1000*60) {
 		document.querySelector('._kx ._l2').click();
 	}
 }
@@ -97,12 +99,11 @@ function dockCount() {
 
 	if (parseInt(c)>0) {
 
+		//replacing Facebook smilies with OS X emojis
 		[].forEach.call(document.querySelectorAll('._kx ._l3 .emoticon_text'), function(e) {e.textContent = "";});
-
 		[].forEach.call(document.querySelectorAll('._kx ._l3 .emoticon'), function(e) {
 			for (a in emoticonMapping) {
 				if (e.classList.contains(a)) {
-					console.log(emoticonMapping[a]);
 					e.textContent = emoticonMapping[a];
 					break;
 				}
@@ -112,15 +113,20 @@ function dockCount() {
 		var subtitle = document.querySelector('._kx ._l2 ._l1').textContent;
 		var text = document.querySelector('._kx ._l3').textContent;
 		if (lastNotification != subtitle+text) {
-			window.webkit.messageHandlers.notification.postMessage({type: 'NOTIFICATION', title: subtitle, text: text});
+			var id = document.querySelector('._kx').id;
+			window.webkit.messageHandlers.notification.postMessage({type: 'NOTIFICATION', title: subtitle, text: text, id: id});
 			lastNotification = subtitle+text;
 			lastNotificationTime = new Date().getTime();
 		}
 	}
 }
 
-function replyToNotification(answer) {
-	document.querySelector('._kx ._l3').click();
-	document.querySelector('._1rt textarea').value = answer;
-	document.querySelector('#u_0_s').click();
+function replyToNotification(userid, answer) {
+	document.getElementById(userid).querySelector('._l3').click();
+	setTimeout(function () {
+		document.querySelector('._1rt textarea').value = answer;
+		setTimeout(function () {
+			document.getElementById('u_0_r').click();
+		},50);
+	},50);
 }

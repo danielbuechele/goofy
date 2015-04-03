@@ -25,7 +25,7 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
                 appDelegate.loadingView.hidden = true
                 break
             case "NOTIFICATION":
-                displayNotification(message.body["title"] as NSString, text: message.body["text"] as NSString)
+                displayNotification(message.body["title"] as NSString, text: message.body["text"] as NSString, id: message.body["id"] as NSString)
                 break
             case "DOCK_COUNT":
                 dockCount(message.body["content"] as String)
@@ -45,13 +45,14 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
         }
     }
     
-    func displayNotification(title: NSString, text: NSString) {
+    func displayNotification(title: NSString, text: NSString, id: NSString) {
         var notification:NSUserNotification = NSUserNotification()
         notification.title = title
         notification.informativeText = text
         notification.deliveryDate = NSDate()
         notification.responsePlaceholder = "Reply"
         notification.hasReplyButton = true
+        notification.userInfo = ["id":id]
         
         var notificationcenter:NSUserNotificationCenter = NSUserNotificationCenter.defaultUserNotificationCenter()
         notificationcenter.delegate = self
@@ -68,10 +69,12 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
     
     func userNotificationCenter(center: NSUserNotificationCenter!, didActivateNotification notification: NSUserNotification!) {
         let appDelegate = NSApplication.sharedApplication().delegate as AppDelegate;
-        
+        let id = notification.userInfo!["id"] as NSString
         if (notification.activationType == NSUserNotificationActivationType.Replied){
             let userResponse = notification.response?.string;
-            appDelegate.webView.evaluateJavaScript("replyToNotification('"+userResponse!+"')", completionHandler: nil);
+            appDelegate.webView.evaluateJavaScript("replyToNotification('" + id + "','" + userResponse! + "')", completionHandler: nil);
+        } else {
+            appDelegate.webView.evaluateJavaScript("reactivation('" + id + "')", completionHandler: nil);
         }
     }
     
