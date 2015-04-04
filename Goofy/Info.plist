@@ -21,7 +21,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>177</string>
+	<string>185</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.social-networking</string>
 	<key>LSMinimumSystemVersion</key>
@@ -37,7 +37,7 @@
 	<key>SUEnableAutomaticChecks</key>
 	<true/>
 	<key>SUFeedURL</key>
-	<string>https://goofyapp.s3.amazonaws.com/update.xml</string>
+	<string>https://dani.taurus.uberspace.de/goofyapp/update.xml</string>
 	<key>SUScheduledCheckInterval</key>
 	<integer>86400</integer>
 </dict>

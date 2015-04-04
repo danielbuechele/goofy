@@ -42,7 +42,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
             let path = NSBundle.mainBundle().objectForInfoDictionaryKey("PROJECT_DIR") as String!
             var source = String(contentsOfFile: path+"/server/dist/fb.js", encoding: NSUTF8StringEncoding, error: nil)!+"init();"
         #else
-            var jsurl = "https://goofyapp.s3.amazonaws.com/fb.js"
+            let version = NSBundle.mainBundle().infoDictionary!["CFBundleShortVersionString"] as String!
+            var jsurl = "https://dani.taurus.uberspace.de/goofyapp/fb" + version + ".js"
             if (NSBundle.mainBundle().objectForInfoDictionaryKey("GoofyJavaScriptURL") != nil) {
                 jsurl = NSBundle.mainBundle().objectForInfoDictionaryKey("GoofyJavaScriptURL") as String!
             }
