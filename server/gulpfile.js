@@ -10,3 +10,7 @@ gulp.task('default', function () {
         gulp.src('./src/fb.js').pipe(uglify()).pipe(insert.prepend("var css='"+css+"';")).pipe(gulp.dest('./dist/'));
     }));
 });
+
+gulp.task('watch', function () {
+    gulp.watch('./src/*', ['default']);
+});
