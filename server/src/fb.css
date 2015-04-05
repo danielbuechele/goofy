@@ -104,7 +104,7 @@ div.uiContextualLayer.uiContextualLayerBelowRight {
     text-indent: -999em;
 }
 @media (max-width: 649px) {
-    ._l4, ._3b, ul.uiList._281._4ki, div._l7.rfloat._ohf, div._1rw {
+    #wmMasterViewThreadlist ._l4, ._3b, ul.uiList._281._4ki, div._l7.rfloat._ohf, div._1rw {
         display: none;
     }
     div.wmMasterView {
