@@ -68,6 +68,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         configuration.userContentController = userContentController
         
         webView = WKWebView(frame: self.view.bounds, configuration: configuration)
+        //webView.configuration.preferences.enableDevExtras();
         webView.navigationDelegate = self
         webView.UIDelegate = self
         
@@ -90,7 +91,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         
         /*
         statusBarItem = statusBar.statusItemWithLength(-1)
-        statusBarItem.image = NSImage(named: "StatusItem")
+        var si = NSImage(named: "StatusItem")
+        si?.setTemplate(true)
+        statusBarItem.image = si
         statusBarItem.target = self
         statusBarItem.action = Selector("statusBarItemClicked")
         */

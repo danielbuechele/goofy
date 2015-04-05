@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		3327A6071ACEF11A00B71853 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3327A6061ACEF11A00B71853 /* Sparkle.framework */; };
 		3327A6091ACEF15D00B71853 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3327A6061ACEF11A00B71853 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3327A60D1AD16EA100B71853 /* WKPreferences+DevExtras.m in Resources */ = {isa = PBXBuildFile; fileRef = 3327A60C1AD16EA100B71853 /* WKPreferences+DevExtras.m */; };
 		33942F9D1A2AE7F700E6D361 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33942F9C1A2AE7F700E6D361 /* AppDelegate.swift */; };
 		33942F9F1A2AE7F700E6D361 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33942F9E1A2AE7F700E6D361 /* Images.xcassets */; };
 		33942FA21A2AE7F700E6D361 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33942FA01A2AE7F700E6D361 /* MainMenu.xib */; };
@@ -41,6 +42,9 @@
 
 /* Begin PBXFileReference section */
 		3327A6061ACEF11A00B71853 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
+		3327A60A1AD16DF500B71853 /* Goofy-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Goofy-Bridging-Header.h"; sourceTree = "<group>"; };
+		3327A60B1AD16E7400B71853 /* WKPreferences+DevExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "WKPreferences+DevExtras.h"; sourceTree = "<group>"; };
+		3327A60C1AD16EA100B71853 /* WKPreferences+DevExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "WKPreferences+DevExtras.m"; sourceTree = "<group>"; };
 		33942F971A2AE7F700E6D361 /* Goofy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Goofy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		33942F9B1A2AE7F700E6D361 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		33942F9C1A2AE7F700E6D361 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -74,6 +78,9 @@
 		33942F8E1A2AE7F700E6D361 = {
 			isa = PBXGroup;
 			children = (
+				3327A60B1AD16E7400B71853 /* WKPreferences+DevExtras.h */,
+				3327A60C1AD16EA100B71853 /* WKPreferences+DevExtras.m */,
+				3327A60A1AD16DF500B71853 /* Goofy-Bridging-Header.h */,
 				33942FB71A2AE8AA00E6D361 /* WebKit.framework */,
 				33942F991A2AE7F700E6D361 /* Goofy */,
 				33942F981A2AE7F700E6D361 /* Products */,
@@ -206,6 +213,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3327A60D1AD16EA100B71853 /* WKPreferences+DevExtras.m in Resources */,
 				33942F9F1A2AE7F700E6D361 /* Images.xcassets in Resources */,
 				33942FA21A2AE7F700E6D361 /* MainMenu.xib in Resources */,
 			);
@@ -373,6 +381,7 @@
 				OTHER_SWIFT_FLAGS = "-DDEBUG";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROJECT_DIR = "$(SRCROOT)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Goofy-Bridging-Header.h";
 			};
 			name = Debug;
 		};
@@ -392,6 +401,7 @@
 				OTHER_SWIFT_FLAGS = "-DRELEASE";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROJECT_DIR = "$(SRCROOT)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Goofy-Bridging-Header.h";
 			};
 			name = Release;
 		};
