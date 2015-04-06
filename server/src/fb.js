@@ -71,6 +71,11 @@ function init() {
 			return false;
 		}
 
+		if (evtobj.metaKey && evtobj.keyCode==78) {
+			document.querySelector('._3mv').click();
+			return false;
+		}
+
 		if (evtobj.metaKey && evtobj.keyCode==219) {
 			//prev
 			document.querySelector('._kv').previousElementSibling.firstChild.childNodes[1].click();
