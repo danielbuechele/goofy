@@ -2,7 +2,7 @@ body {
   -webkit-user-select: none;
 }
 
-.uiScrollableAreaContent {
+.webMessengerMessageGroup {
   -webkit-user-select: text;
 }
 
