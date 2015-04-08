@@ -53,7 +53,7 @@ function init() {
     csssetup();
 
 	setInterval(function() {
-		window.dispatchEvent(new Event('resize'));
+		//window.dispatchEvent(new Event('resize'));
 		dockCount();
 	}, 200);
 
@@ -67,23 +67,24 @@ function init() {
 
 		if (evtobj.metaKey && evtobj.keyCode==221) {
 			//next
-			document.querySelector('._kv').nextElementSibling.firstChild.childNodes[1].click();
+			document.querySelector('._1ht2').nextElementSibling.firstChild.click();
 			return false;
 		}
 
 		if (evtobj.metaKey && evtobj.keyCode==78) {
-			document.querySelector('._3mv').click();
+			//CMD+N new chat
+			document.querySelector('._4bl8._4bl7 a').click();
 			return false;
 		}
 
 		if (evtobj.metaKey && evtobj.keyCode==219) {
 			//prev
-			document.querySelector('._kv').previousElementSibling.firstChild.childNodes[1].click();
+			document.querySelector('._1ht2').previousElementSibling.firstChild.click();
 			return false;
 		}
 
 		if (evtobj.keyCode > 48 && evtobj.keyCode < 58 && evtobj.ctrlKey) {
-			document.querySelector(".uiList._2tm._4kg li:nth-child("+(evtobj.keyCode-48)+") ._k_").click();
+			document.querySelector('._1ht1').parentElement.querySelector('li:nth-child('+(evtobj.keyCode-48)+') a').click()
 			return false;
 		}
 	};
@@ -92,42 +93,39 @@ function init() {
 
 function reactivation(userid) {
 	if (userid) {
-		document.getElementById(userid).querySelector('._k_').click();
+		document.querySelector('[data-reactid="'+userid+'"] a').click();
 	} else if (new Date().getTime() < lastNotificationTime + 1000*60) {
-		document.querySelector('._kx ._l2').click();
+		document.querySelector('._1ht3 a').click();
 	}
 }
 
 function dockCount() {
-	var c = document.querySelector('._1z4y .jewelCount ._3z_5').textContent;
+	var c = /\(([^)]+)\)/.exec(document.querySelector('title').textContent);
+	if (c.length>1) {
+		c = c[1];
+	} else {
+		c = 0;
+	}
+
 	window.webkit.messageHandlers.notification.postMessage({type: 'DOCK_COUNT', content: c});
 
-	if (parseInt(c)>0) {
-
-		//replacing Facebook smilies with OS X emojis
-		[].forEach.call(document.querySelectorAll('._kx ._l3 .emoticon_text'), function(e) {e.textContent = "";});
-		[].forEach.call(document.querySelectorAll('._kx ._l3 .emoticon'), function(e) {
-			for (a in emoticonMapping) {
-				if (e.classList.contains(a)) {
-					e.textContent = emoticonMapping[a];
-					break;
-				}
+	if (c > 0) {
+		var text = document.querySelector('._1ht3 ._1htf');
+		if (text) {
+			text = text.textContent;
+			var subtitle = document.querySelector('._1ht3 ._1ht6').textContent;
+			if (lastNotification != subtitle+text) {
+				var id = document.querySelector('._1ht1._1ht3').getAttribute('data-reactid');
+				window.webkit.messageHandlers.notification.postMessage({type: 'NOTIFICATION', title: subtitle, text: text, id: id});
+				lastNotification = subtitle+text;
+				lastNotificationTime = new Date().getTime();
 			}
-		});
-
-		var subtitle = document.querySelector('._kx ._l2 ._l1').textContent;
-		var text = document.querySelector('._kx ._l3').textContent;
-		if (lastNotification != subtitle+text) {
-			var id = document.querySelector('._kx').id;
-			window.webkit.messageHandlers.notification.postMessage({type: 'NOTIFICATION', title: subtitle, text: text, id: id});
-			lastNotification = subtitle+text;
-			lastNotificationTime = new Date().getTime();
 		}
 	}
 }
 
 function replyToNotification(userid, answer) {
-	document.getElementById(userid).querySelector('._l3').click();
+	document.querySelector('[data-reactid="'+userid+'"] a').click();
 	setTimeout(function () {
 		document.querySelector('._1rt textarea').value = answer;
 		setTimeout(function () {

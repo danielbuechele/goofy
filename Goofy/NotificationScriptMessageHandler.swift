@@ -67,12 +67,11 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
             NSApplication.sharedApplication().dockTile.badgeLabel = ""
         } else {
             NSApplication.sharedApplication().dockTile.badgeLabel = count
-            var si = NSImage(named: "StatusItemUnread")
-            println("unread")
+            //var si = NSImage(named: "StatusItemUnread")
         }
-        si?.setTemplate(true)
+        //si?.setTemplate(true)
         
-        appDelegate.statusBarItem.image = si
+        //appDelegate.statusBarItem.image = si
     }
     
     func userNotificationCenter(center: NSUserNotificationCenter!, didActivateNotification notification: NSUserNotification!) {

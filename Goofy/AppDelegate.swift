@@ -78,7 +78,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         
         var s = NSProcessInfo.processInfo().arguments[0].componentsSeparatedByString("/")
         var st: String = s[s.count-4] as String
-        var url : String = "https://www.messenger.com"
+        var url : String = "https://messenger.com/login"
         
         /* Facebook at word support. Needs to be updated for Messenger.com
         if (st.rangeOfString("Goofy") != nil && countElements(st) > 10) {
@@ -155,6 +155,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     
     
     func applicationDidBecomeActive(aNotification: NSNotification) {
+        NSApplication.sharedApplication().dockTile.badgeLabel = ""
         if (self.activatedFromBackground) {
             if (self.reactivationMenuItem.state == 1) {
                 webView.evaluateJavaScript("reactivation()", completionHandler: nil);
