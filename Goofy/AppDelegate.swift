@@ -34,8 +34,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         window.minSize = NSSize(width: 350,height: 376)
         window.makeMainWindow()
         window.makeKeyWindow()
+        window.titlebarAppearsTransparent = true
         
-        loadingView.layer?.backgroundColor = NSColor(red: 246/255, green: 246/255, blue: 246/255, alpha: 1).CGColor
+        loadingView.layer?.backgroundColor = NSColor.whiteColor().CGColor
         startLoading()
         
         #if DEBUG
@@ -77,12 +78,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         
         var s = NSProcessInfo.processInfo().arguments[0].componentsSeparatedByString("/")
         var st: String = s[s.count-4] as String
-        var url : String = "https://www.facebook.com/messages"
+        var url : String = "https://www.messenger.com"
+        
+        /* Facebook at word support. Needs to be updated for Messenger.com
         if (st.rangeOfString("Goofy") != nil && countElements(st) > 10) {
             st = (st as NSString).stringByReplacingCharactersInRange(NSRange(location: 0,length: 6), withString: "")
             url = "https://" + st.stringByReplacingOccurrencesOfString(".app", withString:"") + ".facebook.com/messages"
             changeDockIcon()
-        }
+        }*/
         
         var req = NSMutableURLRequest(URL: NSURL(string: url)!)
         req.setValue("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/600.3.17 (KHTML, like Gecko) Version/8.0.3 Safari/600.3.17", forHTTPHeaderField: "User-Agent")
@@ -112,18 +115,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     
     func webView(webView: WKWebView!, decidePolicyForNavigationAction navigationAction: WKNavigationAction!, decisionHandler: ((WKNavigationActionPolicy) -> Void)!) {
         
-        var backgroundURLs : Array = ["facebook.com/xti.php","facebook.com/ai.php","fbcdn","facebook.com/sound_iframe"]
+        var backgroundURLs : Array = ["messenger.com","facebook.com/","facebook.com/ai.php","fbcdn","facebook.com/sound_iframe"]
         var inAppURLs : Array = ["facebook.com/messages","facebook.com/login","facebook.com/sound_iframe"]
         
-        var backgroundURLsUser : Array? = NSUserDefaults.standardUserDefaults().objectForKey("backgroundURLs") as? Array<String>
-        var inAppURLsUser : Array? = NSUserDefaults.standardUserDefaults().objectForKey("inAppURLs") as? Array<String>
-        
-        if (backgroundURLsUser != nil) {
-            backgroundURLs = backgroundURLsUser!
+        if let backgroundURLsUser = NSUserDefaults.standardUserDefaults().objectForKey("backgroundURLs") as? Array<String> {
+            backgroundURLs.extend(backgroundURLsUser)
         }
         
-        if (inAppURLsUser != nil) {
-            inAppURLs = inAppURLsUser!
+        if let inAppURLsUser = NSUserDefaults.standardUserDefaults().objectForKey("inAppURLs") as? Array<String> {
+            inAppURLs.extend(inAppURLsUser)
         }
         
         let inApp = inAppURLs.map({(url: String) -> Bool in
