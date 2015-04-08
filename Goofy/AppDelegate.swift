@@ -31,7 +31,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         // Insert code here to initialize your application
         
         window.backgroundColor = NSColor.whiteColor()
-        window.minSize = NSSize(width: 350,height: 376)
+        window.minSize = NSSize(width: 680,height: 376)
         window.makeMainWindow()
         window.makeKeyWindow()
         window.titlebarAppearsTransparent = true
