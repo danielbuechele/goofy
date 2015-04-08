@@ -126,22 +126,20 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
             inAppURLs.extend(inAppURLsUser)
         }
         
-        let inApp = inAppURLs.map({(url: String) -> Bool in
-            return navigationAction.request.URL.absoluteString!.rangeOfString(url) != nil;
-        })
-        
-        let background = backgroundURLs.map({(url: String) -> Bool in
-            return navigationAction.request.URL.absoluteString!.rangeOfString(url) != nil;
-        })
-        
-        if (contains(inApp,true) || contains(background,true)) {
-            if (contains(inApp,true)) {
-                startLoading()
+        if let nav = navigationAction.request.URL.absoluteString {
+            let inApp = inAppURLs.reduce(false, combine: { result, url in result || nav.rangeOfString(url) != nil })
+            let background = backgroundURLs.reduce(false, combine: { result, url in result || nav.rangeOfString(url) != nil })
+            
+            if inApp || background {
+                if inApp {
+                    startLoading()
+                }
+                decisionHandler(.Allow)
             }
-            decisionHandler(.Allow)
-        } else {
-            NSWorkspace.sharedWorkspace().openURL(navigationAction.request.URL)
-            decisionHandler(.Cancel)
+            else {
+                NSWorkspace.sharedWorkspace().openURL(navigationAction.request.URL)
+                decisionHandler(.Cancel)
+            }
         }
     }
     
