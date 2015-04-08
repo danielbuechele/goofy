@@ -115,17 +115,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     
     func webView(webView: WKWebView!, decidePolicyForNavigationAction navigationAction: WKNavigationAction!, decisionHandler: ((WKNavigationActionPolicy) -> Void)!) {
         
-        var backgroundURLs : Array = ["messenger.com","facebook.com/","facebook.com/ai.php","fbcdn","facebook.com/sound_iframe"]
-        var inAppURLs : Array = ["facebook.com/messages","facebook.com/login","facebook.com/sound_iframe"]
-        
+        /* I'm attempting ot change how this works entirely
+        var backgroundURLs : Array = ["facebook.com/","facebook.com/ai.php","fbcdn","facebook.com/sound_iframe"]
+        var inAppURLs : Array = ["messenger.com","facebook.com/messages","facebook.com/login","facebook.com/sound_iframe"]
+        */
+
+        /* I'm unsure if these user URLs are necessary. From what I can tell, they retain incorrect data from previous versions of the app.
         if let backgroundURLsUser = NSUserDefaults.standardUserDefaults().objectForKey("backgroundURLs") as? Array<String> {
             backgroundURLs.extend(backgroundURLsUser)
         }
-        
         if let inAppURLsUser = NSUserDefaults.standardUserDefaults().objectForKey("inAppURLs") as? Array<String> {
             inAppURLs.extend(inAppURLsUser)
         }
+        */
         
+        
+        /*
         if let nav = navigationAction.request.URL.absoluteString {
             let inApp = inAppURLs.reduce(false, combine: { result, url in result || nav.rangeOfString(url) != nil })
             let background = backgroundURLs.reduce(false, combine: { result, url in result || nav.rangeOfString(url) != nil })
@@ -137,10 +142,34 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
                 decisionHandler(.Allow)
             }
             else {
-                NSWorkspace.sharedWorkspace().openURL(navigationAction.request.URL)
+                //NSWorkspace.sharedWorkspace().openURL(navigationAction.request.URL)
                 decisionHandler(.Cancel)
             }
         }
+        */
+        let fbOutsideURLPrefix = "http://www.messenger.com/l.php?"
+        if let nav = navigationAction.request.URL.absoluteString {
+            if nav.hasPrefix(fbOutsideURLPrefix) {
+                if let regex = NSRegularExpression(pattern: "(?<=u=)[^&]*", options: nil, error: nil) {
+                    let fullRange = NSMakeRange(0, (nav as NSString).length)
+                    if let match = regex.firstMatchInString(nav, options: nil, range: fullRange) {
+                        println(match)
+                        let encodedString = (nav as NSString).substringWithRange(match.range)
+                        if let rawString = encodedString.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding) {
+                            if let rawURL = NSURL(string: rawString) {
+                                println(rawString)
+                                NSWorkspace.sharedWorkspace().openURL(rawURL)
+                                decisionHandler(.Cancel)
+                                return
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        startLoading()
+        decisionHandler(.Allow)
+        
     }
     
     
