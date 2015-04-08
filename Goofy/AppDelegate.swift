@@ -73,13 +73,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         webView.navigationDelegate = self
         webView.UIDelegate = self
         
+        // Layout
         view.addSubview(webView, positioned: NSWindowOrderingMode.Below, relativeTo: view);
         webView.autoresizingMask = NSAutoresizingMaskOptions.ViewWidthSizable | NSAutoresizingMaskOptions.ViewHeightSizable
         
-        var s = NSProcessInfo.processInfo().arguments[0].componentsSeparatedByString("/")
-        var st: String = s[s.count-4] as String
-        var url : String = "https://www.messenger.com"
-        
+//        var s = NSProcessInfo.processInfo().arguments[0].componentsSeparatedByString("/")
+//        var st: String = s[s.count-4] as String
+        let url : String = "https://www.messenger.com"
+//        
         /* Facebook at word support. Needs to be updated for Messenger.com
         if (st.rangeOfString("Goofy") != nil && countElements(st) > 10) {
             st = (st as NSString).stringByReplacingCharactersInRange(NSRange(location: 0,length: 6), withString: "")
@@ -88,7 +89,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         }*/
         
         var req = NSMutableURLRequest(URL: NSURL(string: url)!)
-        req.setValue("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/600.3.17 (KHTML, like Gecko) Version/8.0.3 Safari/600.3.17", forHTTPHeaderField: "User-Agent")
+        
+        // No need to set user agent
+//        req.setValue("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/600.3.17 (KHTML, like Gecko) Version/8.0.3 Safari/600.3.17", forHTTPHeaderField: "User-Agent")
         webView.loadRequest(req);
         
         
@@ -147,31 +150,48 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
             }
         }
         */
-        let fbOutsideURLPrefix = "http://www.messenger.com/l.php?"
+        let messengerOutsideURLPrefix = "https://www.messenger.com/l.php?"
+        let fbOutsideURLPrefix = "http://l.facebook.com/l.php?"
+        
+        var outsideURL: NSURL?
+        
         if let nav = navigationAction.request.URL.absoluteString {
-            if nav.hasPrefix(fbOutsideURLPrefix) {
+            println(nav)
+            if nav.hasPrefix(fbOutsideURLPrefix) || nav.hasPrefix(messengerOutsideURLPrefix) {
+                // It's an outside URL
+                // Let's try to find it's destination by stripping the Facebook junk
                 if let regex = NSRegularExpression(pattern: "(?<=u=)[^&]*", options: nil, error: nil) {
                     let fullRange = NSMakeRange(0, (nav as NSString).length)
                     if let match = regex.firstMatchInString(nav, options: nil, range: fullRange) {
-                        println(match)
+                        // We found it! We still need to remove some gross URL percents from it.
                         let encodedString = (nav as NSString).substringWithRange(match.range)
                         if let rawString = encodedString.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding) {
                             if let rawURL = NSURL(string: rawString) {
-                                println(rawString)
-                                NSWorkspace.sharedWorkspace().openURL(rawURL)
-                                decisionHandler(.Cancel)
-                                return
+                                outsideURL = rawURL
                             }
                         }
                     }
                 }
             }
+            else if nav.hasPrefix("https://www.facebook.com") {
+                // Just go to it as if it were an outside URL
+                outsideURL = NSURL(string: nav)
+            }
         }
-        startLoading()
-        decisionHandler(.Allow)
+        
+        if let newURL = outsideURL {
+            // Naviagate there in a web browser!
+            NSWorkspace.sharedWorkspace().openURL(newURL)
+            
+            // Cancel any in-app navigation
+            decisionHandler(.Cancel)
+        }
+        else {
+            startLoading()
+            decisionHandler(.Allow)
+        }
         
     }
-    
     
     func webView(webView: WKWebView, didFinishNavigation navigation: WKNavigation!) {
         NSTimer.scheduledTimerWithTimeInterval(0.4, target: self, selector: Selector("endLoading"), userInfo: nil, repeats: false)
