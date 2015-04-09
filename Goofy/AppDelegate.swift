@@ -8,10 +8,10 @@
 
 import Cocoa
 import WebKit
-import QuartzCore
+import Quartz
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDelegate, QLPreviewPanelDataSource, QLPreviewPanelDelegate {
     
     @IBOutlet var window : NSWindow!
     var webView : WKWebView!
@@ -31,11 +31,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         // Insert code here to initialize your application
         
         window.backgroundColor = NSColor.whiteColor()
-        window.minSize = NSSize(width: 350,height: 376)
+        window.minSize = NSSize(width: 380,height: 376)
         window.makeMainWindow()
         window.makeKeyWindow()
+        window.titlebarAppearsTransparent = true
         
-        loadingView.layer?.backgroundColor = NSColor(red: 246/255, green: 246/255, blue: 246/255, alpha: 1).CGColor
+        loadingView.layer?.backgroundColor = NSColor.whiteColor().CGColor
         startLoading()
         
         #if DEBUG
@@ -72,20 +73,25 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         webView.navigationDelegate = self
         webView.UIDelegate = self
         
+        // Layout
         view.addSubview(webView, positioned: NSWindowOrderingMode.Below, relativeTo: view);
         webView.autoresizingMask = NSAutoresizingMaskOptions.ViewWidthSizable | NSAutoresizingMaskOptions.ViewHeightSizable
         
         var s = NSProcessInfo.processInfo().arguments[0].componentsSeparatedByString("/")
         var st: String = s[s.count-4] as String
-        var url : String = "https://www.facebook.com/messages"
+        var url : String = "https://messenger.com/login"
+        
+        /* Facebook at word support. Needs to be updated for Messenger.com
         if (st.rangeOfString("Goofy") != nil && countElements(st) > 10) {
             st = (st as NSString).stringByReplacingCharactersInRange(NSRange(location: 0,length: 6), withString: "")
             url = "https://" + st.stringByReplacingOccurrencesOfString(".app", withString:"") + ".facebook.com/messages"
             changeDockIcon()
-        }
+        }*/
         
         var req = NSMutableURLRequest(URL: NSURL(string: url)!)
-        req.setValue("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/600.3.17 (KHTML, like Gecko) Version/8.0.3 Safari/600.3.17", forHTTPHeaderField: "User-Agent")
+        
+        // No need to set user agent
+//        req.setValue("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/600.3.17 (KHTML, like Gecko) Version/8.0.3 Safari/600.3.17", forHTTPHeaderField: "User-Agent")
         webView.loadRequest(req);
         
         
@@ -112,39 +118,75 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     
     func webView(webView: WKWebView!, decidePolicyForNavigationAction navigationAction: WKNavigationAction!, decisionHandler: ((WKNavigationActionPolicy) -> Void)!) {
         
-        var backgroundURLs : Array = ["facebook.com/xti.php","facebook.com/ai.php","fbcdn","facebook.com/sound_iframe"]
-        var inAppURLs : Array = ["facebook.com/messages","facebook.com/login","facebook.com/sound_iframe"]
+        var backgroundURLs : Array = ["messenger.com/login","messenger.com/t"]
+        var inAppURLs : Array = ["messenger.com/login","messenger.com/t"]
         
-        var backgroundURLsUser : Array? = NSUserDefaults.standardUserDefaults().objectForKey("backgroundURLs") as? Array<String>
-        var inAppURLsUser : Array? = NSUserDefaults.standardUserDefaults().objectForKey("inAppURLs") as? Array<String>
-        
-        if (backgroundURLsUser != nil) {
-            backgroundURLs = backgroundURLsUser!
+        if let backgroundURLsUser = NSUserDefaults.standardUserDefaults().objectForKey("backgroundURLs") as? Array<String> {
+            backgroundURLs.extend(backgroundURLsUser)
+        }
+        if let inAppURLsUser = NSUserDefaults.standardUserDefaults().objectForKey("inAppURLs") as? Array<String> {
+            inAppURLs.extend(inAppURLsUser)
         }
         
-        if (inAppURLsUser != nil) {
-            inAppURLs = inAppURLsUser!
-        }
-        
-        let inApp = inAppURLs.map({(url: String) -> Bool in
-            return navigationAction.request.URL.absoluteString!.rangeOfString(url) != nil;
-        })
-        
-        let background = backgroundURLs.map({(url: String) -> Bool in
-            return navigationAction.request.URL.absoluteString!.rangeOfString(url) != nil;
-        })
-        
-        if (contains(inApp,true) || contains(background,true)) {
-            if (contains(inApp,true)) {
-                startLoading()
+        /*
+        if let nav = navigationAction.request.URL.absoluteString {
+            let inApp = inAppURLs.reduce(false, combine: { result, url in result || nav.rangeOfString(url) != nil })
+            let background = backgroundURLs.reduce(false, combine: { result, url in result || nav.rangeOfString(url) != nil })
+            
+            if inApp || background {
+                if inApp {
+                    startLoading()
+                }
+                decisionHandler(.Allow)
             }
-            decisionHandler(.Allow)
-        } else {
-            NSWorkspace.sharedWorkspace().openURL(navigationAction.request.URL)
+            else {
+                //NSWorkspace.sharedWorkspace().openURL(navigationAction.request.URL)
+                decisionHandler(.Cancel)
+            }
+        }
+        */
+        let messengerOutsideURLPrefix = "https://www.messenger.com/l.php?"
+        let fbOutsideURLPrefix = "http://l.facebook.com/l.php?"
+        
+        var outsideURL: NSURL?
+        
+        if let nav = navigationAction.request.URL.absoluteString {
+            println(nav)
+            if nav.hasPrefix(fbOutsideURLPrefix) || nav.hasPrefix(messengerOutsideURLPrefix) {
+                // It's an outside URL
+                // Let's try to find it's destination by stripping the Facebook junk
+                if let regex = NSRegularExpression(pattern: "(?<=u=)[^&]*", options: nil, error: nil) {
+                    let fullRange = NSMakeRange(0, (nav as NSString).length)
+                    if let match = regex.firstMatchInString(nav, options: nil, range: fullRange) {
+                        // We found it! We still need to remove some gross URL percents from it.
+                        let encodedString = (nav as NSString).substringWithRange(match.range)
+                        if let rawString = encodedString.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding) {
+                            if let rawURL = NSURL(string: rawString) {
+                                outsideURL = rawURL
+                            }
+                        }
+                    }
+                }
+            }
+            else if nav.hasPrefix("https://www.facebook.com") {
+                // Just go to it as if it were an outside URL
+                outsideURL = NSURL(string: nav)
+            }
+        }
+        
+        if let newURL = outsideURL {
+            // Naviagate there in a web browser!
+            NSWorkspace.sharedWorkspace().openURL(newURL)
+            
+            // Cancel any in-app navigation
             decisionHandler(.Cancel)
         }
+        else {
+            startLoading()
+            decisionHandler(.Allow)
+        }
+        
     }
-    
     
     func webView(webView: WKWebView, didFinishNavigation navigation: WKNavigation!) {
         NSTimer.scheduledTimerWithTimeInterval(0.4, target: self, selector: Selector("endLoading"), userInfo: nil, repeats: false)
@@ -157,6 +199,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     
     
     func applicationDidBecomeActive(aNotification: NSNotification) {
+        NSApplication.sharedApplication().dockTile.badgeLabel = ""
         if (self.activatedFromBackground) {
             if (self.reactivationMenuItem.state == 1) {
                 webView.evaluateJavaScript("reactivation()", completionHandler: nil);
@@ -185,12 +228,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         window.makeKeyAndOrderFront(self)
     }
     
-    
-    @IBAction func reload(sender: AnyObject) {
-        startLoading()
-        webView.reload()
-    }
-    
     @IBAction func toggleReactivation(sender: AnyObject) {
         var i : NSMenuItem = sender as NSMenuItem
         
@@ -204,6 +241,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         NSUserDefaults.standardUserDefaults().synchronize()
     }
     
+    var quicklookMediaURL: NSURL? {
+        didSet {
+            if quicklookMediaURL != nil {
+                QLPreviewPanel.sharedPreviewPanel().makeKeyAndOrderFront(nil);
+            }
+        }
+    }
     
     func endLoading() {
         timer.invalidate()
@@ -234,5 +278,41 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         NSApp.activateIgnoringOtherApps(true)
     }
     
+    // MARK: Quicklook for Media
+    
+    var previewPanel: QLPreviewPanel?
+    
+    override func acceptsPreviewPanelControl(panel: QLPreviewPanel!) -> Bool {
+        return true
+    }
+    
+    override func beginPreviewPanelControl(panel: QLPreviewPanel!) {
+        previewPanel = panel
+        panel.delegate = self
+        panel.dataSource = self
+    }
+    
+    override func endPreviewPanelControl(panel: QLPreviewPanel!) {
+        previewPanel = nil
+    }
+    
+    func numberOfPreviewItemsInPreviewPanel(panel: QLPreviewPanel!) -> Int {
+        return 1
+    }
+    
+    func previewPanel(panel: QLPreviewPanel!, previewItemAtIndex index: Int) -> QLPreviewItem! {
+        return WebPreviewItem(url: quicklookMediaURL!)
+    }
+    
+    class WebPreviewItem : NSObject, QLPreviewItem {
+        let previewItemURL: NSURL
+        init(url: NSURL) {
+            previewItemURL = url
+        }
+        
+        let previewItemTitle: String = "Image"
+        
+    }
 }
+
 
