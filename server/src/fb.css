@@ -21,6 +21,14 @@ body {
     min-width: 280px;
 }
 
+._5irm {
+    margin-right: 12px;
+}
+
+._1ht1 .emoticon {
+    background-image: none !important;
+}
+
 @media (max-width: 630px) {
     ._1enh {
         min-width: 0 !important;

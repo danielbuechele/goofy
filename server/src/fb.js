@@ -6,8 +6,8 @@ for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElemen
 mixpanel.init("2245181dbc803998dedc5b07d840e672");
 
 var emoticonMapping = {
-	"emoticon_smile"			:"😃",
-	"emoticon_frown"			:"😦",
+	"emoticon_smile"		:"😃",
+	"emoticon_frown"		:"😦",
 	"emoticon_poop"			:"💩",
 	"emoticon_putnam"		:":putnam:",
 	"emoticon_tongue"		:"😛",
@@ -19,20 +19,20 @@ var emoticonMapping = {
 	"emoticon_grumpy"		:">:(",
 	"emoticon_unsure"		:":/",
 	"emoticon_cry"			:"😢",
-	"emoticon_devil"			:"😈",
-	"emoticon_angel"			:"😇",
+	"emoticon_devil"		:"😈",
+	"emoticon_angel"		:"😇",
 	"emoticon_kiss"			:"😘",
-	"emoticon_heart"			:"❤️",
+	"emoticon_heart"		:"❤️",
 	"emoticon_kiki"			:"😊",
 	"emoticon_squint"		:"😑",
 	"emoticon_confused"		:"😕",
 	"emoticon_confused_rev"	:"😕",
-	"emoticon_upset"			:">:o",
+	"emoticon_upset"		:">:o",
 	"emoticon_pacman"		:":v",
-	"emoticon_robot"			:":|]",
+	"emoticon_robot"		:":|]",
 	"emoticon_colonthree"	:":3",
 	"emoticon_penguin"		:"🐧",
-	"emoticon_shark"			:"(^^^)",
+	"emoticon_shark"		:"(^^^)",
 	"emoticon_like"			:"👍"
 };
 
@@ -54,6 +54,7 @@ function init() {
 
 	setInterval(function() {
 		//window.dispatchEvent(new Event('resize'));
+		document.querySelector('._1tqi').textContent="Goofy";
 		dockCount();
 	}, 200);
 
@@ -62,33 +63,25 @@ function init() {
 		window.webkit.messageHandlers.notification.postMessage({type: 'URL_CONFIG', backgroundURLs: ["messenger.com/login","messenger.com/t"], inAppURLs: ["messenger.com/login","messenger.com/t"]});
 	}, 3000);
 
-	document.onkeydown = function () {
-		var evtobj = window.event? event : e
-
-		if (evtobj.metaKey && evtobj.keyCode==221) {
-			//next
-			document.querySelector('._1ht2').nextElementSibling.firstChild.click();
-			return false;
+	document.body.addEventListener("DOMNodeInserted", function (ev) {
+		if (document.querySelector('._n8')) {
+			window.webkit.messageHandlers.notification.postMessage({type: 'SHOW_IMAGE', url: document.querySelector('._4-od').getAttribute('src')});
+			document.body.removeChild(document.querySelector('._n8'));
 		}
+	}, false);
 
-		if (evtobj.metaKey && evtobj.keyCode==78) {
-			//CMD+N new chat
-			document.querySelector('._4bl8._4bl7 a').click();
-			return false;
-		}
+}
 
-		if (evtobj.metaKey && evtobj.keyCode==219) {
-			//prev
-			document.querySelector('._1ht2').previousElementSibling.firstChild.click();
-			return false;
-		}
+function newConversation() {
+	document.querySelector('._4bl8._4bl7 a').click();
+}
 
-		if (evtobj.keyCode > 48 && evtobj.keyCode < 58 && evtobj.ctrlKey) {
-			document.querySelector('._1ht1').parentElement.querySelector('li:nth-child('+(evtobj.keyCode-48)+') a').click()
-			return false;
-		}
-	};
-
+function gotoConversation(tag) {
+	if (tag==1) {
+		document.querySelector('._1ht2').nextElementSibling.firstChild.click();
+	} else {
+		document.querySelector('._1ht2').previousElementSibling.firstChild.click();
+	}
 }
 
 function reactivation(userid) {
@@ -115,6 +108,18 @@ function dockCount() {
 			text = text.textContent;
 			var subtitle = document.querySelector('._1ht3 ._1ht6').textContent;
 			if (lastNotification != subtitle+text) {
+				//replacing Facebook smilies with OS X emojis
+				[].forEach.call(document.querySelectorAll('._1ht3 ._1htf .emoticon_text'), function(e) {e.textContent = "";});
+				[].forEach.call(document.querySelectorAll('._1ht3 ._1htf .emoticon'), function(e) {
+					for (a in emoticonMapping) {
+						if (e.classList.contains(a)) {
+							e.textContent = emoticonMapping[a];
+							break;
+						}
+					}
+				});
+
+				text = document.querySelector('._1ht3 ._1htf').textContent;
 				var id = document.querySelector('._1ht1._1ht3').getAttribute('data-reactid');
 				window.webkit.messageHandlers.notification.postMessage({type: 'NOTIFICATION', title: subtitle, text: text, id: id});
 				lastNotification = subtitle+text;

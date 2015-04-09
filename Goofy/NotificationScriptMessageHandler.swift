@@ -30,15 +30,15 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
             case "DOCK_COUNT":
                 dockCount(message.body["content"] as String)
                 break
-            case "RELOAD":
-                appDelegate.reload(self)
-                break
             case "URL_CONFIG":
                 var backgroundURLs = message.body["backgroundURLs"] as NSArray!
                 var inAppURLs = message.body["inAppURLs"] as NSArray!
                 NSUserDefaults.standardUserDefaults().setObject(backgroundURLs, forKey: "backgroundURLs")
                 NSUserDefaults.standardUserDefaults().setObject(inAppURLs, forKey: "inAppURLs")
                 NSUserDefaults.standardUserDefaults().synchronize()
+                break
+            case "SHOW_IMAGE":
+                println(message.body["url"] as NSString)
                 break
             default:
                 0

@@ -184,12 +184,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         window.makeKeyAndOrderFront(self)
     }
     
-    
-    @IBAction func reload(sender: AnyObject) {
-        startLoading()
-        webView.reload()
-    }
-    
     @IBAction func toggleReactivation(sender: AnyObject) {
         var i : NSMenuItem = sender as NSMenuItem
         
