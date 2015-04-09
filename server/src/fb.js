@@ -127,9 +127,33 @@ function dockCount() {
 function replyToNotification(userid, answer) {
 	document.querySelector('[data-reactid="'+userid+'"] a').click();
 	setTimeout(function () {
-		document.querySelector('._1rt textarea').value = answer;
+		if (!document.querySelector('._209g._2vxa span span')) {
+			var textEvent = document.createEvent('TextEvent');
+			textEvent.initTextEvent('textInput', true, true, null, String.fromCharCode(32), 9, "en-US");
+			document.querySelector('._209g._2vxa').dispatchEvent(textEvent);
+		}
+
 		setTimeout(function () {
-			document.getElementById('u_0_r').click();
+			document.querySelector('._209g._2vxa span span').textContent = answer;
+
+			setTimeout(function () {
+				__triggerKeyboardEvent(document.querySelector('._209g._2vxa'),13)
+			},50);
 		},50);
 	},50);
+}
+
+function __triggerKeyboardEvent(el, keyCode) {
+    var eventObj = document.createEventObject ?
+        document.createEventObject() : document.createEvent("Events");
+
+    if(eventObj.initEvent){
+      eventObj.initEvent("keydown", true, true);
+    }
+
+    eventObj.keyCode = keyCode;
+    eventObj.which = keyCode;
+
+    el.dispatchEvent ? el.dispatchEvent(eventObj) : el.fireEvent("onkeydown", eventObj);
+
 }
