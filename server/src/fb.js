@@ -63,13 +63,14 @@ function init() {
 		window.webkit.messageHandlers.notification.postMessage({type: 'URL_CONFIG', backgroundURLs: ["messenger.com/login","messenger.com/t"], inAppURLs: ["messenger.com/login","messenger.com/t"]});
 	}, 3000);
 
+	/*
 	document.body.addEventListener("DOMNodeInserted", function (ev) {
 		if (document.querySelector('._n8')) {
 			window.webkit.messageHandlers.notification.postMessage({type: 'SHOW_IMAGE', url: document.querySelector('._4-od').getAttribute('src')});
 			document.body.removeChild(document.querySelector('._n8'));
 		}
 	}, false);
-
+	*/
 }
 
 function newConversation() {
@@ -136,23 +137,15 @@ function dockCount() {
 function replyToNotification(userid, answer) {
 	document.querySelector('[data-reactid="'+userid+'"] a').click();
 	setTimeout(function () {
-		if (!document.querySelector('._209g._2vxa span span')) {
-			var textEvent = document.createEvent('TextEvent');
-			textEvent.initTextEvent('textInput', true, true, null, String.fromCharCode(32), 9, "en-US");
-			document.querySelector('._209g._2vxa').dispatchEvent(textEvent);
-		}
+		var textEvent = document.createEvent('TextEvent');
+		textEvent.initTextEvent('textInput', true, true, null, answer, 9, "en-US");
+		document.querySelector('._209g._2vxa').dispatchEvent(textEvent);
 
-		setTimeout(function () {
-			document.querySelector('._209g._2vxa span span').textContent = answer;
-
-			setTimeout(function () {
-				__triggerKeyboardEvent(document.querySelector('._209g._2vxa'),13)
-			},50);
-		},50);
+		__triggerKeyboardEvent(document.querySelector('._209g._2vxa'),13,true);
 	},50);
 }
 
-function __triggerKeyboardEvent(el, keyCode) {
+function __triggerKeyboardEvent(el, keyCode, meta) {
     var eventObj = document.createEventObject ?
         document.createEventObject() : document.createEvent("Events");
 
@@ -162,6 +155,9 @@ function __triggerKeyboardEvent(el, keyCode) {
 
     eventObj.keyCode = keyCode;
     eventObj.which = keyCode;
+	if (meta) {
+		eventObj.metaKey = true;
+	}
 
     el.dispatchEvent ? el.dispatchEvent(eventObj) : el.fireEvent("onkeydown", eventObj);
 

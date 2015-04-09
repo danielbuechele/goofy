@@ -38,6 +38,7 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
                 NSUserDefaults.standardUserDefaults().synchronize()
                 break
             case "SHOW_IMAGE":
+                println(message.body["url"] as String)
                 appDelegate.quicklookMediaURL = NSURL(string: (message.body["url"] as String))
                 break
             default:
