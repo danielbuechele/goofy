@@ -30,15 +30,15 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
             case "DOCK_COUNT":
                 dockCount(message.body["content"] as String)
                 break
-            case "RELOAD":
-                appDelegate.reload(self)
-                break
             case "URL_CONFIG":
                 var backgroundURLs = message.body["backgroundURLs"] as NSArray!
                 var inAppURLs = message.body["inAppURLs"] as NSArray!
                 NSUserDefaults.standardUserDefaults().setObject(backgroundURLs, forKey: "backgroundURLs")
                 NSUserDefaults.standardUserDefaults().setObject(inAppURLs, forKey: "inAppURLs")
                 NSUserDefaults.standardUserDefaults().synchronize()
+                break
+            case "SHOW_IMAGE":
+                println(message.body["url"] as NSString)
                 break
             default:
                 0
@@ -67,12 +67,11 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
             NSApplication.sharedApplication().dockTile.badgeLabel = ""
         } else {
             NSApplication.sharedApplication().dockTile.badgeLabel = count
-            var si = NSImage(named: "StatusItemUnread")
-            println("unread")
+            //var si = NSImage(named: "StatusItemUnread")
         }
-        si?.setTemplate(true)
+        //si?.setTemplate(true)
         
-        appDelegate.statusBarItem.image = si
+        //appDelegate.statusBarItem.image = si
     }
     
     func userNotificationCenter(center: NSUserNotificationCenter!, didActivateNotification notification: NSUserNotification!) {

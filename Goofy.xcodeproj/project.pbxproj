@@ -14,6 +14,7 @@
 		33942F9F1A2AE7F700E6D361 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33942F9E1A2AE7F700E6D361 /* Images.xcassets */; };
 		33942FA21A2AE7F700E6D361 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33942FA01A2AE7F700E6D361 /* MainMenu.xib */; };
 		33942FB81A2AE8AA00E6D361 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33942FB71A2AE8AA00E6D361 /* WebKit.framework */; };
+		33B93A6B1AD68BE2003EBDDE /* MenuHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33B93A6A1AD68BE2003EBDDE /* MenuHandler.swift */; };
 		33C741E01A2B02840072D81E /* NotificationScriptMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33C741DF1A2B02840072D81E /* NotificationScriptMessageHandler.swift */; };
 /* End PBXBuildFile section */
 
@@ -52,6 +53,7 @@
 		33942FA11A2AE7F700E6D361 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		33942FA71A2AE7F700E6D361 /* GoofyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GoofyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		33942FB71A2AE8AA00E6D361 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		33B93A6A1AD68BE2003EBDDE /* MenuHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuHandler.swift; sourceTree = "<group>"; };
 		33C741DF1A2B02840072D81E /* NotificationScriptMessageHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationScriptMessageHandler.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -102,6 +104,7 @@
 			children = (
 				33942F9C1A2AE7F700E6D361 /* AppDelegate.swift */,
 				33C741DF1A2B02840072D81E /* NotificationScriptMessageHandler.swift */,
+				33B93A6A1AD68BE2003EBDDE /* MenuHandler.swift */,
 				33942F9E1A2AE7F700E6D361 /* Images.xcassets */,
 				33942FA01A2AE7F700E6D361 /* MainMenu.xib */,
 				33942F9A1A2AE7F700E6D361 /* Supporting Files */,
@@ -176,7 +179,7 @@
 				TargetAttributes = {
 					33942F961A2AE7F700E6D361 = {
 						CreatedOnToolsVersion = 6.1;
-						DevelopmentTeam = K5C6E7A2D6;
+						DevelopmentTeam = PLYLXBYCEQ;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 0;
@@ -250,6 +253,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				33C741E01A2B02840072D81E /* NotificationScriptMessageHandler.swift in Sources */,
+				33B93A6B1AD68BE2003EBDDE /* MenuHandler.swift in Sources */,
 				33942F9D1A2AE7F700E6D361 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -364,6 +368,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -388,6 +393,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

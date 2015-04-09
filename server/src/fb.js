@@ -6,8 +6,8 @@ for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElemen
 mixpanel.init("2245181dbc803998dedc5b07d840e672");
 
 var emoticonMapping = {
-	"emoticon_smile"			:"😃",
-	"emoticon_frown"			:"😦",
+	"emoticon_smile"		:"😃",
+	"emoticon_frown"		:"😦",
 	"emoticon_poop"			:"💩",
 	"emoticon_putnam"		:":putnam:",
 	"emoticon_tongue"		:"😛",
@@ -19,20 +19,20 @@ var emoticonMapping = {
 	"emoticon_grumpy"		:">:(",
 	"emoticon_unsure"		:":/",
 	"emoticon_cry"			:"😢",
-	"emoticon_devil"			:"😈",
-	"emoticon_angel"			:"😇",
+	"emoticon_devil"		:"😈",
+	"emoticon_angel"		:"😇",
 	"emoticon_kiss"			:"😘",
-	"emoticon_heart"			:"❤️",
+	"emoticon_heart"		:"❤️",
 	"emoticon_kiki"			:"😊",
 	"emoticon_squint"		:"😑",
 	"emoticon_confused"		:"😕",
 	"emoticon_confused_rev"	:"😕",
-	"emoticon_upset"			:">:o",
+	"emoticon_upset"		:">:o",
 	"emoticon_pacman"		:":v",
-	"emoticon_robot"			:":|]",
+	"emoticon_robot"		:":|]",
 	"emoticon_colonthree"	:":3",
 	"emoticon_penguin"		:"🐧",
-	"emoticon_shark"			:"(^^^)",
+	"emoticon_shark"		:"(^^^)",
 	"emoticon_like"			:"👍"
 };
 
@@ -53,85 +53,116 @@ function init() {
     csssetup();
 
 	setInterval(function() {
-		window.dispatchEvent(new Event('resize'));
+		//window.dispatchEvent(new Event('resize'));
+		document.querySelector('._1tqi').textContent="Goofy";
 		dockCount();
 	}, 200);
 
 	setTimeout(function() {
 		mixpanel.track("loaded");
-		window.webkit.messageHandlers.notification.postMessage({type: 'URL_CONFIG', backgroundURLs: ["facebook.com/xti.php","facebook.com/ai.php","fbcdn","spotilocal.com","facebook.com/ajax/music","facebook.com/sound_iframe"], inAppURLs: ["facebook.com/messages","facebook.com/login","facebook.com/checkpoint","spotilocal.com","facebook.com/ajax/music","facebook.com/sound_iframe"]});
+		window.webkit.messageHandlers.notification.postMessage({type: 'URL_CONFIG', backgroundURLs: ["messenger.com/login","messenger.com/t"], inAppURLs: ["messenger.com/login","messenger.com/t"]});
 	}, 3000);
 
-	document.onkeydown = function () {
-		var evtobj = window.event? event : e
-
-		if (evtobj.metaKey && evtobj.keyCode==221) {
-			//next
-			document.querySelector('._kv').nextElementSibling.firstChild.childNodes[1].click();
-			return false;
+	document.body.addEventListener("DOMNodeInserted", function (ev) {
+		if (document.querySelector('._n8')) {
+			window.webkit.messageHandlers.notification.postMessage({type: 'SHOW_IMAGE', url: document.querySelector('._4-od').getAttribute('src')});
+			document.body.removeChild(document.querySelector('._n8'));
 		}
+	}, false);
 
-		if (evtobj.metaKey && evtobj.keyCode==78) {
-			document.querySelector('._3mv').click();
-			return false;
-		}
+}
 
-		if (evtobj.metaKey && evtobj.keyCode==219) {
-			//prev
-			document.querySelector('._kv').previousElementSibling.firstChild.childNodes[1].click();
-			return false;
-		}
+function newConversation() {
+	document.querySelector('._4bl8._4bl7 a').click();
+}
 
-		if (evtobj.keyCode > 48 && evtobj.keyCode < 58 && evtobj.ctrlKey) {
-			document.querySelector(".uiList._2tm._4kg li:nth-child("+(evtobj.keyCode-48)+") ._k_").click();
-			return false;
-		}
-	};
-
+function gotoConversation(tag) {
+	if (tag==1) {
+		document.querySelector('._1ht2').nextElementSibling.firstChild.click();
+	} else {
+		document.querySelector('._1ht2').previousElementSibling.firstChild.click();
+	}
 }
 
 function reactivation(userid) {
 	if (userid) {
-		document.getElementById(userid).querySelector('._k_').click();
+		document.querySelector('[data-reactid="'+userid+'"] a').click();
 	} else if (new Date().getTime() < lastNotificationTime + 1000*60) {
-		document.querySelector('._kx ._l2').click();
+		document.querySelector('._1ht3 a').click();
 	}
 }
 
 function dockCount() {
-	var c = document.querySelector('._1z4y .jewelCount ._3z_5').textContent;
+	if (document.querySelector('title').textContent == 'Messenger') {
+		window.webkit.messageHandlers.notification.postMessage({type: 'DOCK_COUNT', content: "0"});
+		return;
+	}
+	var c = /\(([^)]+)\)/.exec(document.querySelector('title').textContent);
+	if (c.length>1) {
+		c = c[1];
+	} else {
+		c = 0;
+	}
+
 	window.webkit.messageHandlers.notification.postMessage({type: 'DOCK_COUNT', content: c});
 
-	if (parseInt(c)>0) {
+	if (c > 0) {
+		var text = document.querySelector('._1ht3 ._1htf');
+		if (text) {
+			text = text.textContent;
+			var subtitle = document.querySelector('._1ht3 ._1ht6').textContent;
+			if (lastNotification != subtitle+text) {
+				//replacing Facebook smilies with OS X emojis
+				[].forEach.call(document.querySelectorAll('._1ht3 ._1htf .emoticon_text'), function(e) {e.textContent = "";});
+				[].forEach.call(document.querySelectorAll('._1ht3 ._1htf .emoticon'), function(e) {
+					for (a in emoticonMapping) {
+						if (e.classList.contains(a)) {
+							e.textContent = emoticonMapping[a];
+							break;
+						}
+					}
+				});
 
-		//replacing Facebook smilies with OS X emojis
-		[].forEach.call(document.querySelectorAll('._kx ._l3 .emoticon_text'), function(e) {e.textContent = "";});
-		[].forEach.call(document.querySelectorAll('._kx ._l3 .emoticon'), function(e) {
-			for (a in emoticonMapping) {
-				if (e.classList.contains(a)) {
-					e.textContent = emoticonMapping[a];
-					break;
-				}
+				text = document.querySelector('._1ht3 ._1htf').textContent;
+				var id = document.querySelector('._1ht1._1ht3').getAttribute('data-reactid');
+				window.webkit.messageHandlers.notification.postMessage({type: 'NOTIFICATION', title: subtitle, text: text, id: id});
+				lastNotification = subtitle+text;
+				lastNotificationTime = new Date().getTime();
 			}
-		});
-
-		var subtitle = document.querySelector('._kx ._l2 ._l1').textContent;
-		var text = document.querySelector('._kx ._l3').textContent;
-		if (lastNotification != subtitle+text) {
-			var id = document.querySelector('._kx').id;
-			window.webkit.messageHandlers.notification.postMessage({type: 'NOTIFICATION', title: subtitle, text: text, id: id});
-			lastNotification = subtitle+text;
-			lastNotificationTime = new Date().getTime();
 		}
 	}
 }
 
 function replyToNotification(userid, answer) {
-	document.getElementById(userid).querySelector('._l3').click();
+	document.querySelector('[data-reactid="'+userid+'"] a').click();
 	setTimeout(function () {
-		document.querySelector('._1rt textarea').value = answer;
+		if (!document.querySelector('._209g._2vxa span span')) {
+			var textEvent = document.createEvent('TextEvent');
+			textEvent.initTextEvent('textInput', true, true, null, String.fromCharCode(32), 9, "en-US");
+			document.querySelector('._209g._2vxa').dispatchEvent(textEvent);
+		}
+
 		setTimeout(function () {
-			document.getElementById('u_0_r').click();
+			document.querySelector('._209g._2vxa span span').textContent = answer;
+
+			setTimeout(function () {
+				__triggerKeyboardEvent(document.querySelector('._209g._2vxa'),13)
+			},50);
 		},50);
 	},50);
+}
+
+function __triggerKeyboardEvent(el, keyCode) {
+    var eventObj = document.createEventObject ?
+        document.createEventObject() : document.createEvent("Events");
+
+    if(eventObj.initEvent){
+      eventObj.initEvent("keydown", true, true);
+    }
+
+    eventObj.keyCode = keyCode;
+    eventObj.which = keyCode;
+
+    el.dispatchEvent ? el.dispatchEvent(eventObj) : el.fireEvent("onkeydown", eventObj);
+
 }

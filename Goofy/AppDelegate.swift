@@ -31,7 +31,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         // Insert code here to initialize your application
         
         window.backgroundColor = NSColor.whiteColor()
-        window.minSize = NSSize(width: 680,height: 376)
+        window.minSize = NSSize(width: 380,height: 376)
         window.makeMainWindow()
         window.makeKeyWindow()
         window.titlebarAppearsTransparent = true
@@ -77,10 +77,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         view.addSubview(webView, positioned: NSWindowOrderingMode.Below, relativeTo: view);
         webView.autoresizingMask = NSAutoresizingMaskOptions.ViewWidthSizable | NSAutoresizingMaskOptions.ViewHeightSizable
         
-//        var s = NSProcessInfo.processInfo().arguments[0].componentsSeparatedByString("/")
-//        var st: String = s[s.count-4] as String
-        let url : String = "https://www.messenger.com"
-//        
+        var s = NSProcessInfo.processInfo().arguments[0].componentsSeparatedByString("/")
+        var st: String = s[s.count-4] as String
+        var url : String = "https://messenger.com/login"
+        
         /* Facebook at word support. Needs to be updated for Messenger.com
         if (st.rangeOfString("Goofy") != nil && countElements(st) > 10) {
             st = (st as NSString).stringByReplacingCharactersInRange(NSRange(location: 0,length: 6), withString: "")
@@ -118,20 +118,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     
     func webView(webView: WKWebView!, decidePolicyForNavigationAction navigationAction: WKNavigationAction!, decisionHandler: ((WKNavigationActionPolicy) -> Void)!) {
         
-        /* I'm attempting ot change how this works entirely
-        var backgroundURLs : Array = ["facebook.com/","facebook.com/ai.php","fbcdn","facebook.com/sound_iframe"]
-        var inAppURLs : Array = ["messenger.com","facebook.com/messages","facebook.com/login","facebook.com/sound_iframe"]
-        */
-
-        /* I'm unsure if these user URLs are necessary. From what I can tell, they retain incorrect data from previous versions of the app.
+        var backgroundURLs : Array = ["messenger.com/login","messenger.com/t"]
+        var inAppURLs : Array = ["messenger.com/login","messenger.com/t"]
+        
         if let backgroundURLsUser = NSUserDefaults.standardUserDefaults().objectForKey("backgroundURLs") as? Array<String> {
             backgroundURLs.extend(backgroundURLsUser)
         }
         if let inAppURLsUser = NSUserDefaults.standardUserDefaults().objectForKey("inAppURLs") as? Array<String> {
             inAppURLs.extend(inAppURLsUser)
         }
-        */
-        
         
         /*
         if let nav = navigationAction.request.URL.absoluteString {
@@ -204,6 +199,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     
     
     func applicationDidBecomeActive(aNotification: NSNotification) {
+        NSApplication.sharedApplication().dockTile.badgeLabel = ""
         if (self.activatedFromBackground) {
             if (self.reactivationMenuItem.state == 1) {
                 webView.evaluateJavaScript("reactivation()", completionHandler: nil);
@@ -230,12 +226,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     
     @IBAction func reopenWindow(sender: AnyObject) {
         window.makeKeyAndOrderFront(self)
-    }
-    
-    
-    @IBAction func reload(sender: AnyObject) {
-        startLoading()
-        webView.reload()
     }
     
     @IBAction func toggleReactivation(sender: AnyObject) {
