@@ -1,5 +1,8 @@
 body {
     overflow: hidden !important;
+    position: fixed;
+    right: 0;
+    left: 0;
 }
 
 ._210n {
@@ -8,4 +11,33 @@ body {
 
 ._3v_o {
     min-height: 200px;
+}
+
+._1q5- {
+    border-left: 1px solid rgba(0, 0, 0, 0.0980392);
+}
+
+._1enh {
+    min-width: 280px;
+}
+
+@media (max-width: 630px) {
+    ._1enh {
+        min-width: 0 !important;
+        width: 72px !important;
+    }
+    ._36ic ._4bl7, ._36ic ._4bl9, ._5iwm {
+        display: none;
+    }
+
+    ._36ic ._4bl8._4bl7 {
+        display: block;
+        float: none;
+        margin-left: 13px;
+    }
+    ._1q5- {
+        right: 0 !important;
+        position: absolute !important;
+        left: 72px !important;
+    }
 }

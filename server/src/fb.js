@@ -59,7 +59,7 @@ function init() {
 
 	setTimeout(function() {
 		mixpanel.track("loaded");
-		window.webkit.messageHandlers.notification.postMessage({type: 'URL_CONFIG', backgroundURLs: ["facebook.com/xti.php","facebook.com/ai.php","fbcdn","spotilocal.com","facebook.com/ajax/music","facebook.com/sound_iframe"], inAppURLs: ["facebook.com/messages","facebook.com/login","facebook.com/checkpoint","spotilocal.com","facebook.com/ajax/music","facebook.com/sound_iframe"]});
+		window.webkit.messageHandlers.notification.postMessage({type: 'URL_CONFIG', backgroundURLs: ["messenger.com/login","messenger.com/t"], inAppURLs: ["messenger.com/login","messenger.com/t"]});
 	}, 3000);
 
 	document.onkeydown = function () {

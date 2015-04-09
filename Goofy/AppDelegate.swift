@@ -31,7 +31,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         // Insert code here to initialize your application
         
         window.backgroundColor = NSColor.whiteColor()
-        window.minSize = NSSize(width: 680,height: 376)
+        window.minSize = NSSize(width: 380,height: 376)
         window.makeMainWindow()
         window.makeKeyWindow()
         window.titlebarAppearsTransparent = true
@@ -115,8 +115,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     
     func webView(webView: WKWebView!, decidePolicyForNavigationAction navigationAction: WKNavigationAction!, decisionHandler: ((WKNavigationActionPolicy) -> Void)!) {
         
-        var backgroundURLs : Array = ["messenger.com","facebook.com/","facebook.com/ai.php","fbcdn","facebook.com/sound_iframe"]
-        var inAppURLs : Array = ["facebook.com/messages","facebook.com/login","facebook.com/sound_iframe"]
+        var backgroundURLs : Array = ["messenger.com/login","messenger.com/t"]
+        var inAppURLs : Array = ["messenger.com/login","messenger.com/t"]
         
         if let backgroundURLsUser = NSUserDefaults.standardUserDefaults().objectForKey("backgroundURLs") as? Array<String> {
             backgroundURLs.extend(backgroundURLsUser)
