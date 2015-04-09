@@ -8,10 +8,10 @@
 
 import Cocoa
 import WebKit
-import QuartzCore
+import Quartz
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDelegate, QLPreviewPanelDataSource, QLPreviewPanelDelegate {
     
     @IBOutlet var window : NSWindow!
     var webView : WKWebView!
@@ -251,6 +251,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         NSUserDefaults.standardUserDefaults().synchronize()
     }
     
+    var quicklookMediaURL: NSURL? {
+        didSet {
+            if quicklookMediaURL != nil {
+                QLPreviewPanel.sharedPreviewPanel().makeKeyAndOrderFront(nil);
+            }
+        }
+    }
     
     func endLoading() {
         timer.invalidate()
@@ -281,5 +288,41 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         NSApp.activateIgnoringOtherApps(true)
     }
     
+    // MARK: Quicklook for Media
+    
+    var previewPanel: QLPreviewPanel?
+    
+    override func acceptsPreviewPanelControl(panel: QLPreviewPanel!) -> Bool {
+        return true
+    }
+    
+    override func beginPreviewPanelControl(panel: QLPreviewPanel!) {
+        previewPanel = panel
+        panel.delegate = self
+        panel.dataSource = self
+    }
+    
+    override func endPreviewPanelControl(panel: QLPreviewPanel!) {
+        previewPanel = nil
+    }
+    
+    func numberOfPreviewItemsInPreviewPanel(panel: QLPreviewPanel!) -> Int {
+        return 1
+    }
+    
+    func previewPanel(panel: QLPreviewPanel!, previewItemAtIndex index: Int) -> QLPreviewItem! {
+        return WebPreviewItem(url: quicklookMediaURL!)
+    }
+    
+    class WebPreviewItem : NSObject, QLPreviewItem {
+        let previewItemURL: NSURL
+        init(url: NSURL) {
+            previewItemURL = url
+        }
+        
+        let previewItemTitle: String = "Image"
+        
+    }
 }
+
 
