@@ -93,6 +93,10 @@ function reactivation(userid) {
 }
 
 function dockCount() {
+	if (document.querySelector('title').textContent == 'Messenger') {
+		window.webkit.messageHandlers.notification.postMessage({type: 'DOCK_COUNT', content: "0"});
+		return;
+	}
 	var c = /\(([^)]+)\)/.exec(document.querySelector('title').textContent);
 	if (c.length>1) {
 		c = c[1];
