@@ -1,5 +1,4 @@
-body {
-    overflow: hidden !important;
+#u_0_0._2sdm {
     position: fixed;
     right: 0;
     left: 0;
@@ -14,7 +13,11 @@ body {
 }
 
 ._1q5- {
-    border-left: 1px solid rgba(0, 0, 0, 0.0980392);
+    border: none;
+}
+
+._2xhi._5vn4 {
+    border-right: 1px solid rgba(0, 0, 0, 0.0980392);
 }
 
 ._1enh {
@@ -27,6 +30,15 @@ body {
 
 ._1ht1 .emoticon {
     background-image: none !important;
+}
+
+/* hide photo button */
+._m._4q60._3rzn._6a {
+    display: none;
+}
+
+._5742, ._36ic._5vn4 {
+    display: none;
 }
 
 @media (max-width: 630px) {

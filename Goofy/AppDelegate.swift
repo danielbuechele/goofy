@@ -11,7 +11,7 @@ import WebKit
 import Quartz
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDelegate, QLPreviewPanelDataSource, QLPreviewPanelDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDelegate, QLPreviewPanelDataSource, QLPreviewPanelDelegate, NSWindowDelegate {
     
     @IBOutlet var window : NSWindow!
     var webView : WKWebView!
@@ -21,6 +21,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     @IBOutlet var longLoading : NSTextField!
     @IBOutlet var reactivationMenuItem : NSMenuItem!
     @IBOutlet var statusbarMenuItem : NSMenuItem!
+    @IBOutlet var toolbarTrenner : NSToolbarItem!
+    @IBOutlet var toolbarSpacing : NSToolbarItem!
+    @IBOutlet var titleLabel : NSTextField!
+    
     var timer : NSTimer!
     var activatedFromBackground = false
     
@@ -35,8 +39,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         window.makeMainWindow()
         window.makeKeyWindow()
         window.titlebarAppearsTransparent = true
-        
+        window.titleVisibility = .Hidden
+        window.delegate = self
         loadingView.layer?.backgroundColor = NSColor.whiteColor().CGColor
+        
+        sizeWindow(window)
+        
         startLoading()
         
         #if DEBUG
@@ -115,77 +123,42 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         
     }
     
+    func windowDidResize(notification: NSNotification) {
+        sizeWindow(notification.object as NSWindow)
+    }
+    
+    func sizeWindow(window: NSWindow) {
+        if window.frame.width > 630.0 {
+            toolbarTrenner.minSize = NSSize(width: 1, height: 100)
+            toolbarTrenner.maxSize = NSSize(width: 1, height: 100)
+            toolbarTrenner.view?.frame = CGRectMake(0, 0, 1, 100)
+            toolbarTrenner.view?.layer?.backgroundColor = NSColor(white: 0.9, alpha: 1.0).CGColor
+            
+            toolbarSpacing.minSize = NSSize(width: 157, height: 100)
+            toolbarSpacing.maxSize = NSSize(width: 157, height: 100)
+        } else {
+            toolbarTrenner.view?.layer?.backgroundColor = NSColor(white: 1.0, alpha: 1.0).CGColor
+            
+            toolbarSpacing.minSize = NSSize(width: 0, height: 100)
+            toolbarSpacing.maxSize = NSSize(width: 0, height: 100)
+        }
+    }
     
     func webView(webView: WKWebView!, decidePolicyForNavigationAction navigationAction: WKNavigationAction!, decisionHandler: ((WKNavigationActionPolicy) -> Void)!) {
         
-        var backgroundURLs : Array = ["messenger.com/login","messenger.com/t"]
         var inAppURLs : Array = ["messenger.com/login","messenger.com/t"]
         
-        if let backgroundURLsUser = NSUserDefaults.standardUserDefaults().objectForKey("backgroundURLs") as? Array<String> {
-            backgroundURLs.extend(backgroundURLsUser)
-        }
-        if let inAppURLsUser = NSUserDefaults.standardUserDefaults().objectForKey("inAppURLs") as? Array<String> {
-            inAppURLs.extend(inAppURLsUser)
-        }
-        
-        /*
         if let nav = navigationAction.request.URL.absoluteString {
             let inApp = inAppURLs.reduce(false, combine: { result, url in result || nav.rangeOfString(url) != nil })
-            let background = backgroundURLs.reduce(false, combine: { result, url in result || nav.rangeOfString(url) != nil })
             
-            if inApp || background {
-                if inApp {
-                    startLoading()
-                }
+            if inApp  {
                 decisionHandler(.Allow)
-            }
-            else {
-                //NSWorkspace.sharedWorkspace().openURL(navigationAction.request.URL)
+            } else {
+                NSWorkspace.sharedWorkspace().openURL(navigationAction.request.URL)
                 decisionHandler(.Cancel)
             }
         }
-        */
-        let messengerOutsideURLPrefix = "https://www.messenger.com/l.php?"
-        let fbOutsideURLPrefix = "http://l.facebook.com/l.php?"
-        
-        var outsideURL: NSURL?
-        
-        if let nav = navigationAction.request.URL.absoluteString {
-            println(nav)
-            if nav.hasPrefix(fbOutsideURLPrefix) || nav.hasPrefix(messengerOutsideURLPrefix) {
-                // It's an outside URL
-                // Let's try to find it's destination by stripping the Facebook junk
-                if let regex = NSRegularExpression(pattern: "(?<=u=)[^&]*", options: nil, error: nil) {
-                    let fullRange = NSMakeRange(0, (nav as NSString).length)
-                    if let match = regex.firstMatchInString(nav, options: nil, range: fullRange) {
-                        // We found it! We still need to remove some gross URL percents from it.
-                        let encodedString = (nav as NSString).substringWithRange(match.range)
-                        if let rawString = encodedString.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding) {
-                            if let rawURL = NSURL(string: rawString) {
-                                outsideURL = rawURL
-                            }
-                        }
-                    }
-                }
-            }
-            else if nav.hasPrefix("https://www.facebook.com") {
-                // Just go to it as if it were an outside URL
-                outsideURL = NSURL(string: nav)
-            }
-        }
-        
-        if let newURL = outsideURL {
-            // Naviagate there in a web browser!
-            NSWorkspace.sharedWorkspace().openURL(newURL)
-            
-            // Cancel any in-app navigation
-            decisionHandler(.Cancel)
-        }
-        else {
-            startLoading()
-            decisionHandler(.Allow)
-        }
-        
+                
     }
     
     func webView(webView: WKWebView, didFinishNavigation navigation: WKNavigation!) {

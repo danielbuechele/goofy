@@ -18,6 +18,9 @@
                 <outlet property="reactivationMenuItem" destination="tfP-aR-ouj" id="9qa-nu-U5w"/>
                 <outlet property="spinner" destination="Ac9-Ec-QfU" id="Z2D-Bs-P2j"/>
                 <outlet property="statusbarMenuItem" destination="eD5-qA-K11" id="dhs-HS-D8H"/>
+                <outlet property="titleLabel" destination="70h-ex-hUm" id="uek-J0-Aye"/>
+                <outlet property="toolbarSpacing" destination="TTq-Gl-gs8" id="rbg-uh-QPQ"/>
+                <outlet property="toolbarTrenner" destination="MEh-6L-h4y" id="7pi-S0-H2h"/>
                 <outlet property="view" destination="5iU-zi-Msx" id="EZo-0d-cCb"/>
                 <outlet property="window" destination="sOM-gr-fGx" id="weL-dl-ebA"/>
             </connections>
@@ -41,6 +44,12 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="checkForUpdates:" target="GAI-1a-fMQ" id="UeG-zT-5kY"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Logout" id="XWI-jW-4jI">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="logout:" target="XE1-by-mZK" id="QNF-RQ-EZS"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="VOq-y0-SEH"/>
@@ -394,7 +403,7 @@
             </items>
         </menu>
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" frameAutosaveName="Goofy" animationBehavior="default" id="sOM-gr-fGx">
-            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" unifiedTitleAndToolbar="YES"/>
             <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="706" height="467"/>
@@ -431,10 +440,84 @@
                     <constraint firstItem="8q9-2T-qDe" firstAttribute="leading" secondItem="5iU-zi-Msx" secondAttribute="leading" constant="20" id="vTh-oR-lb8"/>
                 </constraints>
             </view>
+            <toolbar key="toolbar" implicitIdentifier="44C7AFD1-E665-486E-99F2-1FAA1BC84FB1" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="regular" id="hOM-Z7-ghb">
+                <allowedToolbarItems>
+                    <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="lPL-Is-e1C"/>
+                    <toolbarItem implicitItemIdentifier="B4C3F4B1-5DB7-403C-A6FF-B8287AB66705" label="New conversation" paletteLabel="New conversation" tag="-1" image="New" id="yzA-Zs-hJn">
+                        <size key="minSize" width="0.0" height="21"/>
+                        <size key="maxSize" width="0.0" height="21"/>
+                        <connections>
+                            <action selector="newConversation:" target="XE1-by-mZK" id="9pC-eK-YcA"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="A062131A-9FA2-4BEB-BB97-2C45EDD82653" label="Information" paletteLabel="Information" tag="-1" image="Info" id="DaP-yL-KgO">
+                        <size key="minSize" width="0.0" height="21"/>
+                        <size key="maxSize" width="0.0" height="21"/>
+                        <connections>
+                            <action selector="plus:" target="XE1-by-mZK" id="FNr-2Q-gQM"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="638B8E70-55B4-4275-9535-A63BA3C84BAB" label="Add" paletteLabel="Add" tag="-1" image="Plus" id="vJN-Qh-zpq">
+                        <size key="minSize" width="0.0" height="21"/>
+                        <size key="maxSize" width="0.0" height="21"/>
+                        <connections>
+                            <action selector="plus:" target="XE1-by-mZK" id="3bm-Cz-4Eh"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="1E17005C-4B7B-46E8-B027-3160DFB08E2C" label="" paletteLabel="" id="f8k-yM-9UO">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="38" height="17"/>
+                        <size key="maxSize" width="173" height="24"/>
+                        <textField key="view" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="70h-ex-hUm">
+                            <rect key="frame" x="18" y="14" width="173" height="24"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <textFieldCell key="cell" lineBreakMode="truncatingTail" enabled="NO" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" usesSingleLineMode="YES" id="tpS-Za-inC">
+                                <font key="font" size="15" name="HelveticaNeue-Medium"/>
+                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="F3A39E74-79A0-46E8-B1D2-2B4E6107E565" label="" paletteLabel="" id="TTq-Gl-gs8">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="48" height="48"/>
+                        <size key="maxSize" width="153" height="48"/>
+                        <imageView key="view" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="i1V-4R-UDb">
+                            <rect key="frame" x="0.0" y="0.0" width="48" height="48"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="Oug-5w-R08"/>
+                        </imageView>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="1FE8986D-A30E-452D-A8F9-93F20DB87F58" label="" paletteLabel="" id="MEh-6L-h4y">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="1" height="48"/>
+                        <size key="maxSize" width="48" height="48"/>
+                        <imageView key="view" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="E8B-GL-IND">
+                            <rect key="frame" x="0.0" y="0.0" width="48" height="48"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="Epm-8O-ecp"/>
+                        </imageView>
+                    </toolbarItem>
+                </allowedToolbarItems>
+                <defaultToolbarItems>
+                    <toolbarItem reference="TTq-Gl-gs8"/>
+                    <toolbarItem reference="yzA-Zs-hJn"/>
+                    <toolbarItem reference="MEh-6L-h4y"/>
+                    <toolbarItem reference="TTq-Gl-gs8"/>
+                    <toolbarItem reference="lPL-Is-e1C"/>
+                    <toolbarItem reference="f8k-yM-9UO"/>
+                    <toolbarItem reference="lPL-Is-e1C"/>
+                    <toolbarItem reference="vJN-Qh-zpq"/>
+                    <toolbarItem reference="DaP-yL-KgO"/>
+                </defaultToolbarItems>
+            </toolbar>
             <point key="canvasLocation" x="548" y="515.5"/>
         </window>
     </objects>
     <resources>
+        <image name="Info" width="32" height="32"/>
+        <image name="New" width="32" height="32"/>
+        <image name="Plus" width="32" height="32"/>
         <image name="loading" width="300" height="200"/>
     </resources>
 </document>

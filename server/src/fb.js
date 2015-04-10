@@ -54,7 +54,7 @@ function init() {
 
 	setInterval(function() {
 		//window.dispatchEvent(new Event('resize'));
-		document.querySelector('._1tqi').textContent="Goofy";
+		window.webkit.messageHandlers.notification.postMessage({type: 'SET_TITLE', title: document.querySelector('._5743 span').textContent});
 		dockCount();
 	}, 200);
 
@@ -71,6 +71,11 @@ function init() {
 		}
 	}, false);
 	*/
+
+	document.querySelector('._5743').addEventListener("DOMSubtreeModified", function () {
+		window.webkit.messageHandlers.notification.postMessage({type: 'SET_TITLE', title: document.querySelector('._5743 span').textContent});
+	});
+
 }
 
 function newConversation() {
@@ -93,16 +98,28 @@ function reactivation(userid) {
 	}
 }
 
+function logout() {
+	document.querySelector('._256m li:last-child a').click();
+}
+
+function plus() {
+	document.querySelector('._4v._30yy').click();
+}
+
+function info() {
+	document.querySelector('._fl3._30yy').click();
+}
+
 function dockCount() {
 	if (document.querySelector('title').textContent == 'Messenger') {
 		window.webkit.messageHandlers.notification.postMessage({type: 'DOCK_COUNT', content: "0"});
 		return;
 	}
 	var c = /\(([^)]+)\)/.exec(document.querySelector('title').textContent);
-	if (c.length>1) {
+	if (c && c.length>1) {
 		c = c[1];
 	} else {
-		c = 0;
+		c = "0";
 	}
 
 	window.webkit.messageHandlers.notification.postMessage({type: 'DOCK_COUNT', content: c});
