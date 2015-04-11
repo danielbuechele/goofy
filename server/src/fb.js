@@ -62,6 +62,18 @@ function init() {
 		mixpanel.track("loaded");
 	}, 3000);
 
+	document.body.onkeypress=function(e) {
+		if (!document.querySelector('._209g._2vxa span span') && !e.metaKey) {
+			var char = event.which || event.keyCode;
+
+			var textEvent = document.createEvent('TextEvent');
+			textEvent.initTextEvent('textInput', true, true, null, String.fromCharCode(char), 9, "en-US");
+			document.querySelector('._209g._2vxa').dispatchEvent(textEvent);
+
+			return false;
+		}
+
+	};
 	/*
 	document.body.addEventListener("DOMNodeInserted", function (ev) {
 		if (document.querySelector('._n8')) {
