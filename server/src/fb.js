@@ -74,18 +74,6 @@ function init() {
 		}
 
 	};
-	/*
-	document.body.addEventListener("DOMNodeInserted", function (ev) {
-		if (document.querySelector('._n8')) {
-			window.webkit.messageHandlers.notification.postMessage({type: 'SHOW_IMAGE', url: document.querySelector('._4-od').getAttribute('src')});
-			document.body.removeChild(document.querySelector('._n8'));
-		}
-	}, false);
-	*/
-
-	document.querySelector('._5743').addEventListener("DOMSubtreeModified", function () {
-		updateTitle();
-	});
 
 	// Support drag and drop file uploads.
 	document.addEventListener('dragover', function(e) {
@@ -99,6 +87,19 @@ function init() {
 		e.stopPropagation();
 
 		document.getElementById('js_2').files = e.dataTransfer.files;
+	});
+
+	/*
+	document.body.addEventListener("DOMNodeInserted", function (ev) {
+		if (document.querySelector('._n8')) {
+			window.webkit.messageHandlers.notification.postMessage({type: 'SHOW_IMAGE', url: document.querySelector('._4-od').getAttribute('src')});
+			document.body.removeChild(document.querySelector('._n8'));
+		}
+	}, false);
+	*/
+
+	document.querySelector('._5743').addEventListener("DOMSubtreeModified", function () {
+		updateTitle();
 	});
 }
 
