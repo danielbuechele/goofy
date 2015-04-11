@@ -66,9 +66,18 @@ function init() {
 		if (!document.querySelector('._54-z:focus') && !e.metaKey) {
 			var char = event.which || event.keyCode;
 
+			// Focus the input at the end of any current text.
+			var el = document.querySelector('._54-z');
+			var range = document.createRange();
+			var sel = window.getSelection();
+			range.setStart(el, 1);
+			range.collapse(true);
+			sel.removeAllRanges();
+			sel.addRange(range);
+
+			// Trigger the captured key press.
 			var textEvent = document.createEvent('TextEvent');
 			textEvent.initTextEvent('textInput', true, true, null, String.fromCharCode(char), 9, "en-US");
-			document.querySelector('._54-z').focus();
 			document.querySelector('._209g._2vxa').dispatchEvent(textEvent);
 
 			return false;
