@@ -10,6 +10,7 @@
 		3327A6071ACEF11A00B71853 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3327A6061ACEF11A00B71853 /* Sparkle.framework */; };
 		3327A6091ACEF15D00B71853 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3327A6061ACEF11A00B71853 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3327A60D1AD16EA100B71853 /* WKPreferences+DevExtras.m in Resources */ = {isa = PBXBuildFile; fileRef = 3327A60C1AD16EA100B71853 /* WKPreferences+DevExtras.m */; };
+		338FDBB61AD91FAD00164747 /* TitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 338FDBB51AD91FAD00164747 /* TitleLabel.swift */; };
 		33942F9D1A2AE7F700E6D361 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33942F9C1A2AE7F700E6D361 /* AppDelegate.swift */; };
 		33942F9F1A2AE7F700E6D361 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33942F9E1A2AE7F700E6D361 /* Images.xcassets */; };
 		33942FA21A2AE7F700E6D361 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33942FA01A2AE7F700E6D361 /* MainMenu.xib */; };
@@ -46,6 +47,7 @@
 		3327A60A1AD16DF500B71853 /* Goofy-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Goofy-Bridging-Header.h"; sourceTree = "<group>"; };
 		3327A60B1AD16E7400B71853 /* WKPreferences+DevExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "WKPreferences+DevExtras.h"; sourceTree = "<group>"; };
 		3327A60C1AD16EA100B71853 /* WKPreferences+DevExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "WKPreferences+DevExtras.m"; sourceTree = "<group>"; };
+		338FDBB51AD91FAD00164747 /* TitleLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitleLabel.swift; sourceTree = "<group>"; };
 		33942F971A2AE7F700E6D361 /* Goofy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Goofy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		33942F9B1A2AE7F700E6D361 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		33942F9C1A2AE7F700E6D361 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -105,6 +107,7 @@
 				33942F9C1A2AE7F700E6D361 /* AppDelegate.swift */,
 				33C741DF1A2B02840072D81E /* NotificationScriptMessageHandler.swift */,
 				33B93A6A1AD68BE2003EBDDE /* MenuHandler.swift */,
+				338FDBB51AD91FAD00164747 /* TitleLabel.swift */,
 				33942F9E1A2AE7F700E6D361 /* Images.xcassets */,
 				33942FA01A2AE7F700E6D361 /* MainMenu.xib */,
 				33942F9A1A2AE7F700E6D361 /* Supporting Files */,
@@ -253,6 +256,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				33C741E01A2B02840072D81E /* NotificationScriptMessageHandler.swift in Sources */,
+				338FDBB61AD91FAD00164747 /* TitleLabel.swift in Sources */,
 				33B93A6B1AD68BE2003EBDDE /* MenuHandler.swift in Sources */,
 				33942F9D1A2AE7F700E6D361 /* AppDelegate.swift in Sources */,
 			);

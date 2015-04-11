@@ -54,13 +54,12 @@ function init() {
 
 	setInterval(function() {
 		//window.dispatchEvent(new Event('resize'));
-		window.webkit.messageHandlers.notification.postMessage({type: 'SET_TITLE', title: document.querySelector('._5743 span').textContent});
+		updateTitle();
 		dockCount();
 	}, 200);
 
 	setTimeout(function() {
 		mixpanel.track("loaded");
-		window.webkit.messageHandlers.notification.postMessage({type: 'URL_CONFIG', backgroundURLs: ["messenger.com/login","messenger.com/t"], inAppURLs: ["messenger.com/login","messenger.com/t"]});
 	}, 3000);
 
 	/*
@@ -73,9 +72,17 @@ function init() {
 	*/
 
 	document.querySelector('._5743').addEventListener("DOMSubtreeModified", function () {
-		window.webkit.messageHandlers.notification.postMessage({type: 'SET_TITLE', title: document.querySelector('._5743 span').textContent});
+		updateTitle();
 	});
 
+}
+
+function updateTitle() {
+	var a = ""
+	if (document.querySelector('._2v6o')) {
+		a = document.querySelector('._2v6o').textContent;
+	}
+	window.webkit.messageHandlers.notification.postMessage({type: 'SET_TITLE', title: document.querySelector('._5743 span').textContent, activity: a});
 }
 
 function newConversation() {

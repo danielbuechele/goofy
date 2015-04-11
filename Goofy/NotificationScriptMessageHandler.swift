@@ -10,7 +10,7 @@ import Foundation
 import WebKit
 
 class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUserNotificationCenterDelegate {
-    
+        
     func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
         
         let type : String = message.body["type"] as NSString
@@ -35,7 +35,7 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
                 appDelegate.quicklookMediaURL = NSURL(string: (message.body["url"] as String))
                 break
             case "SET_TITLE":
-                appDelegate.titleLabel.stringValue = message.body["title"] as String;
+                appDelegate.titleLabel.setTitle(message.body["title"] as String, active: message.body["activity"] as String)
                 break
             default:
                 0

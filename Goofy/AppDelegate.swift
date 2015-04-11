@@ -23,7 +23,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     @IBOutlet var statusbarMenuItem : NSMenuItem!
     @IBOutlet var toolbarTrenner : NSToolbarItem!
     @IBOutlet var toolbarSpacing : NSToolbarItem!
-    @IBOutlet var titleLabel : NSTextField!
+    @IBOutlet var toolbar : NSToolbar!
+    @IBOutlet var titleLabel : TitleLabel!
     
     var timer : NSTimer!
     var activatedFromBackground = false
@@ -42,6 +43,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         window.titleVisibility = .Hidden
         window.delegate = self
         loadingView.layer?.backgroundColor = NSColor.whiteColor().CGColor
+
         
         sizeWindow(window)
         
@@ -142,6 +144,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
             toolbarSpacing.minSize = NSSize(width: 0, height: 100)
             toolbarSpacing.maxSize = NSSize(width: 0, height: 100)
         }
+        
+        titleLabel.windowDidResize()
     }
     
     func webView(webView: WKWebView!, decidePolicyForNavigationAction navigationAction: WKNavigationAction!, decisionHandler: ((WKNavigationActionPolicy) -> Void)!) {
@@ -229,6 +233,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         spinner.hidden = true
         longLoading.hidden = true
         
+        for item in toolbar.items {
+            let i = item as NSToolbarItem
+            i.view?.hidden = false
+            i.image = NSImage(named: i.label)
+        }
+        
+        sizeWindow(window)
+        
     }
     
     func startLoading() {
@@ -237,6 +249,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         spinner.hidden = false
         longLoading.hidden = true
         timer = NSTimer.scheduledTimerWithTimeInterval(10, target: self, selector: Selector("longLoadingMessage"), userInfo: nil, repeats: false)
+        
+        for item in toolbar.items {
+            let i = item as NSToolbarItem
+            i.view?.hidden = true
+            i.image = NSImage(named: "White")
+        }
+        
     }
     
     func longLoadingMessage() {

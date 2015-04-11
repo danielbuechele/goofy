@@ -18,7 +18,8 @@
                 <outlet property="reactivationMenuItem" destination="tfP-aR-ouj" id="9qa-nu-U5w"/>
                 <outlet property="spinner" destination="Ac9-Ec-QfU" id="Z2D-Bs-P2j"/>
                 <outlet property="statusbarMenuItem" destination="eD5-qA-K11" id="dhs-HS-D8H"/>
-                <outlet property="titleLabel" destination="70h-ex-hUm" id="uek-J0-Aye"/>
+                <outlet property="titleLabel" destination="qLh-Hp-pnN" id="rR6-GM-Yi6"/>
+                <outlet property="toolbar" destination="hOM-Z7-ghb" id="kf3-qD-9Te"/>
                 <outlet property="toolbarSpacing" destination="TTq-Gl-gs8" id="rbg-uh-QPQ"/>
                 <outlet property="toolbarTrenner" destination="MEh-6L-h4y" id="7pi-S0-H2h"/>
                 <outlet property="view" destination="5iU-zi-Msx" id="EZo-0d-cCb"/>
@@ -28,6 +29,11 @@
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
         <customObject id="GAI-1a-fMQ" customClass="SUUpdater"/>
         <customObject id="XE1-by-mZK" customClass="MenuHandler" customModule="Goofy"/>
+        <customObject id="qLh-Hp-pnN" customClass="TitleLabel" customModule="Goofy" customModuleProvider="target">
+            <connections>
+                <outlet property="view" destination="K2v-PI-Lwx" id="PrV-sl-rgb"/>
+            </connections>
+        </customObject>
         <menu title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
             <items>
                 <menuItem title="Goofy" id="1Xt-HY-uBw">
@@ -443,40 +449,26 @@
             <toolbar key="toolbar" implicitIdentifier="44C7AFD1-E665-486E-99F2-1FAA1BC84FB1" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="regular" id="hOM-Z7-ghb">
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="lPL-Is-e1C"/>
-                    <toolbarItem implicitItemIdentifier="B4C3F4B1-5DB7-403C-A6FF-B8287AB66705" label="New conversation" paletteLabel="New conversation" tag="-1" image="New" id="yzA-Zs-hJn">
+                    <toolbarItem implicitItemIdentifier="B4C3F4B1-5DB7-403C-A6FF-B8287AB66705" label="New" paletteLabel="New conversation" tag="-1" image="New" id="yzA-Zs-hJn">
                         <size key="minSize" width="0.0" height="21"/>
                         <size key="maxSize" width="0.0" height="21"/>
                         <connections>
                             <action selector="newConversation:" target="XE1-by-mZK" id="9pC-eK-YcA"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="A062131A-9FA2-4BEB-BB97-2C45EDD82653" label="Information" paletteLabel="Information" tag="-1" image="Info" id="DaP-yL-KgO">
+                    <toolbarItem implicitItemIdentifier="A062131A-9FA2-4BEB-BB97-2C45EDD82653" label="Info" paletteLabel="Information" tag="-1" image="Info" id="DaP-yL-KgO">
                         <size key="minSize" width="0.0" height="21"/>
                         <size key="maxSize" width="0.0" height="21"/>
                         <connections>
-                            <action selector="plus:" target="XE1-by-mZK" id="FNr-2Q-gQM"/>
+                            <action selector="info:" target="XE1-by-mZK" id="TEo-pK-g0v"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="638B8E70-55B4-4275-9535-A63BA3C84BAB" label="Add" paletteLabel="Add" tag="-1" image="Plus" id="vJN-Qh-zpq">
+                    <toolbarItem implicitItemIdentifier="638B8E70-55B4-4275-9535-A63BA3C84BAB" label="Plus" paletteLabel="Add" tag="-1" image="Plus" id="vJN-Qh-zpq">
                         <size key="minSize" width="0.0" height="21"/>
                         <size key="maxSize" width="0.0" height="21"/>
                         <connections>
                             <action selector="plus:" target="XE1-by-mZK" id="3bm-Cz-4Eh"/>
                         </connections>
-                    </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="1E17005C-4B7B-46E8-B027-3160DFB08E2C" label="" paletteLabel="" id="f8k-yM-9UO">
-                        <nil key="toolTip"/>
-                        <size key="minSize" width="38" height="17"/>
-                        <size key="maxSize" width="173" height="24"/>
-                        <textField key="view" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="70h-ex-hUm">
-                            <rect key="frame" x="18" y="14" width="173" height="24"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <textFieldCell key="cell" lineBreakMode="truncatingTail" enabled="NO" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" usesSingleLineMode="YES" id="tpS-Za-inC">
-                                <font key="font" size="15" name="HelveticaNeue-Medium"/>
-                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                            </textFieldCell>
-                        </textField>
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="F3A39E74-79A0-46E8-B1D2-2B4E6107E565" label="" paletteLabel="" id="TTq-Gl-gs8">
                         <nil key="toolTip"/>
@@ -498,15 +490,21 @@
                             <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="Epm-8O-ecp"/>
                         </imageView>
                     </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="1F30B311-4773-49E3-BE13-3B908A8BFD6A" label="Custom View" paletteLabel="Custom View" tag="-1" id="NOf-MJ-MB7">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="160" height="36"/>
+                        <size key="maxSize" width="9999" height="36"/>
+                        <customView key="view" id="K2v-PI-Lwx">
+                            <rect key="frame" x="0.0" y="14" width="163" height="36"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        </customView>
+                    </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
                     <toolbarItem reference="TTq-Gl-gs8"/>
                     <toolbarItem reference="yzA-Zs-hJn"/>
                     <toolbarItem reference="MEh-6L-h4y"/>
-                    <toolbarItem reference="TTq-Gl-gs8"/>
-                    <toolbarItem reference="lPL-Is-e1C"/>
-                    <toolbarItem reference="f8k-yM-9UO"/>
-                    <toolbarItem reference="lPL-Is-e1C"/>
+                    <toolbarItem reference="NOf-MJ-MB7"/>
                     <toolbarItem reference="vJN-Qh-zpq"/>
                     <toolbarItem reference="DaP-yL-KgO"/>
                 </defaultToolbarItems>
