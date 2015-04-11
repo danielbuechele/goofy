@@ -63,11 +63,12 @@ function init() {
 	}, 3000);
 
 	document.body.onkeypress=function(e) {
-		if (!document.querySelector('._209g._2vxa span span') && !e.metaKey) {
+		if (!document.querySelector('._54-z:focus') && !e.metaKey) {
 			var char = event.which || event.keyCode;
 
 			var textEvent = document.createEvent('TextEvent');
 			textEvent.initTextEvent('textInput', true, true, null, String.fromCharCode(char), 9, "en-US");
+			document.querySelector('._54-z').focus();
 			document.querySelector('._209g._2vxa').dispatchEvent(textEvent);
 
 			return false;
