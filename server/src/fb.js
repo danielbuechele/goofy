@@ -87,6 +87,19 @@ function init() {
 		updateTitle();
 	});
 
+	// Support drag and drop file uploads.
+	document.addEventListener('dragover', function(e) {
+		e.stopPropagation();
+		e.preventDefault();
+		e.dataTransfer.dropEffect = 'copy';
+	});
+
+	document.addEventListener('drop', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		document.getElementById('js_2').files = e.dataTransfer.files;
+	});
 }
 
 function updateTitle() {
