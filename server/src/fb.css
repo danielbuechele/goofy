@@ -33,13 +33,33 @@
     background-image: none !important;
 }
 
-/* hide photo button */
-._m._4q60._3rzn._6a {
+._5742, ._36ic._5vn4 {
     display: none;
 }
 
-._5742, ._36ic._5vn4 {
-    display: none;
+#goofy-upload {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 500;
+    background-color: rgba(0,0,0,0.5);
+    color: white;
+    text-align: center;
+    font-size: 20px;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+}
+
+#goofy-upload div {
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 40%;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 @media (max-width: 630px) {

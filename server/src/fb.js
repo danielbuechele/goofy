@@ -1,5 +1,6 @@
 var lastNotification;
 var lastNotificationTime;
+var uploadInfo;
 
 (function(f,b){if(!b.__SV){var a,e,i,g;window.mixpanel=b;b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b.push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var a="mixpanel";"mixpanel"!==d&&(a+="."+d);b||(a+=" (stub)");return a};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config people.set people.set_once people.increment people.append people.track_charge people.clear_charges people.delete_user".split(" ");
 for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElement("script");a.type="text/javascript";a.async=!0;a.src="//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";e=f.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}})(document,window.mixpanel||[]);
@@ -56,6 +57,15 @@ function init() {
 		//window.dispatchEvent(new Event('resize'));
 		updateTitle();
 		dockCount();
+
+		var uploadButton = document.querySelector('._m._4q60._3rzn._6a');
+		if (uploadButton && uploadButton.onclick==null) {
+			uploadButton.onclick = function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				uploadInfo();
+			}
+		}
 	}, 200);
 
 	setTimeout(function() {
@@ -63,7 +73,7 @@ function init() {
 	}, 3000);
 
 	document.body.onkeypress=function(e) {
-		if ((!document.querySelector('._54-z:focus') || window.getSelection().baseOffset === 0) && !e.metaKey) {
+		if ((!document.querySelector('._54-z:focus') || window.getSelection().baseOffset === 0) && !e.metaKey && !e.ctrlKey) {
 			var char = event.which || event.keyCode;
 
 			// Focus the input at the end of any current text.
@@ -94,7 +104,10 @@ function init() {
 	document.addEventListener('drop', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
-
+		if (uploadInfo) {
+			document.body.removeChild(uploadInfo);
+			uploadInfo = null;
+		}
 		document.getElementById('js_2').files = e.dataTransfer.files;
 	});
 
@@ -110,6 +123,20 @@ function init() {
 	document.querySelector('._5743').addEventListener("DOMSubtreeModified", function () {
 		updateTitle();
 	});
+}
+
+function uploadInfo() {
+	uploadInfo = document.createElement("DIV");
+	uploadInfo.setAttribute("id", "goofy-upload");
+	var inner = document.createElement("DIV");
+	var t = document.createTextNode("Drag and drop files into Goofy to attach them to your message.");
+	inner.appendChild(t);
+	uploadInfo.appendChild(inner);
+	info.onmousedown = function() {
+		document.body.removeChild(uploadInfo);
+		uploadInfo = null;
+	};
+	document.body.appendChild(uploadInfo);
 }
 
 function updateTitle() {
