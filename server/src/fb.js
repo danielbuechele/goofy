@@ -63,7 +63,7 @@ function init() {
 	}, 3000);
 
 	document.body.onkeypress=function(e) {
-		if (!document.querySelector('._54-z:focus') && !e.metaKey) {
+		if ((!document.querySelector('._54-z:focus') || window.getSelection().baseOffset === 0) && !e.metaKey) {
 			var char = event.which || event.keyCode;
 
 			// Focus the input at the end of any current text.
@@ -78,11 +78,10 @@ function init() {
 			// Trigger the captured key press.
 			var textEvent = document.createEvent('TextEvent');
 			textEvent.initTextEvent('textInput', true, true, null, String.fromCharCode(char), 9, "en-US");
-			document.querySelector('._209g._2vxa').dispatchEvent(textEvent);
+			el.dispatchEvent(textEvent);
 
 			return false;
 		}
-
 	};
 
 	// Support drag and drop file uploads.
