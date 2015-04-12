@@ -13,8 +13,8 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
         
     func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
         
-        let type : String = message.body["type"] as NSString
-        let appDelegate = NSApplication.sharedApplication().delegate as AppDelegate;
+        let type = message.body["type"] as! NSString
+        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate;
         
         switch type {
             case "NOT_LOGGED_IN":
@@ -25,17 +25,17 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
                 appDelegate.loadingView.hidden = true
                 break
             case "NOTIFICATION":
-                displayNotification(message.body["title"] as NSString, text: message.body["text"] as NSString, id: message.body["id"] as NSString)
+                displayNotification(message.body["title"] as! NSString, text: message.body["text"] as! NSString, id: message.body["id"] as! NSString)
                 break
             case "DOCK_COUNT":
-                dockCount(message.body["content"] as String)
+                dockCount(message.body["content"] as! String)
                 break
             case "SHOW_IMAGE":
-                println(message.body["url"] as String)
-                appDelegate.quicklookMediaURL = NSURL(string: (message.body["url"] as String))
+                println(message.body["url"] as! String)
+                appDelegate.quicklookMediaURL = NSURL(string: (message.body["url"] as! String))
                 break
             case "SET_TITLE":
-                appDelegate.titleLabel.setTitle(message.body["title"] as String, active: message.body["activity"] as String)
+                appDelegate.titleLabel.setTitle(message.body["title"] as! String, active: message.body["activity"] as! String)
                 break
             default:
                 0
@@ -44,8 +44,8 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
     
     func displayNotification(title: NSString, text: NSString, id: NSString) {
         var notification:NSUserNotification = NSUserNotification()
-        notification.title = title
-        notification.informativeText = text
+        notification.title = title as String
+        notification.informativeText = text as String
         notification.deliveryDate = NSDate()
         notification.responsePlaceholder = "Reply"
         notification.hasReplyButton = true
@@ -57,7 +57,7 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
     }
     
     func dockCount(count: String) {
-        let appDelegate = NSApplication.sharedApplication().delegate as AppDelegate;
+        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate;
         var si = NSImage(named: "StatusItem")
         
         if (count == "0") {
@@ -71,9 +71,9 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
         //appDelegate.statusBarItem.image = si
     }
     
-    func userNotificationCenter(center: NSUserNotificationCenter!, didActivateNotification notification: NSUserNotification!) {
-        let appDelegate = NSApplication.sharedApplication().delegate as AppDelegate;
-        let id = notification.userInfo!["id"] as NSString
+    func userNotificationCenter(center: NSUserNotificationCenter, didActivateNotification notification: NSUserNotification) {
+        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate;
+        let id = notification.userInfo!["id"] as! String
         if (notification.activationType == NSUserNotificationActivationType.Replied){
             let userResponse = notification.response?.string;
             appDelegate.webView.evaluateJavaScript("replyToNotification('" + id + "','" + userResponse! + "')", completionHandler: nil);

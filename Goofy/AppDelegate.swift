@@ -50,7 +50,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         startLoading()
         
         #if DEBUG
-            let path = NSBundle.mainBundle().objectForInfoDictionaryKey("PROJECT_DIR") as String!
+            let path = NSBundle.mainBundle().objectForInfoDictionaryKey("PROJECT_DIR") as! String
             var source = String(contentsOfFile: path+"/server/dist/fb.js", encoding: NSUTF8StringEncoding, error: nil)!+"init();"
         #else
             let version = NSBundle.mainBundle().infoDictionary!["CFBundleShortVersionString"] as String!
@@ -88,7 +88,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         webView.autoresizingMask = NSAutoresizingMaskOptions.ViewWidthSizable | NSAutoresizingMaskOptions.ViewHeightSizable
         
         var s = NSProcessInfo.processInfo().arguments[0].componentsSeparatedByString("/")
-        var st: String = s[s.count-4] as String
+        var st: String = s[s.count-4] as! String
         var url : String = "https://messenger.com/login"
         
         /* Facebook at word support. Needs to be updated for Messenger.com
@@ -126,7 +126,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     }
     
     func windowDidResize(notification: NSNotification) {
-        sizeWindow(notification.object as NSWindow)
+        sizeWindow(notification.object as! NSWindow)
     }
     
     func sizeWindow(window: NSWindow) {
@@ -148,17 +148,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         titleLabel.windowDidResize()
     }
     
-    func webView(webView: WKWebView!, decidePolicyForNavigationAction navigationAction: WKNavigationAction!, decisionHandler: ((WKNavigationActionPolicy) -> Void)!) {
+    func webView(webView: WKWebView, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: ((WKNavigationActionPolicy) -> Void)) {
         
         var inAppURLs : Array = ["messenger.com/login","messenger.com/t"]
         
-        if let nav = navigationAction.request.URL.absoluteString {
+        if let nav = navigationAction.request.URL!.absoluteString {
             let inApp = inAppURLs.reduce(false, combine: { result, url in result || nav.rangeOfString(url) != nil })
             
             if inApp  {
                 decisionHandler(.Allow)
             } else {
-                NSWorkspace.sharedWorkspace().openURL(navigationAction.request.URL)
+                NSWorkspace.sharedWorkspace().openURL(navigationAction.request.URL!)
                 decisionHandler(.Cancel)
             }
         }
@@ -206,7 +206,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     }
     
     @IBAction func toggleReactivation(sender: AnyObject) {
-        var i : NSMenuItem = sender as NSMenuItem
+        var i : NSMenuItem = sender as! NSMenuItem
         
         if (i.state == 0) {
             i.state = NSOnState
@@ -234,7 +234,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         longLoading.hidden = true
         
         for item in toolbar.items {
-            let i = item as NSToolbarItem
+            let i = item as! NSToolbarItem
             i.view?.hidden = false
             i.image = NSImage(named: i.label)
         }
@@ -251,7 +251,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         timer = NSTimer.scheduledTimerWithTimeInterval(10, target: self, selector: Selector("longLoadingMessage"), userInfo: nil, repeats: false)
         
         for item in toolbar.items {
-            let i = item as NSToolbarItem
+            let i = item as! NSToolbarItem
             i.view?.hidden = true
             i.image = NSImage(named: "White")
         }
