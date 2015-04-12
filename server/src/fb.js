@@ -130,6 +130,9 @@ function info() {
 }
 
 function dockCount() {
+	if (document.querySelector('title').textContent.indexOf('Messenger')==-1) {
+		return;
+	}
 	if (document.querySelector('title').textContent == 'Messenger') {
 		window.webkit.messageHandlers.notification.postMessage({type: 'DOCK_COUNT', content: "0"});
 		return;
