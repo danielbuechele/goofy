@@ -84,6 +84,21 @@ function init() {
 		}
 
 	};
+
+	// Support drag and drop file uploads.
+	document.addEventListener('dragover', function(e) {
+		e.stopPropagation();
+		e.preventDefault();
+		e.dataTransfer.dropEffect = 'copy';
+	});
+
+	document.addEventListener('drop', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		document.getElementById('js_2').files = e.dataTransfer.files;
+	});
+
 	/*
 	document.body.addEventListener("DOMNodeInserted", function (ev) {
 		if (document.querySelector('._n8')) {
@@ -96,7 +111,6 @@ function init() {
 	document.querySelector('._5743').addEventListener("DOMSubtreeModified", function () {
 		updateTitle();
 	});
-
 }
 
 function updateTitle() {
