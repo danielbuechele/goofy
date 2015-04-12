@@ -63,9 +63,19 @@ function init() {
 	}, 3000);
 
 	document.body.onkeypress=function(e) {
-		if (!document.querySelector('._209g._2vxa span span') && !e.metaKey) {
+		if (!document.querySelector('._54-z:focus') && !e.metaKey) {
 			var char = event.which || event.keyCode;
 
+			// Focus the input at the end of any current text.
+			var el = document.querySelector('._54-z');
+			var range = document.createRange();
+			var sel = window.getSelection();
+			range.setStart(el, 1);
+			range.collapse(true);
+			sel.removeAllRanges();
+			sel.addRange(range);
+
+			// Trigger the captured key press.
 			var textEvent = document.createEvent('TextEvent');
 			textEvent.initTextEvent('textInput', true, true, null, String.fromCharCode(char), 9, "en-US");
 			document.querySelector('._209g._2vxa').dispatchEvent(textEvent);
@@ -74,6 +84,21 @@ function init() {
 		}
 
 	};
+
+	// Support drag and drop file uploads.
+	document.addEventListener('dragover', function(e) {
+		e.stopPropagation();
+		e.preventDefault();
+		e.dataTransfer.dropEffect = 'copy';
+	});
+
+	document.addEventListener('drop', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		document.getElementById('js_2').files = e.dataTransfer.files;
+	});
+
 	/*
 	document.body.addEventListener("DOMNodeInserted", function (ev) {
 		if (document.querySelector('._n8')) {
@@ -86,7 +111,6 @@ function init() {
 	document.querySelector('._5743').addEventListener("DOMSubtreeModified", function () {
 		updateTitle();
 	});
-
 }
 
 function updateTitle() {
