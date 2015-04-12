@@ -5,6 +5,15 @@ var lastNotificationTime;
 for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElement("script");a.type="text/javascript";a.async=!0;a.src="//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";e=f.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}})(document,window.mixpanel||[]);
 mixpanel.init("2245181dbc803998dedc5b07d840e672");
 
+// Get React's runtime using the dev tool hook.
+Object.defineProperty(window, '__REACT_DEVTOOLS_GLOBAL_HOOK__', {
+	value: {
+		inject: function(runtime) {this._reactRuntime = runtime; },
+		getSelectedInstance: null,
+		Overlay: null
+	}
+});
+
 var emoticonMapping = {
 	"emoticon_smile"		:"😃",
 	"emoticon_frown"		:"😦",
@@ -245,6 +254,67 @@ function replyToNotification(userid, answer) {
 
 		__triggerKeyboardEvent(document.querySelector('._209g._2vxa'),13,true);
 	},50);
+}
+
+// Handle pasted image data forwarded from the wrapper app.
+function pasteImage(base64Data) {
+	var blob = b64toBlob(base64Data, 'image/png');
+	var uploader = getPhotoUploadComponent();
+	uploader._instance.uploadFile(blob);
+}
+
+// Convert base64 encoded data to a Blob.
+function b64toBlob(b64Data, contentType, sliceSize) {
+    contentType = contentType || '';
+    sliceSize = sliceSize || 512;
+
+    var byteCharacters = atob(b64Data);
+    var byteArrays = [];
+
+    for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        var slice = byteCharacters.slice(offset, offset + sliceSize);
+
+        var byteNumbers = new Array(slice.length);
+        for (var i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        var byteArray = new Uint8Array(byteNumbers);
+
+        byteArrays.push(byteArray);
+    }
+
+    var blob = new Blob(byteArrays, {type: contentType});
+    return blob;
+}
+
+// Find the instance of the photo upload class from the React component tree.
+function getPhotoUploadComponent() {
+	var id = '.0.1.$1.0.1.$0.1.0.$1.0.1.0';
+	var idComponents = id.split('.');
+	var children = __REACT_DEVTOOLS_GLOBAL_HOOK__._reactRuntime.Mount._instancesByReactRootID;
+	var component;
+
+	for (var i = 1; i < idComponents.length; i++) {
+		var rootId = '.' + idComponents[i];
+		component = children[rootId];
+		children = getChildren(component);
+	}
+
+	return component;
+}
+
+// Unwrap the children from a React class instance.
+function getChildren(instance) {
+  var children = null;
+  if (instance._renderedComponent) {
+    children = getChildren(instance._renderedComponent);
+  } else if (instance._renderedChildren) {
+    children = instance._renderedChildren;
+  } else {
+    children = [];
+  }
+  return children;
 }
 
 function __triggerKeyboardEvent(el, keyCode, meta) {

@@ -316,6 +316,28 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         let previewItemTitle: String = "Image"
         
     }
+    
+    // Attempt to read image data from the pasteboard and forward on to Javascript.
+    @IBAction func handlePaste(sender: NSMenuItem) {
+        var pasteboard = NSPasteboard.generalPasteboard();
+        var classArray : Array<AnyObject> = [NSImage.self];
+        var options = Dictionary<String, String>();
+        
+        var canReadData = pasteboard.canReadObjectForClasses(classArray, options: options);
+        
+        if (canReadData) {
+            var objectsToPaste = pasteboard.readObjectsForClasses(classArray, options: options) as! Array<NSImage>;
+            var image = objectsToPaste[0];
+            image.lockFocus();
+            var bitmapRep = NSBitmapImageRep(focusedViewRect: NSMakeRect(0, 0, image.size.width, image.size.height));
+            image.unlockFocus();
+            var imageData = bitmapRep?.representationUsingType(NSBitmapImageFileType.NSPNGFileType, properties: options);
+            var base64String = imageData?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed);
+            
+            webView.evaluateJavaScript("pasteImage('\(base64String!)')", completionHandler: nil);
+        } else {
+            // Forward any non-image pastes (text) to the webview as a standard paste event.
+            NSApp.sendAction("paste:", to:nil, from:self);
+        }
+    }
 }
-
-
