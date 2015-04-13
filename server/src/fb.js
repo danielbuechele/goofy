@@ -73,7 +73,8 @@ function init() {
 	}, 3000);
 
 	document.body.onkeypress=function(e) {
-		if ((!document.querySelector('._54-z:focus') || window.getSelection().baseOffset === 0) && !e.metaKey && !e.ctrlKey) {
+		// If no inputs are focused, or we're at the start of the message input (to prevent system beep), focus the message input and trigger the keypress.
+		if ((!document.querySelector(':focus') || (document.querySelector('._54-z:focus') && window.getSelection().baseOffset === 0)) && !e.metaKey && !e.ctrlKey) {
 			var char = event.which || event.keyCode;
 
 			// Focus the input at the end of any current text.
