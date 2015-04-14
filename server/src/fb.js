@@ -57,6 +57,9 @@ function init() {
 		updateTitle();
 		dockCount();
 
+		//render settings menu
+		if (!document.querySelector('._5v-0._53il')) document.querySelector('._30yy').click();
+
 		var uploadButton = document.querySelector('._m._4q60._3rzn._6a');
 		if (uploadButton && uploadButton.onclick==null) {
 			uploadButton.onclick = function (e) {
@@ -179,6 +182,10 @@ function plus() {
 
 function info() {
 	document.querySelector('._fl3._30yy').click();
+}
+
+function preferences() {
+	document.querySelector('._256m ._256n').click()
 }
 
 function dockCount() {

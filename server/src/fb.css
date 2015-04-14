@@ -41,6 +41,11 @@
     display: none;
 }
 
+/* settings menu */
+._5v-0._53il {
+    display: none !important;
+}
+
 #goofy-upload {
     position: fixed;
     top: 0;
