@@ -28,6 +28,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     
     var timer : NSTimer!
     var activatedFromBackground = false
+    var isFullscreen = false
     
     var statusBar = NSStatusBar.systemStatusBar()
     var statusBarItem : NSStatusItem = NSStatusItem()
@@ -129,8 +130,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         sizeWindow(notification.object as! NSWindow)
     }
     
+    
     func sizeWindow(window: NSWindow) {
-        if window.frame.width > 630.0 {
+        
+        if window.frame.width > 630.0 && !self.isFullscreen {
             toolbarTrenner.minSize = NSSize(width: 1, height: 100)
             toolbarTrenner.maxSize = NSSize(width: 1, height: 100)
             toolbarTrenner.view?.frame = CGRectMake(0, 0, 1, 100)
@@ -139,7 +142,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
             toolbarSpacing.minSize = NSSize(width: 157, height: 100)
             toolbarSpacing.maxSize = NSSize(width: 157, height: 100)
         } else {
-            toolbarTrenner.view?.layer?.backgroundColor = NSColor(white: 1.0, alpha: 1.0).CGColor
+            toolbarTrenner.view?.layer?.backgroundColor = NSColor(white: 1.0, alpha: 0.0).CGColor
             
             toolbarSpacing.minSize = NSSize(width: 0, height: 100)
             toolbarSpacing.maxSize = NSSize(width: 0, height: 100)
@@ -198,6 +201,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     func applicationOpenUntitledFile(sender: NSApplication) -> Bool {
         reopenWindow(self)
         return true
+    }
+
+    func windowDidEnterFullScreen(notification: NSNotification) {
+        isFullscreen = true
+        sizeWindow(window)
+    }
+    
+    func windowDidExitFullScreen(notification: NSNotification) {
+        isFullscreen = false
+        sizeWindow(window)
     }
     
     

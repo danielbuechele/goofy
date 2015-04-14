@@ -40,6 +40,16 @@ class MenuHandler: NSObject {
         let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
         appDelegate.webView.evaluateJavaScript("info()", completionHandler: nil);
     }
+    
+    @IBAction func preferences(sender: AnyObject) {
+        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
+        appDelegate.webView.evaluateJavaScript("preferences()", completionHandler: nil);
+    }
+    
+    @IBAction func fullscreen(sender: AnyObject) {
+        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
+        appDelegate.window.toggleFullScreen(self)
+    }
 }
 
 
