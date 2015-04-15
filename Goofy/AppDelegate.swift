@@ -153,19 +153,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     
     func webView(webView: WKWebView, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: ((WKNavigationActionPolicy) -> Void)) {
         
-        var inAppURLs : Array = ["messenger.com/login","messenger.com/t"]
-        
-        if let nav = navigationAction.request.URL!.absoluteString {
-            let inApp = inAppURLs.reduce(false, combine: { result, url in result || nav.rangeOfString(url) != nil })
+        if let url = navigationAction.request.URL {
+            var inApp = url.host!.hasSuffix("messenger.com") && !url.path!.hasPrefix("/l.php");
             
-            if inApp  {
+            if inApp {
                 decisionHandler(.Allow)
             } else {
                 NSWorkspace.sharedWorkspace().openURL(navigationAction.request.URL!)
                 decisionHandler(.Cancel)
             }
         }
-                
     }
     
     func webView(webView: WKWebView, didFinishNavigation navigation: WKNavigation!) {
