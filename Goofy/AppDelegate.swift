@@ -54,10 +54,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
             let path = NSBundle.mainBundle().objectForInfoDictionaryKey("PROJECT_DIR") as! String
             var source = String(contentsOfFile: path+"/server/dist/fb.js", encoding: NSUTF8StringEncoding, error: nil)!+"init();"
         #else
-            let version = NSBundle.mainBundle().infoDictionary!["CFBundleShortVersionString"] as String!
+            let version = NSBundle.mainBundle().infoDictionary!["CFBundleShortVersionString"] as! String
             var jsurl = "https://dani.taurus.uberspace.de/goofyapp/fb" + version + ".js"
             if (NSBundle.mainBundle().objectForInfoDictionaryKey("GoofyJavaScriptURL") != nil) {
-                jsurl = NSBundle.mainBundle().objectForInfoDictionaryKey("GoofyJavaScriptURL") as String!
+                jsurl = NSBundle.mainBundle().objectForInfoDictionaryKey("GoofyJavaScriptURL") as! String
             }
             let source = "function getScript(url,success){ var script = document.createElement('script'); script.src = url; var head = document.getElementsByTagName('head')[0], done=false; script.onload = script.onreadystatechange = function(){ if (!done && (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete')) { done=true; success(); script.onload = script.onreadystatechange = null; head.removeChild(script); } }; head.appendChild(script); }" +
             "getScript('" + jsurl + "', function() {init();});"
