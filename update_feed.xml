@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel>
+        <title>Goofy Changelog</title>
+        <link>https://dani.taurus.uberspace.de/goofyapp/update.xml</link>
+        <description>Most recent changes with links to updates.</description>
+        <language>en</language>
+        <item>
+            <title>Version 2.0.3</title>
+            <sparkle:releaseNotesLink>
+                http://www.goofyapp.com/version/2.0.html
+            </sparkle:releaseNotesLink>
+            <pubDate>Fri, 7 Apr 2015 11:20:11 +0000</pubDate>
+            <link>http://www.goofyapp.com/version/2.0.html</link>
+            <enclosure url="https://github.com/danielbuechele/goofy/releases/download/v2.0.3/Goofy.app.zip"
+                sparkle:version="579"
+                sparkle:shortVersionString="2.0.3"
+                length="3381354"
+                type="application/octet-stream" />
+        </item>
+    </channel>
+</rss>
