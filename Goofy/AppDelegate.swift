@@ -155,8 +155,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         
         if let url = navigationAction.request.URL {
             var inApp = url.host!.hasSuffix("messenger.com") && !url.path!.hasPrefix("/l.php");
+            var isLogin = url.host!.hasSuffix("facebook.com") && (url.path!.hasPrefix("/login") || url.path!.hasPrefix("/checkpoint"));
             
-            if inApp {
+            if inApp || isLogin {
                 decisionHandler(.Allow)
             } else {
                 NSWorkspace.sharedWorkspace().openURL(navigationAction.request.URL!)
