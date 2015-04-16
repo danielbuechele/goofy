@@ -26,6 +26,11 @@ class MenuHandler: NSObject {
         appDelegate.webView.evaluateJavaScript("gotoConversation("+String(sender.tag())+")", completionHandler: nil);
     }
     
+    @IBAction func gotoConversationAtIndex(sender: AnyObject) {
+        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
+        appDelegate.webView.evaluateJavaScript("gotoConversationAtIndex("+String(sender.tag())+")", completionHandler: nil);
+    }
+    
     @IBAction func logout(sender: AnyObject) {
         let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
         appDelegate.webView.evaluateJavaScript("logout()", completionHandler: nil);
