@@ -359,11 +359,19 @@
                                     <action selector="performZoom:" target="-1" id="DIl-cC-cCs"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Main Window" keyEquivalent="0" id="kL3-T3-sdc">
+                            <menuItem title="Main Window" id="kL3-T3-sdc">
+                                <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="reopenWindow:" target="Voe-Tx-rLC" id="Rpk-6v-yT3"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Toggle Full Screen" keyEquivalent="f" id="WDN-WB-Gf5">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                <connections>
+                                    <action selector="fullscreen:" target="XE1-by-mZK" id="Dbb-ar-PzZ"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="dwq-fA-fPF"/>
                             <menuItem title="Next conversation" tag="1" keyEquivalent="]" id="TCm-7h-nwy">
                                 <connections>
                                     <action selector="gotoConversation:" target="XE1-by-mZK" id="nHl-8O-kRk"/>
@@ -374,11 +382,62 @@
                                     <action selector="gotoConversation:" target="XE1-by-mZK" id="jfJ-gk-A3e"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Toggle Full Screen" keyEquivalent="f" id="WDN-WB-Gf5">
-                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
-                                <connections>
-                                    <action selector="fullscreen:" target="XE1-by-mZK" id="Dbb-ar-PzZ"/>
-                                </connections>
+                            <menuItem title="Recent conversations" id="88k-oL-2hk">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Recent conversations" id="sLe-0p-RnN">
+                                    <items>
+                                        <menuItem title="1st conversation" tag="1" keyEquivalent="1" id="hUx-33-dKc">
+                                            <connections>
+                                                <action selector="gotoConversationAtIndex:" target="XE1-by-mZK" id="pM4-Ao-G7e"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="2nd conversation" tag="2" keyEquivalent="2" id="3zV-NI-7u3">
+                                            <connections>
+                                                <action selector="gotoConversationAtIndex:" target="XE1-by-mZK" id="XIU-Q7-yo1"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="3rd conversation" tag="3" keyEquivalent="3" id="2nX-ho-iYX">
+                                            <connections>
+                                                <action selector="gotoConversationAtIndex:" target="XE1-by-mZK" id="2th-LO-GGb"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="4th conversation" tag="4" keyEquivalent="4" id="azw-8x-pe6">
+                                            <connections>
+                                                <action selector="gotoConversationAtIndex:" target="XE1-by-mZK" id="LAq-iU-5cF"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="5th conversation" tag="5" keyEquivalent="5" id="3TY-M4-sSG">
+                                            <connections>
+                                                <action selector="gotoConversationAtIndex:" target="XE1-by-mZK" id="vxn-tv-Q1W"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="6th conversation" tag="6" keyEquivalent="6" id="8IY-lf-4Pt">
+                                            <connections>
+                                                <action selector="gotoConversationAtIndex:" target="XE1-by-mZK" id="UCJ-Ec-uCn"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="7th conversation" tag="7" keyEquivalent="7" id="9z4-Ht-UXc">
+                                            <connections>
+                                                <action selector="gotoConversationAtIndex:" target="XE1-by-mZK" id="RgU-xg-GPi"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="8th conversation" tag="8" keyEquivalent="8" id="3fG-it-yzs">
+                                            <connections>
+                                                <action selector="gotoConversationAtIndex:" target="XE1-by-mZK" id="0Z8-ce-QKI"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="9th conversation" tag="10" keyEquivalent="9" id="TH5-Rg-12I">
+                                            <connections>
+                                                <action selector="gotoConversationAtIndex:" target="XE1-by-mZK" id="gyq-mH-TzR"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="10th conversation" tag="10" keyEquivalent="0" id="ftF-M8-E2a">
+                                            <connections>
+                                                <action selector="gotoConversationAtIndex:" target="XE1-by-mZK" id="UFk-6L-MYZ"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="eu3-7i-yIM"/>
                             <menuItem title="Jump to latest conversation" id="tfP-aR-ouj">
@@ -423,7 +482,7 @@
             <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="706" height="467"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="3200" height="1777"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
             <view key="contentView" wantsLayer="YES" id="5iU-zi-Msx">
                 <rect key="frame" x="0.0" y="0.0" width="706" height="467"/>
                 <autoresizingMask key="autoresizingMask"/>

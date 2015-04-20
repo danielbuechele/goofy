@@ -164,6 +164,10 @@ function gotoConversation(tag) {
 	}
 }
 
+function gotoConversationAtIndex(index) {
+	document.querySelector('ul[data-reactid=".0.1.$0.0.1.1.0.0.0.0.1.0"] li:nth-child(' + index + ') a').click()
+}
+
 function reactivation(userid) {
 	if (userid) {
 		document.querySelector('[data-reactid="'+userid+'"] a').click();
