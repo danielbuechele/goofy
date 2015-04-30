@@ -112,7 +112,7 @@ function init() {
 		if (uploadInfo) {
 			uploadInfo.parentNode.removeChild(uploadInfo);
 		}
-		document.getElementById('js_2').files = e.dataTransfer.files;
+		document.querySelector('input[type=file][name="attachment[]"]').files = e.dataTransfer.files;
 	});
 
 	/*
