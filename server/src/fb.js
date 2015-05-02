@@ -306,15 +306,15 @@ function getPhotoUploadComponent() {
 
 // Unwrap the children from a React class instance.
 function getChildren(instance) {
-  var children = null;
-  if (instance._renderedComponent) {
-    children = getChildren(instance._renderedComponent);
-  } else if (instance._renderedChildren) {
-    children = instance._renderedChildren;
-  } else {
-    children = [];
-  }
-  return children;
+	var children = null;
+	if (instance._renderedComponent) {
+		children = getChildren(instance._renderedComponent);
+	} else if (instance._renderedChildren) {
+		children = instance._renderedChildren;
+	} else {
+		children = [];
+	}
+	return children;
 }
 
 function __triggerKeyboardEvent(el, keyCode, meta) {
