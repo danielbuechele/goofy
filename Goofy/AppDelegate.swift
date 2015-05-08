@@ -25,6 +25,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     @IBOutlet var toolbarSpacing : NSToolbarItem!
     @IBOutlet var toolbar : NSToolbar!
     @IBOutlet var titleLabel : TitleLabel!
+    @IBOutlet var menuHandler : MenuHandler!
     
     var timer : NSTimer!
     var activatedFromBackground = false
@@ -167,7 +168,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     }
     
     func webView(webView: WKWebView, didFinishNavigation navigation: WKNavigation!) {
+
+        
         NSTimer.scheduledTimerWithTimeInterval(0.4, target: self, selector: Selector("endLoading"), userInfo: nil, repeats: false)
+        if webView.URL!.absoluteString!.rangeOfString("messenger.com/login") == nil{
+            showMenuBar()
+        }
+        
     }
     
     
@@ -243,15 +250,25 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         spinner.stopAnimation(self)
         spinner.hidden = true
         longLoading.hidden = true
-        
+
+        sizeWindow(window)
+    }
+    
+    func showMenuBar() {
         for item in toolbar.items {
             let i = item as! NSToolbarItem
             i.view?.hidden = false
             i.image = NSImage(named: i.label)
         }
-        
         sizeWindow(window)
-        
+    }
+    
+    func hideMenuBar() {
+        for item in toolbar.items {
+            let i = item as! NSToolbarItem
+            i.view?.hidden = true
+            i.image = NSImage(named: "White")
+        }
     }
     
     func startLoading() {
@@ -261,11 +278,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         longLoading.hidden = true
         timer = NSTimer.scheduledTimerWithTimeInterval(10, target: self, selector: Selector("longLoadingMessage"), userInfo: nil, repeats: false)
         
-        for item in toolbar.items {
-            let i = item as! NSToolbarItem
-            i.view?.hidden = true
-            i.image = NSImage(named: "White")
-        }
+        hideMenuBar()
         
     }
     

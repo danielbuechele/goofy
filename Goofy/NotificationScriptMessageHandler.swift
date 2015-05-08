@@ -34,7 +34,10 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
                 println(message.body["url"] as! String)
                 appDelegate.quicklookMediaURL = NSURL(string: (message.body["url"] as! String))
                 break
-            case "SET_TITLE":
+            case "CHOOSE_IMAGE":
+                appDelegate.menuHandler.sendImage(nil)
+                break
+        case "SET_TITLE":
                 appDelegate.titleLabel.setTitle(message.body["title"] as! String, active: message.body["activity"] as! String)
                 break
             default:

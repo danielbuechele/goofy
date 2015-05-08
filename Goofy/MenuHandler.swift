@@ -34,6 +34,7 @@ class MenuHandler: NSObject {
     @IBAction func logout(sender: AnyObject) {
         let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
         appDelegate.webView.evaluateJavaScript("logout()", completionHandler: nil);
+        appDelegate.hideMenuBar()
     }
     
     @IBAction func plus(sender: AnyObject) {
@@ -57,27 +58,43 @@ class MenuHandler: NSObject {
     }
     
     @IBAction func handlePaste(sender: NSMenuItem) {
-        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
-        var pasteboard = NSPasteboard.generalPasteboard();
-        var classArray : Array<AnyObject> = [NSImage.self];
-        var options = Dictionary<String, String>();
-        
-        var canReadData = pasteboard.canReadObjectForClasses(classArray, options: options);
+        var pasteboard = NSPasteboard.generalPasteboard()
+        var classArray : Array<AnyObject> = [NSImage.self]
+        var canReadData = pasteboard.canReadObjectForClasses(classArray, options: nil)
         
         if (canReadData) {
-            var objectsToPaste = pasteboard.readObjectsForClasses(classArray, options: options) as! Array<NSImage>;
+            var objectsToPaste = pasteboard.readObjectsForClasses(classArray, options: nil) as! Array<NSImage>
             var image = objectsToPaste[0];
-            image.lockFocus();
-            var bitmapRep = NSBitmapImageRep(focusedViewRect: NSMakeRect(0, 0, image.size.width, image.size.height));
-            image.unlockFocus();
-            var imageData = bitmapRep?.representationUsingType(NSBitmapImageFileType.NSPNGFileType, properties: options);
-            var base64String = imageData?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed);
-            
-            appDelegate.webView.evaluateJavaScript("pasteImage('\(base64String!)')", completionHandler: nil);
+            self.uploadimage(image)
         } else {
             // Forward any non-image pastes (text) to the webview as a standard paste event.
-            NSApp.sendAction("paste:", to:nil, from:self);
+            NSApp.sendAction("paste:", to:nil, from:self)
         }
+    }
+    
+    @IBAction func sendImage(sender: NSMenuItem?) {
+        var openPanel = NSOpenPanel()
+        openPanel.allowsMultipleSelection = false
+        openPanel.canChooseDirectories = false
+        openPanel.canCreateDirectories = false
+        openPanel.canChooseFiles = true
+        openPanel.allowedFileTypes = ["png","jpg","gif"]
+        openPanel.beginWithCompletionHandler { (result) -> Void in
+            if result == NSFileHandlingPanelOKButton {
+                var image = NSImage(contentsOfURL: openPanel.URL!);
+                self.uploadimage(image!)
+            }
+        }
+    }
+    
+    func uploadimage(image: NSImage) {
+        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
+        image.lockFocus();
+        var bitmapRep = NSBitmapImageRep(focusedViewRect: NSMakeRect(0, 0, image.size.width, image.size.height));
+        image.unlockFocus();
+        var imageData = bitmapRep?.representationUsingType(NSBitmapImageFileType.NSPNGFileType, properties: [:]);
+        var base64String = imageData?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed);
+        appDelegate.webView.evaluateJavaScript("pasteImage('\(base64String!)')", completionHandler: nil);
     }
 }
 

@@ -15,6 +15,7 @@
             <connections>
                 <outlet property="loadingView" destination="TeE-NN-cFD" id="hRa-8B-LpT"/>
                 <outlet property="longLoading" destination="8q9-2T-qDe" id="qvz-EA-01A"/>
+                <outlet property="menuHandler" destination="XE1-by-mZK" id="zOw-NM-qqt"/>
                 <outlet property="reactivationMenuItem" destination="tfP-aR-ouj" id="9qa-nu-U5w"/>
                 <outlet property="spinner" destination="Ac9-Ec-QfU" id="Z2D-Bs-P2j"/>
                 <outlet property="statusbarMenuItem" destination="eD5-qA-K11" id="dhs-HS-D8H"/>
@@ -170,6 +171,12 @@
                             <menuItem title="Select All" keyEquivalent="a" id="e1E-yL-2sT">
                                 <connections>
                                     <action selector="selectAll:" target="-1" id="r1P-jW-xdb"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Attach image..." id="Dye-F1-izS">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="sendImage:" target="XE1-by-mZK" id="F2J-cF-U3m"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="JcN-g1-661"/>

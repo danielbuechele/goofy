@@ -140,18 +140,7 @@ function init() {
 }
 
 function uploadInfo() {
-	if (!document.getElementById('goofy-upload')) {
-		var uploadInfo = document.createElement("DIV");
-		uploadInfo.setAttribute("id", "goofy-upload");
-		var inner = document.createElement("DIV");
-		var t = document.createTextNode("Drag and drop files into the textarea or paste images using ⌘+V to attach them to your message.");
-		inner.appendChild(t);
-		uploadInfo.appendChild(inner);
-		uploadInfo.onmousedown = function() {
-			uploadInfo.parentNode.removeChild(uploadInfo);
-		};
-		document.body.appendChild(uploadInfo);
-	}
+	window.webkit.messageHandlers.notification.postMessage({type: 'CHOOSE_IMAGE'});
 }
 
 function updateTitle() {
