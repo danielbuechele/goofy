@@ -50,6 +50,27 @@
     display: none !important;
 }
 
+._2xhi._5vn4 ._4wzq {
+  display: none;
+}
+
+._1ht3 ._4ld- {
+  box-shadow: 0 0 0 0 rgba(23,135,252, 0.4);
+  -webkit-animation: pulse 2s infinite;
+}
+
+@-webkit-keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(23,135,252, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(23,252,44, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(23,135,252, 0);
+  }
+}
+
 #goofy-upload {
     position: fixed;
     top: 0;

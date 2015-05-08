@@ -55,6 +55,30 @@ class MenuHandler: NSObject {
         let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
         appDelegate.window.toggleFullScreen(self)
     }
+    
+    @IBAction func handlePaste(sender: NSMenuItem) {
+        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
+        var pasteboard = NSPasteboard.generalPasteboard();
+        var classArray : Array<AnyObject> = [NSImage.self];
+        var options = Dictionary<String, String>();
+        
+        var canReadData = pasteboard.canReadObjectForClasses(classArray, options: options);
+        
+        if (canReadData) {
+            var objectsToPaste = pasteboard.readObjectsForClasses(classArray, options: options) as! Array<NSImage>;
+            var image = objectsToPaste[0];
+            image.lockFocus();
+            var bitmapRep = NSBitmapImageRep(focusedViewRect: NSMakeRect(0, 0, image.size.width, image.size.height));
+            image.unlockFocus();
+            var imageData = bitmapRep?.representationUsingType(NSBitmapImageFileType.NSPNGFileType, properties: options);
+            var base64String = imageData?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed);
+            
+            appDelegate.webView.evaluateJavaScript("pasteImage('\(base64String!)')", completionHandler: nil);
+        } else {
+            // Forward any non-image pastes (text) to the webview as a standard paste event.
+            NSApp.sendAction("paste:", to:nil, from:self);
+        }
+    }
 }
 
 

@@ -107,6 +107,7 @@ function init() {
 	};
 
 	// Support drag and drop file uploads.
+	/*
 	document.addEventListener('dragover', function(e) {
 		e.stopPropagation();
 		e.preventDefault();
@@ -123,7 +124,7 @@ function init() {
 		}
 		document.querySelector('input[type=file][name="attachment[]"]').files = e.dataTransfer.files;
 	});
-
+	*/
 	/*
 	document.body.addEventListener("DOMNodeInserted", function (ev) {
 		if (document.querySelector('._n8')) {
@@ -143,7 +144,7 @@ function uploadInfo() {
 		var uploadInfo = document.createElement("DIV");
 		uploadInfo.setAttribute("id", "goofy-upload");
 		var inner = document.createElement("DIV");
-		var t = document.createTextNode("Drag and drop files into Goofy to attach them to your message.");
+		var t = document.createTextNode("Drag and drop files into the textarea or paste images using ⌘+V to attach them to your message.");
 		inner.appendChild(t);
 		uploadInfo.appendChild(inner);
 		uploadInfo.onmousedown = function() {
@@ -174,7 +175,7 @@ function gotoConversation(tag) {
 }
 
 function gotoConversationAtIndex(index) {
-	document.querySelector('ul[data-reactid=".0.1.$0.0.1.1.0.0.0.0.1.0"] li:nth-child(' + index + ') a').click()
+	document.querySelector('._2xhi._5vn4 ul li:nth-child(' + index + ') a').click()
 }
 
 function reactivation(userid) {
