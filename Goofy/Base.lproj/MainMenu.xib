@@ -485,10 +485,10 @@
                         <nil key="toolTip"/>
                         <size key="minSize" width="48" height="48"/>
                         <size key="maxSize" width="153" height="48"/>
-                        <imageView key="view" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="i1V-4R-UDb">
+                        <imageView key="view" hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="i1V-4R-UDb">
                             <rect key="frame" x="0.0" y="0.0" width="48" height="48"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="Oug-5w-R08"/>
+                            <imageCell key="cell" enabled="NO" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="Oug-5w-R08"/>
                         </imageView>
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="1FE8986D-A30E-452D-A8F9-93F20DB87F58" label="" paletteLabel="" id="MEh-6L-h4y">

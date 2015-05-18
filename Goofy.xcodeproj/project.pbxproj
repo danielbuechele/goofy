@@ -17,6 +17,7 @@
 		33942FB81A2AE8AA00E6D361 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33942FB71A2AE8AA00E6D361 /* WebKit.framework */; };
 		33B93A6B1AD68BE2003EBDDE /* MenuHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33B93A6A1AD68BE2003EBDDE /* MenuHandler.swift */; };
 		33C741E01A2B02840072D81E /* NotificationScriptMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33C741DF1A2B02840072D81E /* NotificationScriptMessageHandler.swift */; };
+		33D6DF8D1B09F8E300B0CC9B /* GoofyWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D6DF8C1B09F8E300B0CC9B /* GoofyWindow.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		33942FB71A2AE8AA00E6D361 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		33B93A6A1AD68BE2003EBDDE /* MenuHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuHandler.swift; sourceTree = "<group>"; };
 		33C741DF1A2B02840072D81E /* NotificationScriptMessageHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationScriptMessageHandler.swift; sourceTree = "<group>"; };
+		33D6DF8C1B09F8E300B0CC9B /* GoofyWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoofyWindow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +113,7 @@
 				33942F9E1A2AE7F700E6D361 /* Images.xcassets */,
 				33942FA01A2AE7F700E6D361 /* MainMenu.xib */,
 				33942F9A1A2AE7F700E6D361 /* Supporting Files */,
+				33D6DF8C1B09F8E300B0CC9B /* GoofyWindow.swift */,
 			);
 			path = Goofy;
 			sourceTree = "<group>";
@@ -258,6 +261,7 @@
 				33C741E01A2B02840072D81E /* NotificationScriptMessageHandler.swift in Sources */,
 				338FDBB61AD91FAD00164747 /* TitleLabel.swift in Sources */,
 				33B93A6B1AD68BE2003EBDDE /* MenuHandler.swift in Sources */,
+				33D6DF8D1B09F8E300B0CC9B /* GoofyWindow.swift in Sources */,
 				33942F9D1A2AE7F700E6D361 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
