@@ -78,7 +78,7 @@ class MenuHandler: NSObject {
         openPanel.canChooseDirectories = false
         openPanel.canCreateDirectories = false
         openPanel.canChooseFiles = true
-        openPanel.allowedFileTypes = ["png","jpg","gif"]
+        openPanel.allowedFileTypes = ["png","jpg","jpeg","gif"]
         openPanel.beginWithCompletionHandler { (result) -> Void in
             if result == NSFileHandlingPanelOKButton {
                 var image = NSImage(contentsOfURL: openPanel.URL!);
