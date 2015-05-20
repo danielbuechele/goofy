@@ -474,13 +474,6 @@
                             <action selector="info:" target="XE1-by-mZK" id="TEo-pK-g0v"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="638B8E70-55B4-4275-9535-A63BA3C84BAB" label="Plus" paletteLabel="Add" tag="-1" image="Plus" id="vJN-Qh-zpq">
-                        <size key="minSize" width="0.0" height="21"/>
-                        <size key="maxSize" width="0.0" height="21"/>
-                        <connections>
-                            <action selector="plus:" target="XE1-by-mZK" id="3bm-Cz-4Eh"/>
-                        </connections>
-                    </toolbarItem>
                     <toolbarItem implicitItemIdentifier="F3A39E74-79A0-46E8-B1D2-2B4E6107E565" label="" paletteLabel="" id="TTq-Gl-gs8">
                         <nil key="toolTip"/>
                         <size key="minSize" width="48" height="48"/>
@@ -516,7 +509,6 @@
                     <toolbarItem reference="yzA-Zs-hJn"/>
                     <toolbarItem reference="MEh-6L-h4y"/>
                     <toolbarItem reference="NOf-MJ-MB7"/>
-                    <toolbarItem reference="vJN-Qh-zpq"/>
                     <toolbarItem reference="DaP-yL-KgO"/>
                 </defaultToolbarItems>
             </toolbar>
@@ -526,7 +518,6 @@
     <resources>
         <image name="Info" width="32" height="32"/>
         <image name="New" width="32" height="32"/>
-        <image name="Plus" width="32" height="32"/>
         <image name="loading" width="300" height="200"/>
     </resources>
 </document>

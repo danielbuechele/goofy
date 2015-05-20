@@ -59,12 +59,14 @@ class MenuHandler: NSObject {
     
     @IBAction func handlePaste(sender: NSMenuItem) {
         var pasteboard = NSPasteboard.generalPasteboard()
+        
         var classArray : Array<AnyObject> = [NSImage.self]
         var canReadData = pasteboard.canReadObjectForClasses(classArray, options: nil)
         
         if (canReadData) {
             var objectsToPaste = pasteboard.readObjectsForClasses(classArray, options: nil) as! Array<NSImage>
             var image = objectsToPaste[0];
+            println(image)
             self.uploadimage(image)
         } else {
             // Forward any non-image pastes (text) to the webview as a standard paste event.
@@ -88,6 +90,7 @@ class MenuHandler: NSObject {
     }
     
     func uploadimage(image: NSImage) {
+        println(image)
         let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
         image.lockFocus();
         var bitmapRep = NSBitmapImageRep(focusedViewRect: NSMakeRect(0, 0, image.size.width, image.size.height));
