@@ -219,11 +219,12 @@ function dockCount() {
 
 				text = document.querySelector('._1ht3 ._1htf').textContent;
 				var id = document.querySelector('._1ht1._1ht3').getAttribute('data-reactid');
+				var pictureUrl = document.querySelector('._1ht3 ._55lt > .img').getAttribute('src')
 
 				if (ignoreNotification) {
 					ignoreNotification = false;
 				} else {
-					window.webkit.messageHandlers.notification.postMessage({type: 'NOTIFICATION', title: subtitle, text: text, id: id});
+					window.webkit.messageHandlers.notification.postMessage({type: 'NOTIFICATION', title: subtitle, text: text, id: id, pictureUrl: pictureUrl});
 					window.webkit.messageHandlers.notification.postMessage({type: 'DOCK_COUNT', content: String(c)});
 				}
 
