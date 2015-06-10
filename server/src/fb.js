@@ -63,6 +63,9 @@ function init() {
 
     csssetup();
 
+	//fb fix
+	document.getElementsByTagName('div')[0].style.webkitUserSelect = 'auto';
+
 	setInterval(function() {
 		//window.dispatchEvent(new Event('resize'));
 		updateTitle();
