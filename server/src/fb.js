@@ -197,9 +197,8 @@ function preferences() {
 }
 
 function dockCount() {
-	var c = document.querySelectorAll('._1ht3').length;
+	var c = document.querySelectorAll('._1ht3:not(._569x)').length;
 	if (c != dockCounter) {
-		c -= document.querySelectorAll('.1ht3._569x').length;
 		window.webkit.messageHandlers.notification.postMessage({type: 'DOCK_COUNT', content: String(c)});
 		dockCounter = c;
 	}
