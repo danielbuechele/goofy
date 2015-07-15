@@ -199,12 +199,14 @@ function preferences() {
 function dockCount() {
 	var c = document.querySelectorAll('._1ht3').length;
 	if (c != dockCounter) {
+		c -= document.querySelectorAll('.1ht3._569x').length;
 		window.webkit.messageHandlers.notification.postMessage({type: 'DOCK_COUNT', content: String(c)});
 		dockCounter = c;
 	}
 
 	if (c > 0) {
-		var text = document.querySelector('._1ht3 ._1htf');
+		var latest = document.querySelector('._1ht3');
+		var text = latest.querySelector('._1htf');
 		if (text) {
 			text = text.textContent;
 			var subtitle = document.querySelector('._1ht3 ._1ht6').textContent;
@@ -225,7 +227,7 @@ function dockCount() {
 
 				if (ignoreNotification) {
 					ignoreNotification = false;
-				} else {
+				} else if (!latest.classList.contains('_569x')) {
 					window.webkit.messageHandlers.notification.postMessage({type: 'NOTIFICATION', title: subtitle, text: text, id: id});
 					window.webkit.messageHandlers.notification.postMessage({type: 'DOCK_COUNT', content: String(c)});
 				}
