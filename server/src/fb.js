@@ -157,7 +157,7 @@ function updateTitle() {
 }
 
 function newConversation() {
-	document.querySelector('._4bl8._4bl7 a').click();
+	document.querySelector('a._30yy._4kzv').click();
 }
 
 function gotoConversation(tag) {
