@@ -181,7 +181,7 @@ function reactivation(userid) {
 }
 
 function logout() {
-	document.querySelector('._256m li:last-child a').click();
+	document.querySelector('._54nf li:last-child a').click();
 }
 
 function plus() {
