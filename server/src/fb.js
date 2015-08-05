@@ -283,7 +283,7 @@ function b64toBlob(b64Data, contentType, sliceSize) {
 
 // Find the instance of the photo upload class from the React component tree.
 function getPhotoUploadComponent() {
-	var id = '.0.1.$1.0.1.$0.1.0.1.1.0';
+	var id = '.0.1.1.1.0.1.0.1.1.0';
 	var idComponents = id.split('.');
 	var children = __REACT_DEVTOOLS_GLOBAL_HOOK__._reactRuntime.Mount._instancesByReactRootID;
 	var component;
