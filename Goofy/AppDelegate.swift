@@ -143,8 +143,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
             toolbarTrenner.view?.layer?.backgroundColor = NSColor(white: 0.9, alpha: 1.0).CGColor
             
             
-            toolbarSpacing.minSize = NSSize(width: 157, height: 100)
-            toolbarSpacing.maxSize = NSSize(width: 157, height: 100)
+            toolbarSpacing.minSize = NSSize(width: 197, height: 100)
+            toolbarSpacing.maxSize = NSSize(width: 197, height: 100)
             toolbarSpacing.view = NSView(frame: CGRectMake(0, 0, 157, 100))
         } else {
             toolbarTrenner.view?.layer?.backgroundColor = NSColor(white: 1.0, alpha: 0.0).CGColor

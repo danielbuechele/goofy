@@ -157,7 +157,7 @@ function updateTitle() {
 }
 
 function newConversation() {
-	document.querySelector('._4bl8._4bl7 a').click();
+	document.querySelector('a._30yy._4kzv').click();
 }
 
 function gotoConversation(tag) {
@@ -181,7 +181,7 @@ function reactivation(userid) {
 }
 
 function logout() {
-	document.querySelector('._256m li:last-child a').click();
+	document.querySelector('._54nf li:last-child a').click();
 }
 
 function plus() {
@@ -193,7 +193,7 @@ function info() {
 }
 
 function preferences() {
-	document.querySelector('._256m ._256n').click()
+	document.querySelector('a._54nc').click()
 }
 
 function dockCount() {
