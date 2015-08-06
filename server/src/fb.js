@@ -33,7 +33,7 @@ function init() {
     csssetup();
 
 	setInterval(function() {
-		//window.dispatchEvent(new Event('resize'));
+		window.dispatchEvent(new Event('resize'));
 		updateTitle();
 		dockCount();
 
@@ -214,7 +214,7 @@ function b64toBlob(b64Data, contentType, sliceSize) {
 
 // Find the instance of the photo upload class from the React component tree.
 function getPhotoUploadComponent() {
-	var id = '.0.1.1.1.0.1.0.1.1.0';
+	var id = '.0.1.1.1.0.1.0.1.1.0.2.1';
 	var idComponents = id.split('.');
 	var children = __REACT_DEVTOOLS_GLOBAL_HOOK__._reactRuntime.Mount._instancesByReactRootID;
 	var component;
@@ -225,7 +225,7 @@ function getPhotoUploadComponent() {
 		component = children[rootId];
 		children = getChildren(component);
 	}
-	window.webkit.messageHandlers.notification.postMessage({type: 'LOG', message: "yo222"+component._instance});
+	//window.webkit.messageHandlers.notification.postMessage({type: 'LOG', message: "yo222"+component._instance});
 	return component;
 }
 
