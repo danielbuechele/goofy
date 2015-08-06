@@ -31,7 +31,6 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
                 dockCount(message.body["content"] as! String)
                 break
             case "SHOW_IMAGE":
-                println(message.body["url"] as! String)
                 appDelegate.quicklookMediaURL = NSURL(string: (message.body["url"] as! String))
                 break
             case "CHOOSE_IMAGE":

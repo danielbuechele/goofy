@@ -71,7 +71,6 @@ class MenuHandler: NSObject {
         if (canReadData) {
             var objectsToPaste = pasteboard.readObjectsForClasses(classArray, options: nil) as! Array<NSImage>
             var image = objectsToPaste[0];
-            println(image)
             self.uploadimage(image)
         } else {
             // Forward any non-image pastes (text) to the webview as a standard paste event.
@@ -95,14 +94,12 @@ class MenuHandler: NSObject {
     }
     
     func uploadimage(image: NSImage) {
-        println(image)
         let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
         image.lockFocus();
         var bitmapRep = NSBitmapImageRep(focusedViewRect: NSMakeRect(0, 0, image.size.width, image.size.height));
         image.unlockFocus();
         var imageData = bitmapRep?.representationUsingType(NSBitmapImageFileType.NSPNGFileType, properties: [:]);
         var base64String = imageData?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed);
-        println(base64String!);
         appDelegate.webView.evaluateJavaScript("pasteImage('\(base64String!)')", completionHandler: nil);
     }
 }
