@@ -37,9 +37,11 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
             case "CHOOSE_IMAGE":
                 appDelegate.menuHandler.sendImage(nil)
                 break
-        case "SET_TITLE":
+            case "SET_TITLE":
                 appDelegate.titleLabel.setTitle(message.body["title"] as! String, active: message.body["activity"] as! String)
                 break
+            case "LOG":
+                println(message.body["message"] as! String)
             default:
                 0
         }

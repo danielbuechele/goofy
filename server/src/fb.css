@@ -1,119 +1,50 @@
 html {
     overflow: hidden;
 }
-#u_0_0._2sdm {
-    position: fixed;
-    right: 0;
-    left: 0;
-}
 
-._210n {
-    display: none;
-}
-
-._s15 {
+/* conversation header */
+._5742 {
     display: none !important;
 }
 
-._3v_o {
-    min-height: 200px;
+/* sidebar */
+._1enh {
+    max-width: 280px;
+    min-width: 280px;
+}
+
+@media all and (max-width: 640px) {
+    ._1enh {
+        min-width: 74px;
+        max-width: 74px;
+    }
+}
+
+._4u-c:not(._1wfr) {
+    border-right: 1px solid rgba(0, 0, 0, 0.0980392);
 }
 
 ._1q5- {
     border: none;
 }
 
-._4u-c {
-    border-right: 1px solid rgba(0, 0, 0, 0.0980392);
+/* fixing sidebar text-overflow for resized sidebar */
+._1htf, ._1ht6 {
+    max-width: 100%;
+    overflow: hidden;
+    display: block;
 }
 
-._1enh {
-    min-width: 280px;
-    width: 280px !important;
+
+/* sidebar header */
+._1enh ._36ic {
+    display: none;
 }
 
-._5irm {
-    margin-right: 12px;
-}
 
-._1ht1 .emoticon {
+/* replace emojis */
+.emoticon, ._1az {
     background-image: none !important;
-}
-
-._5742, ._36ic._5vn4, ._36ic {
-    display: none;
-}
-
-._2xhi._5vn4 ._2xhj {
-    display: none;
-}
-
-/* settings menu */
-.uiContextualLayerBelowLeft ._5v-0._53il {
-    display: none !important;
-}
-
-._2xhi._5vn4 ._4wzq {
-  display: none;
-}
-
-._1ht3 ._4ld- {
-  box-shadow: 0 0 0 0 rgba(23,135,252, 0.4);
-  -webkit-animation: pulse 2s infinite;
-}
-
-@-webkit-keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(23,135,252, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(23,252,44, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(23,135,252, 0);
-  }
-}
-
-#goofy-upload {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 500;
-    background-color: rgba(0,0,0,0.5);
-    color: white;
-    text-align: center;
-    font-size: 20px;
-    display: table;
-    width: 100%;
-    height: 100%;
-    vertical-align: middle;
-}
-
-#goofy-upload div {
-    display: table-cell;
-    width: 70%;
-    vertical-align: middle;
-}
-
-@media (max-width: 630px) {
-    ._1enh {
-        min-width: 0 !important;
-        width: 72px !important;
-    }
-    ._36ic ._4bl7, ._36ic ._4bl9, ._5iwm {
-        display: none;
-    }
-
-    ._36ic ._4bl8._4bl7 {
-        display: block;
-        float: none;
-        margin-left: 13px;
-    }
-    ._1q5- {
-        right: 0 !important;
-        position: absolute !important;
-        left: 72px !important;
-    }
+    width: auto !important;
+    height: auto !important;
 }

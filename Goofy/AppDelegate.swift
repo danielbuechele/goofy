@@ -95,36 +95,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         var st: String = s[s.count-4] as! String
         var url : String = "https://messenger.com/login"
         
-        /* Facebook at word support. Needs to be updated for Messenger.com
-        if (st.rangeOfString("Goofy") != nil && countElements(st) > 10) {
-            st = (st as NSString).stringByReplacingCharactersInRange(NSRange(location: 0,length: 6), withString: "")
-            url = "https://" + st.stringByReplacingOccurrencesOfString(".app", withString:"") + ".facebook.com/messages"
-            changeDockIcon()
-        }*/
-        
         var req = NSMutableURLRequest(URL: NSURL(string: url)!)
-        
-        // No need to set user agent
-//        req.setValue("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/600.3.17 (KHTML, like Gecko) Version/8.0.3 Safari/600.3.17", forHTTPHeaderField: "User-Agent")
         webView.loadRequest(req);
-        
-        
-        /*
-        statusBarItem = statusBar.statusItemWithLength(-1)
-        var si = NSImage(named: "StatusItem")
-        si?.setTemplate(true)
-        statusBarItem.image = si
-        statusBarItem.target = self
-        statusBarItem.action = Selector("statusBarItemClicked")
-        */
-        /*
-        var contents : [String] = NSFileManager.defaultManager().contentsOfDirectoryAtPath("~/Library/Preferences/ByHost/".stringByExpandingTildeInPath, error: nil) as [String];
-        contents = contents.filter( { (file: String) -> Bool in
-            return file.rangeOfString("com.apple.notificationcenterui") != nil
-        })
-        var myDict = NSDictionary(contentsOfFile: "~/Library/Preferences/ByHost/".stringByExpandingTildeInPath+"/"+contents[0])
-        println(myDict!["doNotDisturb"]!)
-        */
         
         
     }
@@ -136,7 +108,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     
     func sizeWindow(window: NSWindow) {
         
-        if window.frame.width > 630.0 && !self.isFullscreen {
+        if window.frame.width > 640.0 && !self.isFullscreen {
             toolbarTrenner.minSize = NSSize(width: 1, height: 100)
             toolbarTrenner.maxSize = NSSize(width: 1, height: 100)
             toolbarTrenner.view?.frame = CGRectMake(0, 0, 1, 100)

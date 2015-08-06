@@ -7,14 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3327A6071ACEF11A00B71853 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3327A6061ACEF11A00B71853 /* Sparkle.framework */; };
-		3327A6091ACEF15D00B71853 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3327A6061ACEF11A00B71853 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3327A60D1AD16EA100B71853 /* WKPreferences+DevExtras.m in Resources */ = {isa = PBXBuildFile; fileRef = 3327A60C1AD16EA100B71853 /* WKPreferences+DevExtras.m */; };
 		338FDBB61AD91FAD00164747 /* TitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 338FDBB51AD91FAD00164747 /* TitleLabel.swift */; };
 		33942F9D1A2AE7F700E6D361 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33942F9C1A2AE7F700E6D361 /* AppDelegate.swift */; };
 		33942F9F1A2AE7F700E6D361 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33942F9E1A2AE7F700E6D361 /* Images.xcassets */; };
 		33942FA21A2AE7F700E6D361 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33942FA01A2AE7F700E6D361 /* MainMenu.xib */; };
 		33942FB81A2AE8AA00E6D361 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33942FB71A2AE8AA00E6D361 /* WebKit.framework */; };
+		33A2E9701B6E40D90079CB65 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33A2E96F1B6E40D90079CB65 /* Sparkle.framework */; };
+		33A2E9721B6E41990079CB65 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 33A2E96F1B6E40D90079CB65 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		33B93A6B1AD68BE2003EBDDE /* MenuHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33B93A6A1AD68BE2003EBDDE /* MenuHandler.swift */; };
 		33C741E01A2B02840072D81E /* NotificationScriptMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33C741DF1A2B02840072D81E /* NotificationScriptMessageHandler.swift */; };
 /* End PBXBuildFile section */
@@ -36,14 +36,13 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				3327A6091ACEF15D00B71853 /* Sparkle.framework in CopyFiles */,
+				33A2E9721B6E41990079CB65 /* Sparkle.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3327A6061ACEF11A00B71853 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		3327A60A1AD16DF500B71853 /* Goofy-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Goofy-Bridging-Header.h"; sourceTree = "<group>"; };
 		3327A60B1AD16E7400B71853 /* WKPreferences+DevExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "WKPreferences+DevExtras.h"; sourceTree = "<group>"; };
 		3327A60C1AD16EA100B71853 /* WKPreferences+DevExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "WKPreferences+DevExtras.m"; sourceTree = "<group>"; };
@@ -55,6 +54,7 @@
 		33942FA11A2AE7F700E6D361 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		33942FA71A2AE7F700E6D361 /* GoofyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GoofyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		33942FB71A2AE8AA00E6D361 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		33A2E96F1B6E40D90079CB65 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		33B93A6A1AD68BE2003EBDDE /* MenuHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuHandler.swift; sourceTree = "<group>"; };
 		33C741DF1A2B02840072D81E /* NotificationScriptMessageHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationScriptMessageHandler.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -65,7 +65,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				33942FB81A2AE8AA00E6D361 /* WebKit.framework in Frameworks */,
-				3327A6071ACEF11A00B71853 /* Sparkle.framework in Frameworks */,
+				33A2E9701B6E40D90079CB65 /* Sparkle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -126,7 +126,7 @@
 		DF75007D11E0E9DB18327EF8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3327A6061ACEF11A00B71853 /* Sparkle.framework */,
+				33A2E96F1B6E40D90079CB65 /* Sparkle.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -142,6 +142,7 @@
 				33942F941A2AE7F700E6D361 /* Frameworks */,
 				33942F951A2AE7F700E6D361 /* Resources */,
 				33BA617C1A66909100D28A1D /* CopyFiles */,
+				33A2E9711B6E41950079CB65 /* ShellScript */,
 				338BD0041AC5CFBE006F4C93 /* ShellScript */,
 			);
 			buildRules = (
@@ -247,6 +248,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "#!/bin/bash\nbuildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"$INFOPLIST_FILE\")\nbuildNumber=$(($buildNumber + 1))\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"$INFOPLIST_FILE\"";
+		};
+		33A2E9711B6E41950079CB65 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "LOCATION=\"${BUILT_PRODUCTS_DIR}\"/\"${FRAMEWORKS_FOLDER_PATH}\"\nIDENTITY=\"Mac Developer: Daniel Buechele (SUY5N9862J)\"\ncodesign --verbose --force --sign \"$IDENTITY\" \"$LOCATION/Sparkle.framework/Versions/A\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -372,7 +386,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_IDENTITY = "Mac Developer: Daniel Buechele (SUY5N9862J)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer: Daniel Buechele (SUY5N9862J)";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -389,6 +404,7 @@
 				OTHER_SWIFT_FLAGS = "-DDEBUG";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROJECT_DIR = "$(SRCROOT)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Goofy-Bridging-Header.h";
 			};
 			name = Debug;
@@ -397,7 +413,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_IDENTITY = "Mac Developer: Daniel Buechele (SUY5N9862J)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer: Daniel Buechele (SUY5N9862J)";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -409,6 +426,7 @@
 				OTHER_SWIFT_FLAGS = "-DRELEASE";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROJECT_DIR = "$(SRCROOT)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Goofy-Bridging-Header.h";
 			};
 			name = Release;

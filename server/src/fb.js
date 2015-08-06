@@ -16,37 +16,6 @@ Object.defineProperty(window, '__REACT_DEVTOOLS_GLOBAL_HOOK__', {
 	}
 });
 
-var emoticonMapping = {
-	"emoticon_smile"		:"😃",
-	"emoticon_frown"		:"😦",
-	"emoticon_poop"			:"💩",
-	"emoticon_putnam"		:":putnam:",
-	"emoticon_tongue"		:"😛",
-	"emoticon_grin"			:"😀",
-	"emoticon_gasp"			:"😦",
-	"emoticon_wink"			:"😉",
-	"emoticon_glasses"		:"8-)",
-	"emoticon_sunglasses"	:"😎",
-	"emoticon_grumpy"		:">:(",
-	"emoticon_unsure"		:":/",
-	"emoticon_cry"			:"😢",
-	"emoticon_devil"		:"😈",
-	"emoticon_angel"		:"😇",
-	"emoticon_kiss"			:"😘",
-	"emoticon_heart"		:"❤️",
-	"emoticon_kiki"			:"😊",
-	"emoticon_squint"		:"😑",
-	"emoticon_confused"		:"😕",
-	"emoticon_confused_rev"	:"😕",
-	"emoticon_upset"		:">:o",
-	"emoticon_pacman"		:":v",
-	"emoticon_robot"		:":|]",
-	"emoticon_colonthree"	:":3",
-	"emoticon_penguin"		:"🐧",
-	"emoticon_shark"		:"(^^^)",
-	"emoticon_like"			:"👍"
-};
-
 csssetup = function() {
 	head = document.head || document.getElementsByTagName( 'head' )[ 0 ];
 	style = document.createElement( 'style' );
@@ -63,16 +32,10 @@ function init() {
 
     csssetup();
 
-	//fb fix
-	document.getElementsByTagName('div')[0].style.webkitUserSelect = 'auto';
-
 	setInterval(function() {
 		//window.dispatchEvent(new Event('resize'));
 		updateTitle();
 		dockCount();
-
-		//render settings menu
-		if (!document.querySelector('._5v-0._53il')) document.querySelector('._30yy').click();
 
 		var uploadButton = document.querySelector('._m._4q60._3rzn._6a');
 		if (uploadButton && uploadButton.onclick==null) {
@@ -82,11 +45,16 @@ function init() {
 				uploadInfo();
 			}
 		}
+
 	}, 200);
 
 	setTimeout(function() {
+		//render settings menu
+		document.querySelector('._150g._30yy._2fug._p').click();
+		getPhotoUploadComponent();
 		mixpanel.track("loaded");
 	}, 3000);
+
 
 	document.body.onkeypress=function(e) {
 		// If no inputs are focused, or we're at the start of the message input (to prevent system beep), focus the message input and trigger the keypress.
@@ -111,34 +79,6 @@ function init() {
 		}
 	};
 
-	// Support drag and drop file uploads.
-	/*
-	document.addEventListener('dragover', function(e) {
-		e.stopPropagation();
-		e.preventDefault();
-		e.dataTransfer.dropEffect = 'copy';
-	});
-
-	document.addEventListener('drop', function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		var uploadInfo = document.getElementById('goofy-upload');
-		if (uploadInfo) {
-			uploadInfo.parentNode.removeChild(uploadInfo);
-		}
-		document.querySelector('input[type=file][name="attachment[]"]').files = e.dataTransfer.files;
-	});
-	*/
-	/*
-	document.body.addEventListener("DOMNodeInserted", function (ev) {
-		if (document.querySelector('._n8')) {
-			window.webkit.messageHandlers.notification.postMessage({type: 'SHOW_IMAGE', url: document.querySelector('._4-od').getAttribute('src')});
-			document.body.removeChild(document.querySelector('._n8'));
-		}
-	}, false);
-	*/
-
 	document.querySelector('._5743').addEventListener("DOMSubtreeModified", function () {
 		updateTitle();
 	});
@@ -157,7 +97,7 @@ function updateTitle() {
 }
 
 function newConversation() {
-	document.querySelector('._4bl8._4bl7 a').click();
+	document.querySelector('a._30yy._4kzv').click();
 }
 
 function gotoConversation(tag) {
@@ -181,11 +121,7 @@ function reactivation(userid) {
 }
 
 function logout() {
-	document.querySelector('._256m li:last-child a').click();
-}
-
-function plus() {
-	document.querySelector('._4v._30yy').click();
+	document.querySelector('._54nq._2i-c._150g._558b._2n_z li:last-child a').click();
 }
 
 function info() {
@@ -193,7 +129,11 @@ function info() {
 }
 
 function preferences() {
-	document.querySelector('._256m ._256n').click()
+	document.querySelector('._54nq._2i-c._150g._558b._2n_z li:first-child a').click();
+}
+
+function search() {
+	document.querySelector('._58al').focus()
 }
 
 function dockCount() {
@@ -203,22 +143,14 @@ function dockCount() {
 		dockCounter = c;
 	}
 
+	convertEmoji();
+
 	if (c > 0) {
 		var text = document.querySelector('._1ht3 ._1htf');
 		if (text) {
 			text = text.textContent;
 			var subtitle = document.querySelector('._1ht3 ._1ht6').textContent;
 			if (lastNotification != subtitle+text) {
-				//replacing Facebook smilies with OS X emojis
-				[].forEach.call(document.querySelectorAll('._1ht3 ._1htf .emoticon_text'), function(e) {e.textContent = "";});
-				[].forEach.call(document.querySelectorAll('._1ht3 ._1htf .emoticon'), function(e) {
-					for (a in emoticonMapping) {
-						if (e.classList.contains(a)) {
-							e.textContent = emoticonMapping[a];
-							break;
-						}
-					}
-				});
 
 				text = document.querySelector('._1ht3 ._1htf').textContent;
 				var id = document.querySelector('._1ht1._1ht3').getAttribute('data-reactid');
@@ -282,17 +214,18 @@ function b64toBlob(b64Data, contentType, sliceSize) {
 
 // Find the instance of the photo upload class from the React component tree.
 function getPhotoUploadComponent() {
-	var id = '.0.1.$1.0.1.$0.1.0.1.1.0';
+	var id = '.0.1.1.1.0.1.0.1.1.0.2.1';
 	var idComponents = id.split('.');
 	var children = __REACT_DEVTOOLS_GLOBAL_HOOK__._reactRuntime.Mount._instancesByReactRootID;
 	var component;
+
 
 	for (var i = 1; i < idComponents.length; i++) {
 		var rootId = '.' + idComponents[i];
 		component = children[rootId];
 		children = getChildren(component);
 	}
-
+	window.webkit.messageHandlers.notification.postMessage({type: 'LOG', message: "yo222"+component._instance});
 	return component;
 }
 
@@ -326,3 +259,248 @@ function __triggerKeyboardEvent(el, keyCode, meta) {
     el.dispatchEvent ? el.dispatchEvent(eventObj) : el.fireEvent("onkeydown", eventObj);
 
 }
+
+function convertEmoji() {
+	var emoticon = document.querySelectorAll('.emoticon, ._1az');
+	[].forEach.call(emoticon, function(e) {
+		e.classList.toString().split(" ").forEach(function (c) {
+			if (EMOJI_TABLE[c]) {
+				e.parentNode.replaceChild(document.createTextNode(EMOJI_TABLE[c]),e);
+			}
+		});
+	});
+}
+
+
+var EMOJI_TABLE = {
+    "emoticon_smile": "😃",
+    "emoticon_frown": "😦",
+    "emoticon_tongue": "😛",
+    "emoticon_grin": "😀",
+    "emoticon_gasp": "😦",
+    "emoticon_wink": "😉",
+    "emoticon_pacman": ":v",
+    "emoticon_grumpy": ">:(",
+    "emoticon_unsure": ":/",
+    "emoticon_cry": "😢",
+    "emoticon_kiki": "😊",
+    "emoticon_glasses": "8)",
+    "emoticon_sunglasses": "😎",
+    "emoticon_heart": "❤️",
+    "emoticon_devil": "😈",
+    "emoticon_angel": "😇",
+    "emoticon_squint": "😑",
+    "emoticon_confused": "😕",
+    "emoticon_upset": ">:o",
+    "emoticon_colonthree": ":3",
+    "emoticon_like": "👍",
+    "emoticon_kiss": ":*",
+    "emoticon_shark": "(^^^)",
+    "emoticon_robot": ":|]",
+    "emoticon_penguin": "🐧",
+    "emoticon_poop": "💩",
+    "emoticon_putnam": ":putnam:",
+    "_2c0": "🌂",
+    "_2c1": "🌊",
+    "_2c2": "🌙",
+    "_2c3": "🌟",
+    "_2c4": "🌱",
+    "_2c5": "🌴",
+    "_2c6": "🌵",
+    "_2c7": "🌷",
+    "_2c8": "🌸",
+    "_2c9": "🌹",
+    "_2ca": "🌺",
+    "_2cb": "🌻",
+    "_2cc": "🌾",
+    "_2cd": "🍀",
+    "_2ce": "🍁",
+    "_2cf": "🍂",
+    "_2cg": "🍃",
+    "_2ch": "🍊",
+    "_2ci": "🍎",
+    "_2cj": "🍓",
+    "_2ck": "🍔",
+    "_2cl": "🍸",
+    "_2cm": "🍺",
+    "_2cn": "🎁",
+    "_2co": "🎃",
+    "_2cp": "🎄",
+    "_2cq": "🎅",
+    "_2cr": "🎈",
+    "_2cs": "🎉",
+    "_2ct": "🎍",
+    "_2cu": "🎎",
+    "_2cv": "🎏",
+    "_2cw": "🎐",
+    "_2cx": "🎓",
+    "_2cy": "🎵",
+    "_2cz": "🎶",
+    "_2c-": "🎼",
+    "_2c_": "🐍",
+    "_2d0": "🐎",
+    "_2d1": "🐑",
+    "_2d2": "🐒",
+    "_2d3": "🐔",
+    "_2d4": "🐗",
+    "_2d5": "🐘",
+    "_2d6": "🐙",
+    "_2d7": "🐚",
+    "_2d8": "🐛",
+    "_2d9": "🐟",
+    "_2da": "🐠",
+    "_2db": "🐡",
+    "_2dc": "🐥",
+    "_2dd": "🐦",
+    "_2de": "🐧",
+    "_2df": "🐨",
+    "_2dg": "🐩",
+    "_2dh": "🐫",
+    "_2di": "🐬",
+    "_2dj": "🐭",
+    "_2dk": "🐮",
+    "_2dl": "🐯",
+    "_2dm": "🐰",
+    "_2dn": "🐱",
+    "_2do": "🐳",
+    "_2dp": "🐴",
+    "_2dq": "🐵",
+    "_2dr": "🐷",
+    "_2ds": "🐸",
+    "_2dt": "🐹",
+    "_2du": "🐺",
+    "_2dv": "🐻",
+    "_2dw": "🐾",
+    "_2dx": "👀",
+    "_2dy": "👂",
+    "_2dz": "👃",
+    "_2d-": "👄",
+    "_2d_": "👅",
+    "_2e0": "👆",
+    "_2e1": "👇",
+    "_2e2": "👈",
+    "_2e3": "👉",
+    "_2e4": "👊",
+    "_2e5": "👋",
+    "_2e6": "👌",
+    "_2e7": "👍",
+    "_2e8": "👎",
+    "_2e9": "👏",
+    "_2ea": "👐",
+    "_2eb": "👦",
+    "_2ec": "👧",
+    "_2ed": "👨",
+    "_2ee": "👩",
+    "_2ef": "👫",
+    "_2eg": "👮",
+    "_2eh": "👯",
+    "_2ei": "👱",
+    "_2ej": "👲",
+    "_2ek": "👳",
+    "_2el": "👴",
+    "_2em": "👵",
+    "_2en": "👶",
+    "_2eo": "👷",
+    "_2ep": "👸",
+    "_2eq": "👻",
+    "_2er": "👼",
+    "_2es": "👽",
+    "_2et": "👾",
+    "_2eu": "👿",
+    "_2ev": "💀",
+    "_2ew": "💂",
+    "_2ex": "💃",
+    "_2ey": "💅",
+    "_2ez": "💋",
+    "_2e-": "💏",
+    "_2e_": "💐",
+    "_2f0": "💑",
+    "_2f1": "💓",
+    "_2f2": "💔",
+    "_2f3": "💖",
+    "_2f4": "💗",
+    "_2f5": "💘",
+    "_2f6": "💙",
+    "_2f7": "💚",
+    "_2f8": "💛",
+    "_2f9": "💜",
+    "_2fa": "💝",
+    "_2fb": "💢",
+    "_2fc": "💤",
+    "_2fd": "💦",
+    "_2fe": "💨",
+    "_2ff": "💩",
+    "_2fg": "💪",
+    "_2fh": "💻",
+    "_2fi": "💽",
+    "_2fj": "💾",
+    "_2fk": "💿",
+    "_2fl": "📀",
+    "_2fm": "📞",
+    "_2fn": "📠",
+    "_2fo": "📱",
+    "_2fp": "📲",
+    "_2fq": "📺",
+    "_2fr": "🔔",
+    "_2fs": "😁",
+    "_2ft": "😂",
+    "_2fu": "😃",
+    "_2fv": "😄",
+    "_2fw": "😆",
+    "_2fx": "😉",
+    "_2fy": "😋",
+    "_2fz": "😌",
+    "_2f-": "😍",
+    "_2f_": "😏",
+    "_2g0": "😒",
+    "_2g1": "😓",
+    "_2g2": "😔",
+    "_2g3": "😖",
+    "_2g4": "😘",
+    "_2g5": "😚",
+    "_2g6": "😜",
+    "_2g7": "😝",
+    "_2g8": "😞",
+    "_2g9": "😠",
+    "_2ga": "😡",
+    "_2gb": "😢",
+    "_2gc": "😣",
+    "_2gd": "😤",
+    "_2ge": "😥",
+    "_2gf": "😨",
+    "_2gg": "😩",
+    "_2gh": "😪",
+    "_2gi": "😫",
+    "_2gj": "😭",
+    "_2gk": "😰",
+    "_2gl": "😱",
+    "_2gm": "😲",
+    "_2gn": "😳",
+    "_2go": "😵",
+    "_2gp": "😷",
+    "_2gq": "😸",
+    "_2gr": "😹",
+    "_2gs": "😺",
+    "_2gt": "😻",
+    "_2gu": "😼",
+    "_2gv": "😽",
+    "_2gw": "😿",
+    "_2gx": "🙀",
+    "_2gy": "🙋",
+    "_2gz": "🙌",
+    "_2g-": "🙍",
+    "_2g_": "🙏",
+    "_2h0": "☝",
+    "_2h1": "☺",
+    "_2h2": "⚡",
+    "_2h3": "⛄",
+    "_2h4": "✊",
+    "_2h5": "✋",
+    "_2h6": "✌",
+    "_2h7": "☀",
+    "_2h8": "☁",
+    "_2h9": "☔",
+    "_2ha": "☕",
+    "_2hb": "✨",
+    "_2hc": "❤"
+};

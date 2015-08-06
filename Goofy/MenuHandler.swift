@@ -47,6 +47,11 @@ class MenuHandler: NSObject {
         appDelegate.webView.evaluateJavaScript("info()", completionHandler: nil);
     }
     
+    @IBAction func search(sender: AnyObject) {
+        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
+        appDelegate.webView.evaluateJavaScript("search()", completionHandler: nil);
+    }
+    
     @IBAction func preferences(sender: AnyObject) {
         let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
         appDelegate.webView.evaluateJavaScript("preferences()", completionHandler: nil);
@@ -97,6 +102,7 @@ class MenuHandler: NSObject {
         image.unlockFocus();
         var imageData = bitmapRep?.representationUsingType(NSBitmapImageFileType.NSPNGFileType, properties: [:]);
         var base64String = imageData?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed);
+        println(base64String!);
         appDelegate.webView.evaluateJavaScript("pasteImage('\(base64String!)')", completionHandler: nil);
     }
 }
