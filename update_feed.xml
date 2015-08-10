@@ -6,15 +6,15 @@
         <description>Most recent changes with links to updates.</description>
         <language>en</language>
         <item>
-            <title>Version 2.2.0</title>
+            <title>Version 2.2.1</title>
             <sparkle:releaseNotesLink>
                 http://www.goofyapp.com/version/2.2.html
             </sparkle:releaseNotesLink>
-            <pubDate>Thu, 07 August 2015 11:20:11 +0000</pubDate>
+            <pubDate>Thu, 10 August 2015 11:20:11 +0000</pubDate>
             <link>http://www.goofyapp.com/version/2.1.html</link>
-            <enclosure url="https://github.com/danielbuechele/goofy/releases/download/v2.2.0/Goofy.app.zip"
-                sparkle:version="780"
-                sparkle:shortVersionString="2.2.0"
+            <enclosure url="https://github.com/danielbuechele/goofy/releases/download/v2.2.1/Goofy.app.zip"
+                sparkle:version="817"
+                sparkle:shortVersionString="2.2.1"
                 length="3381354"
                 type="application/octet-stream" />
         </item>
