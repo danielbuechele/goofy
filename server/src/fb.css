@@ -2,6 +2,11 @@ html {
     overflow: hidden;
 }
 
+/*  window wrapper */
+._4sp8 {
+    min-width: 0;
+}
+
 /* conversation header */
 ._5742 {
     display: none !important;
@@ -47,4 +52,9 @@ html {
     background-image: none !important;
     width: auto !important;
     height: auto !important;
+}
+
+/* "Get the app"-banner */
+._s15 {
+    display: none;
 }

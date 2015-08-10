@@ -7,15 +7,6 @@ var ignoreNotification = false;
 for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElement("script");a.type="text/javascript";a.async=!0;a.src="//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";e=f.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}})(document,window.mixpanel||[]);
 mixpanel.init("2245181dbc803998dedc5b07d840e672");
 
-// Get React's runtime using the dev tool hook.
-Object.defineProperty(window, '__REACT_DEVTOOLS_GLOBAL_HOOK__', {
-	value: {
-		inject: function(runtime) {this._reactRuntime = runtime; },
-		getSelectedInstance: null,
-		Overlay: null
-	}
-});
-
 csssetup = function() {
 	head = document.head || document.getElementsByTagName( 'head' )[ 0 ];
 	style = document.createElement( 'style' );
@@ -33,6 +24,7 @@ function init() {
     csssetup();
 
 	setInterval(function() {
+
 		window.dispatchEvent(new Event('resize'));
 		updateTitle();
 		dockCount();
@@ -51,7 +43,6 @@ function init() {
 	setTimeout(function() {
 		//render settings menu
 		document.querySelector('._150g._30yy._2fug._p').click();
-		getPhotoUploadComponent();
 		mixpanel.track("loaded");
 	}, 3000);
 
@@ -155,7 +146,8 @@ function dockCount() {
 				text = document.querySelector('._1ht3 ._1htf').textContent;
 				var id = document.querySelector('._1ht1._1ht3').getAttribute('data-reactid');
 
-				if (ignoreNotification) {
+				//muted = ._569x
+				if (ignoreNotification || document.querySelector('[data-reactid="'+id+'"]').classList.toString().indexOf('_569x') > -1) {
 					ignoreNotification = false;
 				} else {
 					window.webkit.messageHandlers.notification.postMessage({type: 'NOTIFICATION', title: subtitle, text: text, id: id});
@@ -214,18 +206,18 @@ function b64toBlob(b64Data, contentType, sliceSize) {
 
 // Find the instance of the photo upload class from the React component tree.
 function getPhotoUploadComponent() {
-	var id = '.0.1.1.1.0.1.0.1.1.0.2.1';
+	var id = '.0.1.1.1.0.1.0.1.1.0';
 	var idComponents = id.split('.');
 	var children = __REACT_DEVTOOLS_GLOBAL_HOOK__._reactRuntime.Mount._instancesByReactRootID;
 	var component;
-
 
 	for (var i = 1; i < idComponents.length; i++) {
 		var rootId = '.' + idComponents[i];
 		component = children[rootId];
 		children = getChildren(component);
 	}
-	//window.webkit.messageHandlers.notification.postMessage({type: 'LOG', message: "yo222"+component._instance});
+
+
 	return component;
 }
 
@@ -280,8 +272,8 @@ var EMOJI_TABLE = {
     "emoticon_gasp": "😦",
     "emoticon_wink": "😉",
     "emoticon_pacman": ":v",
-    "emoticon_grumpy": ">:(",
-    "emoticon_unsure": ":/",
+    "emoticon_grumpy": "😠",
+    "emoticon_unsure": "😕",
     "emoticon_cry": "😢",
     "emoticon_kiki": "😊",
     "emoticon_glasses": "8)",
@@ -291,10 +283,10 @@ var EMOJI_TABLE = {
     "emoticon_angel": "😇",
     "emoticon_squint": "😑",
     "emoticon_confused": "😕",
-    "emoticon_upset": ">:o",
+    "emoticon_upset": "😠",
     "emoticon_colonthree": ":3",
     "emoticon_like": "👍",
-    "emoticon_kiss": ":*",
+    "emoticon_kiss": "😘",
     "emoticon_shark": "(^^^)",
     "emoticon_robot": ":|]",
     "emoticon_penguin": "🐧",

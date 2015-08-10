@@ -11,7 +11,7 @@ import WebKit
 import Quartz
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDelegate, QLPreviewPanelDataSource, QLPreviewPanelDelegate, NSWindowDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDelegate, NSWindowDelegate {
     
     @IBOutlet var window : NSWindow!
     var webView : WKWebView!
@@ -70,9 +70,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         }
         
         let userScript = WKUserScript(source: source, injectionTime: .AtDocumentEnd, forMainFrameOnly: true)
+        let reactDevTools = WKUserScript(source: "Object.defineProperty(window, '__REACT_DEVTOOLS_GLOBAL_HOOK__', {value: {inject: function(runtime) {this._reactRuntime = runtime; },getSelectedInstance: null,Overlay: null}});", injectionTime: .AtDocumentStart, forMainFrameOnly: true)
         
         let userContentController = WKUserContentController()
         userContentController.addUserScript(userScript)
+        userContentController.addUserScript(reactDevTools)
         
         let handler = NotificationScriptMessageHandler()
         userContentController.addScriptMessageHandler(handler, name: "notification")
@@ -81,7 +83,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         configuration.userContentController = userContentController
         
         webView = WKWebView(frame: self.view.bounds, configuration: configuration)
-        //webView.configuration.preferences.enableDevExtras();
+        webView.configuration.preferences.setValue(true, forKey: "developerExtrasEnabled")
         webView.navigationDelegate = self
         webView.UIDelegate = self
         webView.setValue(true, forKey: "drawsTransparentBackground")
@@ -276,40 +278,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         NSApp.activateIgnoringOtherApps(true)
     }
     
-    // MARK: Quicklook for Media
-    
-    var previewPanel: QLPreviewPanel?
-    
-    override func acceptsPreviewPanelControl(panel: QLPreviewPanel!) -> Bool {
-        return true
-    }
-    
-    override func beginPreviewPanelControl(panel: QLPreviewPanel!) {
-        previewPanel = panel
-        panel.delegate = self
-        panel.dataSource = self
-    }
-    
-    override func endPreviewPanelControl(panel: QLPreviewPanel!) {
-        previewPanel = nil
-    }
-    
-    func numberOfPreviewItemsInPreviewPanel(panel: QLPreviewPanel!) -> Int {
-        return 1
-    }
-    
-    func previewPanel(panel: QLPreviewPanel!, previewItemAtIndex index: Int) -> QLPreviewItem! {
-        return WebPreviewItem(url: quicklookMediaURL!)
-    }
-    
-    class WebPreviewItem : NSObject, QLPreviewItem {
-        let previewItemURL: NSURL
-        init(url: NSURL) {
-            previewItemURL = url
-        }
-        
-        let previewItemTitle: String = "Image"
-        
-    }
+
 
 }

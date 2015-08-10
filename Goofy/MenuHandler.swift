@@ -100,6 +100,7 @@ class MenuHandler: NSObject {
         image.unlockFocus();
         var imageData = bitmapRep?.representationUsingType(NSBitmapImageFileType.NSPNGFileType, properties: [:]);
         var base64String = imageData?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed);
+        //println(base64String!)
         appDelegate.webView.evaluateJavaScript("pasteImage('\(base64String!)')", completionHandler: nil);
     }
 }
