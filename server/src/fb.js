@@ -143,11 +143,13 @@ function dockCount() {
 			var subtitle = document.querySelector('._1ht3 ._1ht6').textContent;
 			if (lastNotification != subtitle+text) {
 				var el = document.querySelector('._1ht3 ._1htf');
-				text = Array.from(el.childNodes)
-				            .filter(e => e.nodeType == Node.TEXT_NODE || !e.classList.contains('emoticon_text'))
-				            .map(e => e.textContent)
-				            .join('');
-				
+
+				[].forEach.call(document.querySelectorAll('.emoticon_text'), function(a) {
+					a.textContent = "";
+				});
+
+				text = document.querySelector('._1ht3 ._1htf').textContent;
+
 				var id = document.querySelector('._1ht1._1ht3').getAttribute('data-reactid');
 
 				//muted = ._569x

@@ -63,6 +63,7 @@ function OutputStream(options) {
         preserve_line    : false,
         screw_ie8        : false,
         preamble         : null,
+        quote_style      : 0
     }, true);
 
     var indentation = 0;
@@ -84,9 +85,9 @@ function OutputStream(options) {
         });
     };
 
-    function make_string(str) {
+    function make_string(str, quote) {
         var dq = 0, sq = 0;
-        str = str.replace(/[\\\b\f\n\r\t\x22\x27\u2028\u2029\0]/g, function(s){
+        str = str.replace(/[\\\b\f\n\r\t\x22\x27\u2028\u2029\0\ufeff]/g, function(s){
             switch (s) {
               case "\\": return "\\\\";
               case "\b": return "\\b";
@@ -98,16 +99,31 @@ function OutputStream(options) {
               case '"': ++dq; return '"';
               case "'": ++sq; return "'";
               case "\0": return "\\x00";
+              case "\ufeff": return "\\ufeff";
             }
             return s;
         });
+        function quote_single() {
+            return "'" + str.replace(/\x27/g, "\\'") + "'";
+        }
+        function quote_double() {
+            return '"' + str.replace(/\x22/g, '\\"') + '"';
+        }
         if (options.ascii_only) str = to_ascii(str);
-        if (dq > sq) return "'" + str.replace(/\x27/g, "\\'") + "'";
-        else return '"' + str.replace(/\x22/g, '\\"') + '"';
+        switch (options.quote_style) {
+          case 1:
+            return quote_single();
+          case 2:
+            return quote_double();
+          case 3:
+            return quote == "'" ? quote_single() : quote_double();
+          default:
+            return dq > sq ? quote_single() : quote_double();
+        }
     };
 
-    function encode_string(str) {
-        var ret = make_string(str);
+    function encode_string(str, quote) {
+        var ret = make_string(str, quote);
         if (options.inline_script)
             ret = ret.replace(/<\x2fscript([>\/\t\n\f\r ])/gi, "<\\/script$1");
         return ret;
@@ -160,7 +176,6 @@ function OutputStream(options) {
                     might_need_space = false;
             }
             might_need_semicolon = false;
-            maybe_newline();
         }
 
         if (!options.beautify && options.preserve_line && stack[stack.length - 1]) {
@@ -221,7 +236,7 @@ function OutputStream(options) {
 
     var newline = options.beautify ? function() {
         print("\n");
-    } : noop;
+    } : maybe_newline;
 
     var semicolon = options.beautify ? function() {
         print(";");
@@ -323,7 +338,7 @@ function OutputStream(options) {
         force_semicolon : force_semicolon,
         to_ascii        : to_ascii,
         print_name      : function(name) { print(make_name(name)) },
-        print_string    : function(str) { print(encode_string(str)) },
+        print_string    : function(str, quote) { print(encode_string(str, quote)) },
         next_indent     : next_indent,
         with_indent     : with_indent,
         with_block      : with_block,
@@ -412,6 +427,15 @@ function OutputStream(options) {
                         return c(self, comment);
                     });
                 }
+
+                // Keep single line comments after nlb, after nlb
+                if (!output.option("beautify") && comments.length > 0 &&
+                    /comment[134]/.test(comments[0].type) &&
+                    output.col() !== 0 && comments[0].nlb)
+                {
+                    output.print("\n");
+                }
+
                 comments.forEach(function(c){
                     if (/comment[134]/.test(c.type)) {
                         output.print("//" + c.value + "\n");
@@ -549,12 +573,6 @@ function OutputStream(options) {
             return true;
     });
 
-    PARENS(AST_NaN, function(output){
-        var p = output.parent();
-        if (p instanceof AST_PropAccess && p.expression === this)
-            return true;
-    });
-
     PARENS([ AST_Assign, AST_Conditional ], function (output){
         var p = output.parent();
         // !(a = false) → true
@@ -577,7 +595,7 @@ function OutputStream(options) {
     /* -----[ PRINTERS ]----- */
 
     DEFPRINT(AST_Directive, function(self, output){
-        output.print_string(self.value);
+        output.print_string(self.value, self.quote);
         output.semicolon();
     });
     DEFPRINT(AST_Debugger, function(self, output){
@@ -1073,6 +1091,7 @@ function OutputStream(options) {
     });
     DEFPRINT(AST_ObjectKeyVal, function(self, output){
         var key = self.key;
+        var quote = self.quote;
         if (output.option("quote_keys")) {
             output.print_string(key + "");
         } else if ((typeof key == "number"
@@ -1083,7 +1102,7 @@ function OutputStream(options) {
         } else if (RESERVED_WORDS(key) ? output.option("screw_ie8") : is_identifier_string(key)) {
             output.print_name(key);
         } else {
-            output.print_string(key);
+            output.print_string(key, quote);
         }
         output.colon();
         self.value.print(output);
@@ -1109,10 +1128,10 @@ function OutputStream(options) {
     });
     DEFPRINT(AST_Hole, noop);
     DEFPRINT(AST_Infinity, function(self, output){
-        output.print("1/0");
+        output.print("Infinity");
     });
     DEFPRINT(AST_NaN, function(self, output){
-        output.print("0/0");
+        output.print("NaN");
     });
     DEFPRINT(AST_This, function(self, output){
         output.print("this");
@@ -1121,7 +1140,7 @@ function OutputStream(options) {
         output.print(self.getValue());
     });
     DEFPRINT(AST_String, function(self, output){
-        output.print_string(self.getValue());
+        output.print_string(self.getValue(), self.quote);
     });
     DEFPRINT(AST_Number, function(self, output){
         output.print(make_num(self.getValue()));
