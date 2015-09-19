@@ -25,7 +25,10 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
                 appDelegate.loadingView.hidden = true
                 break
             case "NOTIFICATION":
-                displayNotification(message.body["title"] as! NSString, text: message.body["text"] as! NSString, id: message.body["id"] as! NSString)
+                var pictureUrl = NSURL(string: message.body["pictureUrl"] as! String)
+                var picture = NSImage(contentsOfURL: pictureUrl!)
+
+                displayNotification(message.body["title"] as! NSString, text: message.body["text"] as! NSString, id: message.body["id"] as! NSString, picture: picture!)
                 break
             case "DOCK_COUNT":
                 dockCount(message.body["content"] as! String)
@@ -46,10 +49,11 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
         }
     }
     
-    func displayNotification(title: NSString, text: NSString, id: NSString) {
+    func displayNotification(title: NSString, text: NSString, id: NSString, picture: NSImage) {
         var notification:NSUserNotification = NSUserNotification()
         notification.title = title as String
         notification.informativeText = text as String
+        notification.contentImage = picture
         notification.deliveryDate = NSDate()
         notification.responsePlaceholder = "Reply"
         notification.hasReplyButton = true
