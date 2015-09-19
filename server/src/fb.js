@@ -151,7 +151,12 @@ function dockCount() {
 				text = document.querySelector('._1ht3 ._1htf').textContent;
 
 				var id = document.querySelector('._1ht1._1ht3').getAttribute('data-reactid');
-				var pictureUrl = document.querySelector('._1ht3 ._55lt > .img').getAttribute('src')
+				var pictureUrl = document.querySelector('._1ht3 ._55lt > .img')
+				if (pictureUrl) {
+					pictureUrl = pictureUrl.getAttribute('src');
+				} else {
+					pictureUrl = "";
+				}
 
 				//muted = ._569x
 				if (ignoreNotification || document.querySelector('[data-reactid="'+id+'"]').classList.toString().indexOf('_569x') > -1) {

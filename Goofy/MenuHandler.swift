@@ -63,14 +63,14 @@ class MenuHandler: NSObject {
     }
     
     @IBAction func handlePaste(sender: NSMenuItem) {
-        var pasteboard = NSPasteboard.generalPasteboard()
+        let pasteboard = NSPasteboard.generalPasteboard()
         
-        var classArray : Array<AnyObject> = [NSImage.self]
-        var canReadData = pasteboard.canReadObjectForClasses(classArray, options: nil)
+        let classArray : Array<AnyClass> = [NSImage.self]
+        let canReadData = pasteboard.canReadObjectForClasses(classArray, options: nil)
         
         if (canReadData) {
             var objectsToPaste = pasteboard.readObjectsForClasses(classArray, options: nil) as! Array<NSImage>
-            var image = objectsToPaste[0];
+            let image = objectsToPaste[0];
             self.uploadimage(image)
         } else {
             // Forward any non-image pastes (text) to the webview as a standard paste event.
@@ -79,7 +79,7 @@ class MenuHandler: NSObject {
     }
     
     @IBAction func sendImage(sender: NSMenuItem?) {
-        var openPanel = NSOpenPanel()
+        let openPanel = NSOpenPanel()
         openPanel.allowsMultipleSelection = false
         openPanel.canChooseDirectories = false
         openPanel.canCreateDirectories = false
@@ -87,7 +87,7 @@ class MenuHandler: NSObject {
         openPanel.allowedFileTypes = ["png","jpg","jpeg","gif"]
         openPanel.beginWithCompletionHandler { (result) -> Void in
             if result == NSFileHandlingPanelOKButton {
-                var image = NSImage(contentsOfURL: openPanel.URL!);
+                let image = NSImage(contentsOfURL: openPanel.URL!);
                 self.uploadimage(image!)
             }
         }
@@ -96,10 +96,10 @@ class MenuHandler: NSObject {
     func uploadimage(image: NSImage) {
         let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
         image.lockFocus();
-        var bitmapRep = NSBitmapImageRep(focusedViewRect: NSMakeRect(0, 0, image.size.width, image.size.height));
+        let bitmapRep = NSBitmapImageRep(focusedViewRect: NSMakeRect(0, 0, image.size.width, image.size.height));
         image.unlockFocus();
-        var imageData = bitmapRep?.representationUsingType(NSBitmapImageFileType.NSPNGFileType, properties: [:]);
-        var base64String = imageData?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed);
+        let imageData = bitmapRep?.representationUsingType(NSBitmapImageFileType.NSPNGFileType, properties: [:]);
+        let base64String = imageData?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed);
         //println(base64String!)
         appDelegate.webView.evaluateJavaScript("pasteImage('\(base64String!)')", completionHandler: nil);
     }

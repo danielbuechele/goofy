@@ -16,7 +16,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     @IBOutlet var window : NSWindow!
     var webView : WKWebView!
     @IBOutlet var view : NSView!
-    @IBOutlet var loadingView : NSImageView!
+    @IBOutlet var loadingView : NSImageView?
     @IBOutlet var spinner : NSProgressIndicator!
     @IBOutlet var longLoading : NSTextField!
     @IBOutlet var reactivationMenuItem : NSMenuItem!
@@ -44,7 +44,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         window.titlebarAppearsTransparent = true
         window.titleVisibility = .Hidden
         window.delegate = self
-        loadingView.layer?.backgroundColor = NSColor.whiteColor().CGColor
+        loadingView?.layer?.backgroundColor = NSColor.whiteColor().CGColor
 
         
         sizeWindow(window)
@@ -53,7 +53,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         
         #if DEBUG
             let path = NSBundle.mainBundle().objectForInfoDictionaryKey("PROJECT_DIR") as! String
-            var source = String(contentsOfFile: path+"/server/dist/fb.js", encoding: NSUTF8StringEncoding, error: nil)!+"init();"
+            let source = (try! String(contentsOfFile: path+"/server/dist/fb.js", encoding: NSUTF8StringEncoding))+"init();"
         #else
             let version = NSBundle.mainBundle().infoDictionary!["CFBundleShortVersionString"] as! String
             var jsurl = "https://dani.taurus.uberspace.de/goofyapp/fb" + version + ".js"
@@ -64,7 +64,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
             "getScript('" + jsurl + "', function() {init();});"
         #endif
         
-        var reactivationToggle : Bool? = NSUserDefaults.standardUserDefaults().objectForKey("reactivationToggle") as? Bool
+        let reactivationToggle : Bool? = NSUserDefaults.standardUserDefaults().objectForKey("reactivationToggle") as? Bool
         if (reactivationToggle != nil && reactivationToggle==true) {
             self.reactivationMenuItem.state = 1
         }
@@ -91,13 +91,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         
         // Layout
         view.addSubview(webView, positioned: NSWindowOrderingMode.Below, relativeTo: view);
-        webView.autoresizingMask = NSAutoresizingMaskOptions.ViewWidthSizable | NSAutoresizingMaskOptions.ViewHeightSizable
+        webView.autoresizingMask = [NSAutoresizingMaskOptions.ViewWidthSizable, NSAutoresizingMaskOptions.ViewHeightSizable]
         
         var s = NSProcessInfo.processInfo().arguments[0].componentsSeparatedByString("/")
-        var st: String = s[s.count-4] as! String
-        var url : String = "https://messenger.com/login"
+        var st: String = s[s.count-4] 
+        let url : String = "https://messenger.com/login"
         
-        var req = NSMutableURLRequest(URL: NSURL(string: url)!)
+        let req = NSMutableURLRequest(URL: NSURL(string: url)!)
         webView.loadRequest(req);
         
         
@@ -134,8 +134,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         
         if let url = navigationAction.request.URL {
             if let host = url.host {
-                var inApp = url.host!.hasSuffix("messenger.com") && !url.path!.hasPrefix("/l.php");
-                var isLogin = url.host!.hasSuffix("facebook.com") && (url.path!.hasPrefix("/login") || url.path!.hasPrefix("/checkpoint"));
+                let inApp = url.host!.hasSuffix("messenger.com") && !url.path!.hasPrefix("/l.php");
+                let isLogin = url.host!.hasSuffix("facebook.com") && (url.path!.hasPrefix("/login") || url.path!.hasPrefix("/checkpoint"));
                 
                 if inApp || isLogin {
                     decisionHandler(.Allow)
@@ -155,7 +155,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
 
         
         NSTimer.scheduledTimerWithTimeInterval(0.4, target: self, selector: Selector("endLoading"), userInfo: nil, repeats: false)
-        if webView.URL!.absoluteString!.rangeOfString("messenger.com/login") == nil{
+        if webView.URL!.absoluteString.rangeOfString("messenger.com/login") == nil{
             showMenuBar()
         }
         
@@ -208,7 +208,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     }
     
     @IBAction func toggleReactivation(sender: AnyObject) {
-        var i : NSMenuItem = sender as! NSMenuItem
+        let i : NSMenuItem = sender as! NSMenuItem
         
         if (i.state == 0) {
             i.state = NSOnState
@@ -230,7 +230,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     
     func endLoading() {
         timer.invalidate()
-        loadingView.hidden = true
+        loadingView?.hidden = true
         spinner.stopAnimation(self)
         spinner.hidden = true
         longLoading.hidden = true
@@ -240,7 +240,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     
     func showMenuBar() {
         for item in toolbar.items {
-            let i = item as! NSToolbarItem
+            let i = item 
             i.view?.hidden = false
             i.image = NSImage(named: i.label)
         }
@@ -249,14 +249,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     
     func hideMenuBar() {
         for item in toolbar.items {
-            let i = item as! NSToolbarItem
+            let i = item 
             i.view?.hidden = true
             i.image = NSImage(named: "White")
         }
     }
     
     func startLoading() {
-        loadingView.hidden = false
+        loadingView?.hidden = false
         spinner.startAnimation(self)
         spinner.hidden = false
         longLoading.hidden = true
@@ -267,7 +267,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     }
     
     func longLoadingMessage() {
-        if (!loadingView.hidden) {
+        if (loadingView?.hidden == false) {
             longLoading.hidden = false
         }
     }

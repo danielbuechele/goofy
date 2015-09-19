@@ -23,7 +23,7 @@ class TitleLabel: NSViewController {
         activeLabel?.bezeled = false
         activeLabel?.selectable = false
         activeLabel?.drawsBackground = false
-        activeLabel?.alignment = .CenterTextAlignment
+        activeLabel?.alignment = .Center
         activeLabel?.font = NSFont(name: "HelveticaNeue", size: 10.0)
         self.view.addSubview(activeLabel!)
         
@@ -33,7 +33,7 @@ class TitleLabel: NSViewController {
         titleLabel?.bezeled = false
         titleLabel?.selectable = false
         titleLabel?.drawsBackground = false
-        titleLabel?.alignment = .CenterTextAlignment
+        titleLabel?.alignment = .Center
         titleLabel?.textColor = NSColor.blackColor()
         titleLabel?.font = NSFont(name: "HelveticaNeue", size: 14.0)
         self.view.addSubview(titleLabel!)
@@ -61,7 +61,7 @@ class TitleLabel: NSViewController {
         var toolbarItem : NSToolbarItem!
         let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate;
         for item in appDelegate.toolbar.items {
-            let i = item as! NSToolbarItem
+            let i = item 
             if i.view == self.view {
                 toolbarItem = i
                 break

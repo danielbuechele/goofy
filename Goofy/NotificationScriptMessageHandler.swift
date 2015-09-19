@@ -22,13 +22,15 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
                 //appDelegate.notLoggedIn()
                 break
             case "LOADED":
-                appDelegate.loadingView.hidden = true
+                appDelegate.loadingView?.hidden = true
                 break
             case "NOTIFICATION":
-                var pictureUrl = NSURL(string: message.body["pictureUrl"] as! String)
-                var picture = NSImage(contentsOfURL: pictureUrl!)
-
-                displayNotification(message.body["title"] as! NSString, text: message.body["text"] as! NSString, id: message.body["id"] as! NSString, picture: picture!)
+                if (message.body["pictureUrl"] as! String != "") {
+                    let pictureUrl = NSURL(string: message.body["pictureUrl"] as! String)
+                    displayNotification(message.body["title"] as! NSString, text: message.body["text"] as! NSString, id: message.body["id"] as! NSString, picture: NSImage(contentsOfURL: pictureUrl!))
+                } else {
+                    displayNotification(message.body["title"] as! NSString, text: message.body["text"] as! NSString, id: message.body["id"] as! NSString, picture: nil)
+                }
                 break
             case "DOCK_COUNT":
                 dockCount(message.body["content"] as! String)
@@ -43,14 +45,14 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
                 appDelegate.titleLabel.setTitle(message.body["title"] as! String, active: message.body["activity"] as! String)
                 break
             case "LOG":
-                println(message.body["message"] as! String)
+                print(message.body["message"] as! String)
             default:
                 0
         }
     }
     
-    func displayNotification(title: NSString, text: NSString, id: NSString, picture: NSImage) {
-        var notification:NSUserNotification = NSUserNotification()
+    func displayNotification(title: NSString, text: NSString, id: NSString, picture: NSImage?) {
+        let notification:NSUserNotification = NSUserNotification()
         notification.title = title as String
         notification.informativeText = text as String
         notification.contentImage = picture
@@ -59,7 +61,7 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
         notification.hasReplyButton = true
         notification.userInfo = ["id":id]
         
-        var notificationcenter:NSUserNotificationCenter = NSUserNotificationCenter.defaultUserNotificationCenter()
+        let notificationcenter:NSUserNotificationCenter = NSUserNotificationCenter.defaultUserNotificationCenter()
         notificationcenter.delegate = self
         notificationcenter.scheduleNotification(notification)
     }
