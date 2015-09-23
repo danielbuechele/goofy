@@ -2,6 +2,11 @@ html {
     overflow: hidden;
 }
 
+/* weird display of input bar above messages, fixes #148*/
+._4_j4{
+    display:block
+}
+
 /*  window wrapper */
 ._4sp8 {
     min-width: 0;
