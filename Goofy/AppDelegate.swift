@@ -140,8 +140,33 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
                 if inApp || isLogin {
                     decisionHandler(.Allow)
                 } else {
-                    NSWorkspace.sharedWorkspace().openURL(navigationAction.request.URL!)
-                    decisionHandler(.Cancel)
+
+                    // Check if the host is l.messenger.com
+                    let facebookFormattedLink = (url.host! == "l.messenger.com");
+
+                    // If such is the case...
+                    if facebookFormattedLink {
+                        do {
+                            // Generate a NSRegularExpression to match our url, extracting the value of u= into it's
+                            // own regex group.
+                            let regex = try NSRegularExpression(pattern: "(https://l.messenger.com/l.php\\?u=)(.+)(&h=.+)", options: [])
+                            let nsString = url.absoluteString as NSString
+                            let results = regex.firstMatchInString(url.absoluteString, options: [], range: NSMakeRange(0, nsString.length))
+
+                            // Take the result, pull it out of our string, and decode the url string
+                            let referenceString = nsString.substringWithRange(results!.rangeAtIndex(2)).stringByRemovingPercentEncoding!
+
+                            // Open it up as a normal url
+                            NSWorkspace.sharedWorkspace().openURL(NSURL(string: referenceString)!)
+                            decisionHandler(.Cancel)
+                        } catch {
+                            NSWorkspace.sharedWorkspace().openURL(url)
+                            decisionHandler(.Cancel)
+                        }
+                    } else {
+                        NSWorkspace.sharedWorkspace().openURL(url)
+                        decisionHandler(.Cancel)
+                    }
                 }
             } else {
                 decisionHandler(.Cancel)
