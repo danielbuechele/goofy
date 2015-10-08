@@ -78,6 +78,11 @@ class MenuHandler: NSObject {
         }
     }
     
+    @IBAction func reportIssue(sender: NSMenuItem) {
+        let reportIssueURL = NSURL(string: "https://github.com/danielbuechele/goofy/issues/new")
+        NSWorkspace.sharedWorkspace().openURL(reportIssueURL!)
+    }
+    
     @IBAction func sendImage(sender: NSMenuItem?) {
         let openPanel = NSOpenPanel()
         openPanel.allowsMultipleSelection = false
