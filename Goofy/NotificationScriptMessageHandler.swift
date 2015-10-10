@@ -45,7 +45,7 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
                 appDelegate.titleLabel.setTitle(message.body["title"] as! String, active: message.body["activity"] as! String)
                 break
             case "LOG":
-                print(message.body["message"] as! String)
+                print(message.body)
             default:
                 0
         }
@@ -67,8 +67,8 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
     }
     
     func dockCount(count: String) {
-        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate;
-        var si = NSImage(named: "StatusItem")
+        //let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate;
+        //var si = NSImage(named: "StatusItem")
         
         if (count == "0") {
             NSApplication.sharedApplication().dockTile.badgeLabel = ""

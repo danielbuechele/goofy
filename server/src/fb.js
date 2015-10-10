@@ -46,7 +46,6 @@ function init() {
 		mixpanel.track("loaded");
 	}, 3000);
 
-
 	document.body.onkeypress=function(e) {
 		// If no inputs are focused, or we're at the start of the message input (to prevent system beep), focus the message input and trigger the keypress.
 		if ((!document.querySelector(':focus') || (document.querySelector('._54-z:focus') && window.getSelection().baseOffset === 0)) && !e.metaKey && !e.ctrlKey) {
@@ -228,7 +227,6 @@ function getPhotoUploadComponent() {
 		component = children[rootId];
 		children = getChildren(component);
 	}
-
 
 	return component;
 }

@@ -86,18 +86,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         webView.configuration.preferences.setValue(true, forKey: "developerExtrasEnabled")
         webView.navigationDelegate = self
         webView.UIDelegate = self
-        webView.setValue(true, forKey: "drawsTransparentBackground")
         
         
         // Layout
         view.addSubview(webView, positioned: NSWindowOrderingMode.Below, relativeTo: view);
         webView.autoresizingMask = [NSAutoresizingMaskOptions.ViewWidthSizable, NSAutoresizingMaskOptions.ViewHeightSizable]
         
-        var s = NSProcessInfo.processInfo().arguments[0].componentsSeparatedByString("/")
-        var st: String = s[s.count-4] 
         let url : String = "https://messenger.com/login"
         
         let req = NSMutableURLRequest(URL: NSURL(string: url)!)
+        
         webView.loadRequest(req);
         
         
@@ -134,8 +132,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         
         if let url = navigationAction.request.URL {
             if let host = url.host {
-                let inApp = url.host!.hasSuffix("messenger.com") && !url.path!.hasPrefix("/l.php");
-                let isLogin = url.host!.hasSuffix("facebook.com") && (url.path!.hasPrefix("/login") || url.path!.hasPrefix("/checkpoint"));
+                let inApp = host.hasSuffix("messenger.com") && !url.path!.hasPrefix("/l.php");
+                let isLogin = host.hasSuffix("facebook.com") && (url.path!.hasPrefix("/login") || url.path!.hasPrefix("/checkpoint"));
                 
                 if inApp || isLogin {
                     decisionHandler(.Allow)
