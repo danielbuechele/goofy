@@ -55,7 +55,7 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
         let notification:NSUserNotification = NSUserNotification()
         notification.title = title as String
         notification.informativeText = text as String
-        notification.contentImage = picture
+        notification.contentImage = roundCorners(picture!)
         notification.deliveryDate = NSDate()
         notification.responsePlaceholder = "Reply"
         notification.hasReplyButton = true
@@ -90,6 +90,33 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
         } else {
             appDelegate.webView.evaluateJavaScript("reactivation('" + id + "')", completionHandler: nil);
         }
+    }
+    
+    func roundCorners(image: NSImage) -> NSImage {
+        
+        let existingImage = image
+        let imageSize = existingImage.size
+        let width = imageSize.width
+        let height = imageSize.height
+        let xRad = width / 2
+        let yRad = height / 2
+        let newSize = NSMakeSize(imageSize.height, imageSize.width)
+        let roundedImage = NSImage(size: newSize)
+        
+        roundedImage.lockFocus()
+        let ctx = NSGraphicsContext.currentContext()
+        ctx?.imageInterpolation = NSImageInterpolation.High
+        
+        let imageFrame = NSRect(x: 0, y: 0, width: width, height: height)
+        let clipPath = NSBezierPath(roundedRect: imageFrame, xRadius: xRad, yRadius: yRad)
+        clipPath.windingRule = NSWindingRule.EvenOddWindingRule
+        clipPath.addClip()
+        
+        let rect = NSRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
+        image.drawAtPoint(NSZeroPoint, fromRect: rect, operation: NSCompositingOperation.CompositeSourceOver, fraction: 1)
+        roundedImage.unlockFocus()
+        
+        return roundedImage
     }
     
 }
