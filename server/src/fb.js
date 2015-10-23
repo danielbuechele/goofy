@@ -87,7 +87,7 @@ function updateTitle() {
 }
 
 function newConversation() {
-	document.querySelector('a._30yy._4kzv').click();
+	document.querySelector('._36ic._5l-3 ._30yy').click();
 }
 
 function gotoConversation(tag) {
