@@ -293,6 +293,7 @@ var EMOJI_TABLE = {
     "emoticon_angel": "😇",
     "emoticon_squint": "😑",
     "emoticon_confused": "😕",
+    "emoticon_confused_rev": "😕",
     "emoticon_upset": "😠",
     "emoticon_colonthree": ":3",
     "emoticon_like": "👍",
