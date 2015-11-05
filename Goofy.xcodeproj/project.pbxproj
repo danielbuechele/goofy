@@ -142,9 +142,9 @@
 				33942F941A2AE7F700E6D361 /* Frameworks */,
 				33942F951A2AE7F700E6D361 /* Resources */,
 				33BA617C1A66909100D28A1D /* CopyFiles */,
-				33A2E9711B6E41950079CB65 /* ShellScript */,
-				338BD0041AC5CFBE006F4C93 /* ShellScript */,
-				9DAE3AAA1BEBF6710055C25A /* ShellScript */,
+				33A2E9711B6E41950079CB65 /* Codesign Sparkle */,
+				338BD0041AC5CFBE006F4C93 /* Increment Version Number */,
+				9DAE3AAA1BEBF6710055C25A /* Gulp */,
 			);
 			buildRules = (
 			);
@@ -238,39 +238,42 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		338BD0041AC5CFBE006F4C93 /* ShellScript */ = {
+		338BD0041AC5CFBE006F4C93 /* Increment Version Number */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Increment Version Number";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "#!/bin/bash\nbuildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"$INFOPLIST_FILE\")\nbuildNumber=$(($buildNumber + 1))\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"$INFOPLIST_FILE\"";
 		};
-		33A2E9711B6E41950079CB65 /* ShellScript */ = {
+		33A2E9711B6E41950079CB65 /* Codesign Sparkle */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Codesign Sparkle";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "LOCATION=\"${BUILT_PRODUCTS_DIR}\"/\"${FRAMEWORKS_FOLDER_PATH}\"\nIDENTITY=\"Mac Developer\"\ncodesign --verbose --force --sign \"$IDENTITY\" \"$LOCATION/Sparkle.framework/Versions/A\"";
 		};
-		9DAE3AAA1BEBF6710055C25A /* ShellScript */ = {
+		9DAE3AAA1BEBF6710055C25A /* Gulp */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = Gulp;
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
