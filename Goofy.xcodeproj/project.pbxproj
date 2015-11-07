@@ -142,8 +142,9 @@
 				33942F941A2AE7F700E6D361 /* Frameworks */,
 				33942F951A2AE7F700E6D361 /* Resources */,
 				33BA617C1A66909100D28A1D /* CopyFiles */,
-				33A2E9711B6E41950079CB65 /* ShellScript */,
-				338BD0041AC5CFBE006F4C93 /* ShellScript */,
+				33A2E9711B6E41950079CB65 /* Codesign Sparkle */,
+				338BD0041AC5CFBE006F4C93 /* Increment Version Number */,
+				9DAE3AAA1BEBF6710055C25A /* Gulp */,
 			);
 			buildRules = (
 			);
@@ -185,7 +186,6 @@
 				TargetAttributes = {
 					33942F961A2AE7F700E6D361 = {
 						CreatedOnToolsVersion = 6.1;
-						DevelopmentTeam = K5C6E7A2D6;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 0;
@@ -238,31 +238,47 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		338BD0041AC5CFBE006F4C93 /* ShellScript */ = {
+		338BD0041AC5CFBE006F4C93 /* Increment Version Number */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Increment Version Number";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "#!/bin/bash\nbuildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"$INFOPLIST_FILE\")\nbuildNumber=$(($buildNumber + 1))\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"$INFOPLIST_FILE\"";
 		};
-		33A2E9711B6E41950079CB65 /* ShellScript */ = {
+		33A2E9711B6E41950079CB65 /* Codesign Sparkle */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Codesign Sparkle";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "LOCATION=\"${BUILT_PRODUCTS_DIR}\"/\"${FRAMEWORKS_FOLDER_PATH}\"\nIDENTITY=\"Mac Developer: Daniel Buechele (SUY5N9862J)\"\ncodesign --verbose --force --sign \"$IDENTITY\" \"$LOCATION/Sparkle.framework/Versions/A\"";
+			shellScript = "LOCATION=\"${BUILT_PRODUCTS_DIR}\"/\"${FRAMEWORKS_FOLDER_PATH}\"\nIDENTITY=\"Mac Developer\"\ncodesign --verbose --force --sign \"$IDENTITY\" \"$LOCATION/Sparkle.framework/Versions/A\"";
+		};
+		9DAE3AAA1BEBF6710055C25A /* Gulp */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = Gulp;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"${PROJECT_DIR}\"/server\n# check if gulp command is available.\nif hash gulp 2>/dev/null; then\n    # if gulp fails, installs everything it needs to and\n    # tries again\n    gulp || (npm install && gulp)\nelse\n    echo \"npm and gulp must be installed!\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
