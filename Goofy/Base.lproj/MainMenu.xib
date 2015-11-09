@@ -47,7 +47,7 @@
                                     <action selector="orderFrontStandardAboutPanel:" target="-1" id="Exp-CZ-Vem"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Check for updates..." id="GWq-Ld-dlX">
+                            <menuItem title="Check for Updates..." id="GWq-Ld-dlX">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="checkForUpdates:" target="GAI-1a-fMQ" id="UeG-zT-5kY"/>
@@ -101,7 +101,7 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="File" id="ENt-SM-5Fz">
                         <items>
-                            <menuItem title="New conversation" keyEquivalent="n" id="RJF-Jw-iBq">
+                            <menuItem title="New Conversation" keyEquivalent="n" id="RJF-Jw-iBq">
                                 <connections>
                                     <action selector="newConversation:" target="XE1-by-mZK" id="axB-as-nN8"/>
                                 </connections>
@@ -371,18 +371,18 @@
                                     <action selector="reopenWindow:" target="Voe-Tx-rLC" id="Rpk-6v-yT3"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Next conversation" tag="1" keyEquivalent="]" id="TCm-7h-nwy">
+                            <menuItem title="Next Conversation" tag="1" keyEquivalent="]" id="TCm-7h-nwy">
                                 <connections>
                                     <action selector="gotoConversation:" target="XE1-by-mZK" id="nHl-8O-kRk"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Previous conversation" tag="-1" keyEquivalent="[" id="Ffn-Ns-2bQ">
+                            <menuItem title="Previous Conversation" tag="-1" keyEquivalent="[" id="Ffn-Ns-2bQ">
                                 <connections>
                                     <action selector="gotoConversation:" target="XE1-by-mZK" id="jfJ-gk-A3e"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="eu3-7i-yIM"/>
-                            <menuItem title="Jump to latest conversation" id="tfP-aR-ouj">
+                            <menuItem title="Jump to Latest Conversation" id="tfP-aR-ouj">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="toggleReactivation:" target="Voe-Tx-rLC" id="uD5-Sk-5Yc"/>
