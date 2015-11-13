@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="8191"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9059"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -47,7 +47,7 @@
                                     <action selector="orderFrontStandardAboutPanel:" target="-1" id="Exp-CZ-Vem"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Check for updates..." id="GWq-Ld-dlX">
+                            <menuItem title="Check for Updates..." id="GWq-Ld-dlX">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="checkForUpdates:" target="GAI-1a-fMQ" id="UeG-zT-5kY"/>
@@ -101,7 +101,7 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="File" id="ENt-SM-5Fz">
                         <items>
-                            <menuItem title="New conversation" keyEquivalent="n" id="RJF-Jw-iBq">
+                            <menuItem title="New Conversation" keyEquivalent="n" id="RJF-Jw-iBq">
                                 <connections>
                                     <action selector="newConversation:" target="XE1-by-mZK" id="axB-as-nN8"/>
                                 </connections>
@@ -371,18 +371,18 @@
                                     <action selector="reopenWindow:" target="Voe-Tx-rLC" id="Rpk-6v-yT3"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Next conversation" tag="1" keyEquivalent="]" id="TCm-7h-nwy">
+                            <menuItem title="Next Conversation" tag="1" keyEquivalent="]" id="TCm-7h-nwy">
                                 <connections>
                                     <action selector="gotoConversation:" target="XE1-by-mZK" id="nHl-8O-kRk"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Previous conversation" tag="-1" keyEquivalent="[" id="Ffn-Ns-2bQ">
+                            <menuItem title="Previous Conversation" tag="-1" keyEquivalent="[" id="Ffn-Ns-2bQ">
                                 <connections>
                                     <action selector="gotoConversation:" target="XE1-by-mZK" id="jfJ-gk-A3e"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="eu3-7i-yIM"/>
-                            <menuItem title="Jump to latest conversation" id="tfP-aR-ouj">
+                            <menuItem title="Jump to Latest Conversation" id="tfP-aR-ouj">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="toggleReactivation:" target="Voe-Tx-rLC" id="uD5-Sk-5Yc"/>
@@ -430,7 +430,7 @@
             <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="706" height="467"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="3200" height="1777"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
             <view key="contentView" wantsLayer="YES" id="5iU-zi-Msx">
                 <rect key="frame" x="0.0" y="0.0" width="706" height="467"/>
                 <autoresizingMask key="autoresizingMask"/>
