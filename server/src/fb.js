@@ -24,8 +24,6 @@ function init() {
     csssetup();
 
 	setInterval(function() {
-
-		window.dispatchEvent(new Event('resize'));
 		updateTitle();
 		dockCount();
 
@@ -44,6 +42,7 @@ function init() {
 		//render settings menu
 		document.querySelector('._150g._30yy._2fug._p').click();
 		mixpanel.track("loaded");
+		window.dispatchEvent(new Event('resize'));
 	}, 3000);
 
 	document.body.onkeypress=function(e) {
@@ -149,8 +148,8 @@ function dockCount() {
 
 				text = document.querySelector('._1ht3 ._1htf').textContent;
 
-				var id = document.querySelector('._1ht1._1ht3').getAttribute('data-reactid');
-				var pictureUrl = document.querySelector('._1ht3 ._55lt > .img')
+				var id = document.querySelector('._1ht1._1ht3 div').getAttribute('id');
+				var pictureUrl = document.querySelector('._1ht3 ._55lt > .img');
 				if (pictureUrl) {
 					pictureUrl = pictureUrl.getAttribute('src');
 				} else {
@@ -158,7 +157,7 @@ function dockCount() {
 				}
 
 				//muted = ._569x
-				if (ignoreNotification || document.querySelector('[data-reactid="'+id+'"]').classList.toString().indexOf('_569x') > -1) {
+				if (ignoreNotification || document.querySelector('[id="'+id+'"]').parentElement.classList.toString().indexOf('_569x') > -1) {
 					ignoreNotification = false;
 				} else {
 					window.webkit.messageHandlers.notification.postMessage({type: 'NOTIFICATION', title: subtitle, text: text, id: id, pictureUrl: pictureUrl});
@@ -173,7 +172,7 @@ function dockCount() {
 }
 
 function replyToNotification(userid, answer) {
-	document.querySelector('[data-reactid="'+userid+'"] a').click();
+	document.querySelector('[id="'+userid+'"] a').click();
 	setTimeout(function () {
 		var textEvent = document.createEvent('TextEvent');
 		textEvent.initTextEvent('textInput', true, true, null, answer, 9, "en-US");
@@ -183,11 +182,19 @@ function replyToNotification(userid, answer) {
 	},50);
 }
 
+function getValueForFirstObjectKey(object) {
+    var keys = Object.keys(object);
+    if (keys.length > 0) {
+        return object[keys[0]];
+    }
+    return null;
+}
+
 // Handle pasted image data forwarded from the wrapper app.
 function pasteImage(base64Data) {
 	var blob = b64toBlob(base64Data, 'image/png');
-	var uploader = getPhotoUploadComponent();
-	uploader._instance.uploadFile(blob);
+	var uploader = getValueForFirstObjectKey(getValueForFirstObjectKey(__REACT_DEVTOOLS_GLOBAL_HOOK__._renderers).ComponentTree.getClosestInstanceFromNode(document.querySelector('._4rv4 form').parentElement)._renderedChildren);
+	uploader._instance.uploadFiles([blob]);
 }
 
 // Convert base64 encoded data to a Blob.
@@ -213,35 +220,6 @@ function b64toBlob(b64Data, contentType, sliceSize) {
 
     var blob = new Blob(byteArrays, {type: contentType});
     return blob;
-}
-
-// Find the instance of the photo upload class from the React component tree.
-function getPhotoUploadComponent() {
-	var id = document.querySelector('._4rv4 form').getAttribute('data-reactid');
-	var idComponents = id.split('.');
-	var children = __REACT_DEVTOOLS_GLOBAL_HOOK__._reactRuntime.Mount._instancesByReactRootID;
-	var component;
-
-	for (var i = 1; i < idComponents.length; i++) {
-		var rootId = '.' + idComponents[i];
-		component = children[rootId];
-		children = getChildren(component);
-	}
-
-	return component;
-}
-
-// Unwrap the children from a React class instance.
-function getChildren(instance) {
-	var children = null;
-	if (instance._renderedComponent) {
-		children = getChildren(instance._renderedComponent);
-	} else if (instance._renderedChildren) {
-		children = instance._renderedChildren;
-	} else {
-		children = [];
-	}
-	return children;
 }
 
 function __triggerKeyboardEvent(el, keyCode, meta) {
@@ -299,7 +277,7 @@ var EMOJI_TABLE = {
     "emoticon_like": "👍",
     "emoticon_kiss": "😘",
     "emoticon_shark": "(^^^)",
-    "emoticon_robot": ":|]",
+    "emoticon_robot": "🤖",
     "emoticon_penguin": "🐧",
     "emoticon_poop": "💩",
     "emoticon_putnam": ":putnam:",

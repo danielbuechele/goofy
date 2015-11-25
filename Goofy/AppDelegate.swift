@@ -70,7 +70,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         }
         
         let userScript = WKUserScript(source: source, injectionTime: .AtDocumentEnd, forMainFrameOnly: true)
-        let reactDevTools = WKUserScript(source: "Object.defineProperty(window, '__REACT_DEVTOOLS_GLOBAL_HOOK__', {value: {inject: function(runtime) {this._reactRuntime = runtime; },getSelectedInstance: null,Overlay: null}});", injectionTime: .AtDocumentStart, forMainFrameOnly: true)
+        let reactDevTools = WKUserScript(source: "Object.defineProperty(window, '__REACT_DEVTOOLS_GLOBAL_HOOK__', {value: {_renderers: {},helpers: {},inject: function(renderer) {var id = Math.random().toString(16).slice(2);this._renderers[id] = renderer;this.emit('renderer', {id, renderer});},_listeners: {},sub: function(evt, fn) {this.on(evt, fn);return function () {this.off(evt, fn)};},on: function(evt, fn) {if (!this._listeners[evt]) {this._listeners[evt] = [];}this._listeners[evt].push(fn);},off: function(evt, fn) {if (!this._listeners[evt]) {return;}var ix = this._listeners[evt].indexOf(fn);if (ix !== -1) {this._listeners[evt].splice(ix, 1);}if (!this._listeners[evt].length) {this._listeners[evt] = null;}},emit: function(evt, data) {if (this._listeners[evt]) {this._listeners[evt].map(function fn() {fn(data)});}}}});", injectionTime: .AtDocumentStart, forMainFrameOnly: true)
         
         let userContentController = WKUserContentController()
         userContentController.addUserScript(userScript)
