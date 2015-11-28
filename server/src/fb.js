@@ -40,7 +40,7 @@ function init() {
 
 	setTimeout(function() {
 		//render settings menu
-		document.querySelector('._150g._30yy._2fug._p').click();
+		document.querySelector('._30yy._2fug._p').click();
 		mixpanel.track("loaded");
 		window.dispatchEvent(new Event('resize'));
 	}, 3000);
@@ -98,7 +98,7 @@ function gotoConversation(tag) {
 }
 
 function gotoConversationAtIndex(index) {
-	document.querySelector('._2xhi._5vn4 ul li:nth-child(' + index + ') a').click()
+	document.querySelector('._2xhi ul li:nth-child(' + index + ') a').click()
 }
 
 function reactivation(userid) {
@@ -110,7 +110,7 @@ function reactivation(userid) {
 }
 
 function logout() {
-	document.querySelector('._54nq._2i-c._150g._558b._2n_z li:last-child a').click();
+	document.querySelector('._54nq._2i-c._558b._2n_z li:last-child a').click();
 }
 
 function info() {
@@ -118,7 +118,7 @@ function info() {
 }
 
 function preferences() {
-	document.querySelector('._54nq._2i-c._150g._558b._2n_z li:first-child a').click();
+	document.querySelector('._54nq._2i-c._558b._2n_z li:first-child a').click();
 }
 
 function search() {
