@@ -91,9 +91,9 @@ function newConversation() {
 
 function gotoConversation(tag) {
 	if (tag==1) {
-		document.querySelector('._1ht2').nextElementSibling.firstChild.click();
+		document.querySelector('._1ht2').nextElementSibling.querySelector('a').click();
 	} else {
-		document.querySelector('._1ht2').previousElementSibling.firstChild.click();
+		document.querySelector('._1ht2').previousElementSibling.querySelector('a').click();
 	}
 }
 
