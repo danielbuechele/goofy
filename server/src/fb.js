@@ -254,7 +254,7 @@ function convertEmoji() {
 
 var EMOJI_TABLE = {
     "emoticon_smile": "😊",
-    "emoticon_frown": "😦",
+    "emoticon_frown": "😞",
     "emoticon_tongue": "😛",
     "emoticon_grin": "😀",
     "emoticon_gasp": "😦",
