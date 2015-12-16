@@ -65,18 +65,15 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
     }
     
     func dockCount(count: String) {
-        //let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate;
-        //var si = NSImage(named: "StatusItem")
+        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate;
         
         if (count == "0") {
             NSApplication.sharedApplication().dockTile.badgeLabel = ""
+            appDelegate.changeStatusItemImage("StatusItem")
         } else {
             NSApplication.sharedApplication().dockTile.badgeLabel = count
-            //var si = NSImage(named: "StatusItemUnread")
+            appDelegate.changeStatusItemImage("StatusItemUnread")
         }
-        //si?.setTemplate(true)
-        
-        //appDelegate.statusBarItem.image = si
     }
     
     func userNotificationCenter(center: NSUserNotificationCenter, didActivateNotification notification: NSUserNotification) {

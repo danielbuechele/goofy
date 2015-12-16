@@ -20,7 +20,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     @IBOutlet var spinner : NSProgressIndicator!
     @IBOutlet var longLoading : NSTextField!
     @IBOutlet var reactivationMenuItem : NSMenuItem!
-    @IBOutlet var statusbarMenuItem : NSMenuItem!
+    @IBOutlet var statusItemMenuItem : NSMenuItem!
     @IBOutlet var toolbarTrenner : NSToolbarItem!
     @IBOutlet var toolbarSpacing : NSToolbarItem!
     @IBOutlet var toolbar : NSToolbar!
@@ -30,9 +30,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     var timer : NSTimer!
     var activatedFromBackground = false
     var isFullscreen = false
-    
-    var statusBar = NSStatusBar.systemStatusBar()
-    var statusBarItem : NSStatusItem = NSStatusItem()
+
+    var statusItem = NSStatusItem()
+    var statusItemConfigurationKey = "showStatusItem"
+    var statusItemDefault = true
     
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         // Insert code here to initialize your application
@@ -99,6 +100,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         webView.loadRequest(req);
         
         
+    }
+
+    func applicationWillFinishLaunching(aNotification: NSNotification) {
+        // Initialize Menubar Button
+        initStatusItem()
     }
     
     func windowDidResize(notification: NSNotification) {
@@ -294,12 +300,63 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         }
     }
     
-    func statusBarItemClicked() {
+    func statusItemClicked(sender: AnyObject) {
         webView.evaluateJavaScript("reactivation()", completionHandler: nil);
         reopenWindow(self)
         NSApp.activateIgnoringOtherApps(true)
     }
     
 
+    func addStatusItem() {
+        statusItem = NSStatusBar.systemStatusBar().statusItemWithLength(NSSquareStatusItemLength)
+
+        if let button = statusItem.button {
+			changeStatusItemImage("StatusItem")
+            button.action = Selector("statusItemClicked:")
+        }
+    }
+
+    func hideStatusItem() {
+    	NSStatusBar.systemStatusBar().removeStatusItem(statusItem)
+    }
+
+    func changeStatusItemImage(newImage: String) {
+        if let button = statusItem.button {
+            let image = NSImage(named: newImage)
+            image!.template = true
+            button.image = image
+        }
+    }
+
+    func initStatusItem() {
+        if ((NSUserDefaults.standardUserDefaults().objectForKey(statusItemConfigurationKey)) == nil) {
+            NSUserDefaults.standardUserDefaults().setObject(statusItemDefault, forKey: statusItemConfigurationKey)
+        } else {
+			updateStatusItemVisibility()
+        }
+    }
+
+    func toggleStatusItemConfiguration() {
+        print (NSUserDefaults.standardUserDefaults().boolForKey(statusItemConfigurationKey) )
+        if (NSUserDefaults.standardUserDefaults().boolForKey(statusItemConfigurationKey) == true) {
+            NSUserDefaults.standardUserDefaults().setObject(false, forKey: statusItemConfigurationKey)
+        } else {
+            NSUserDefaults.standardUserDefaults().setObject(true, forKey: statusItemConfigurationKey)
+        }
+
+    }
+
+    func updateStatusItemVisibility() {
+        if (NSUserDefaults.standardUserDefaults().boolForKey(statusItemConfigurationKey) == true) {
+            addStatusItem()
+        } else {
+            hideStatusItem()
+        }
+    }
+
+    @IBAction func toggleStatusItem(sender: AnyObject) {
+		toggleStatusItemConfiguration()
+        updateStatusItemVisibility()
+    }
 
 }
