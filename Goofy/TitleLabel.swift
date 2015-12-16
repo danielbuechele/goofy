@@ -12,6 +12,9 @@ class TitleLabel: NSViewController {
     
     var titleLabel : NSTextField?
     var activeLabel : NSTextField?
+
+
+    // MARK: - NSView Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,6 +44,9 @@ class TitleLabel: NSViewController {
         
         
     }
+
+    
+    // MARK: - Title
     
     func setTitle(title: String, active: String) {
         
@@ -55,6 +61,9 @@ class TitleLabel: NSViewController {
         activeLabel?.stringValue = active
         
     }
+
+
+    // MARK: - Window
 
     func windowDidResize() {
         

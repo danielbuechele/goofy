@@ -10,7 +10,9 @@ import Foundation
 import WebKit
 
 class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUserNotificationCenterDelegate {
-        
+
+    // MARK: - ContentController message handler
+
     func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
         
         let type = message.body["type"] as! NSString
@@ -48,7 +50,7 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
     }
 
     
-    // MARK: Dock Badge counter & Status Item state
+    // MARK: - Dock Badge counter, Status Item state
 
     func dockCount(count: String) {
         //let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate;
@@ -66,7 +68,7 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
     }
 
 
-    // MARK: - User Notifications
+    // MARK: - OSX Notifications
 
     func displayNotification(title: NSString, text: NSString, id: NSString, picture: NSImage?) {
         let notification:NSUserNotification = NSUserNotification()
