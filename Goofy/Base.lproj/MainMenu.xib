@@ -18,7 +18,7 @@
                 <outlet property="menuHandler" destination="XE1-by-mZK" id="zOw-NM-qqt"/>
                 <outlet property="reactivationMenuItem" destination="tfP-aR-ouj" id="9qa-nu-U5w"/>
                 <outlet property="spinner" destination="Ac9-Ec-QfU" id="Z2D-Bs-P2j"/>
-                <outlet property="statusbarMenuItem" destination="eD5-qA-K11" id="dhs-HS-D8H"/>
+                <outlet property="statusItemMenuItem" destination="eD5-qA-K11" id="8DY-O0-XgN"/>
                 <outlet property="titleLabel" destination="qLh-Hp-pnN" id="rR6-GM-Yi6"/>
                 <outlet property="toolbar" destination="hOM-Z7-ghb" id="kf3-qD-9Te"/>
                 <outlet property="toolbarSpacing" destination="TTq-Gl-gs8" id="rbg-uh-QPQ"/>
@@ -388,8 +388,11 @@
                                     <action selector="toggleReactivation:" target="Voe-Tx-rLC" id="uD5-Sk-5Yc"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Show Menubar Icon" id="eD5-qA-K11">
+                            <menuItem title="Toggle Menubar Icon" id="eD5-qA-K11">
                                 <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleStatusItem:" target="Voe-Tx-rLC" id="DJZ-oc-izA"/>
+                                </connections>
                             </menuItem>
                             <menuItem title="Bring All to Front" id="yt8-L4-YOr">
                                 <modifierMask key="keyEquivalentModifierMask"/>
