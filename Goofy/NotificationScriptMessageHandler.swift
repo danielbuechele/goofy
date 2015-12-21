@@ -10,7 +10,9 @@ import Foundation
 import WebKit
 
 class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUserNotificationCenterDelegate {
-        
+
+    // MARK: - ContentController message handler
+
     func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
         
         let type = message.body["type"] as! NSString
@@ -46,7 +48,25 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
                 0
         }
     }
+
     
+    // MARK: - Dock Badge counter, Status Item state
+
+    func dockCount(count: String) {
+        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate;
+
+        if (count == "0") {
+            NSApplication.sharedApplication().dockTile.badgeLabel = ""
+            appDelegate.changeStatusItemImage("StatusItem")
+        } else {
+            NSApplication.sharedApplication().dockTile.badgeLabel = count
+            appDelegate.changeStatusItemImage("StatusItemUnread")
+        }
+    }
+
+
+    // MARK: - OSX Notifications
+
     func displayNotification(title: NSString, text: NSString, id: NSString, picture: NSImage?) {
         let notification:NSUserNotification = NSUserNotification()
         notification.title = title as String
@@ -58,24 +78,12 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
         notification.responsePlaceholder = "Reply"
         notification.hasReplyButton = true
         notification.userInfo = ["id":id]
-        
+
         let notificationcenter:NSUserNotificationCenter = NSUserNotificationCenter.defaultUserNotificationCenter()
         notificationcenter.delegate = self
         notificationcenter.scheduleNotification(notification)
     }
-    
-    func dockCount(count: String) {
-        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate;
-        
-        if (count == "0") {
-            NSApplication.sharedApplication().dockTile.badgeLabel = ""
-            appDelegate.changeStatusItemImage("StatusItem")
-        } else {
-            NSApplication.sharedApplication().dockTile.badgeLabel = count
-            appDelegate.changeStatusItemImage("StatusItemUnread")
-        }
-    }
-    
+
     func userNotificationCenter(center: NSUserNotificationCenter, didActivateNotification notification: NSUserNotification) {
         let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate;
         let id = notification.userInfo!["id"] as! String
@@ -86,6 +94,9 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
             appDelegate.webView.evaluateJavaScript("reactivation('" + id + "')", completionHandler: nil);
         }
     }
+
+
+    // MARK: - Image Processing
     
     func roundCorners(image: NSImage) -> NSImage {
         
