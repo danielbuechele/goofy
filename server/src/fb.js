@@ -176,8 +176,9 @@ function dockCount() {
 			text = text.textContent;
 			
 			/* Sometimes messages are bold when *you* have sent a message and the conversation is
-			unread. This stops that, all those begin with "You: " */
-			if (text.startsWith("You: ")) {
+			unread. This stops that, all those begin with "You: " in a separate <span> */
+			var messageHTML = document.querySelector(UNREAD_MESSAGE_TEXT).innerHTML;
+			if (messageHTML.indexOf("<span>You: </span>") != -1) {
 				return
 			}
 			
