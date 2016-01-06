@@ -31,6 +31,16 @@ var EMOTICONS = '.emoticon_text';
 var ALL_EMOJI = '.emoticon, ._1az';
 var MUTED = '_569x';
 
+var _localeKeyword = Array.prototype.filter.call(document.body.classList, function(e) {
+	return e.startsWith("Locale"); 
+})[0];
+
+// Resistant if Facebook stops exposing locale as a class
+var LOCALE = _localeKeyword ? _localeKeyword.replace("Locale_", "") : "";
+
+var YOU_KEYWORDS = {"default": "You: ", "tr_TR": "Sen: "};
+var YOU = YOU_KEYWORDS.hasOwnProperty(LOCALE) ? YOU_KEYWORDS[LOCALE] : YOU_KEYWORDS["default"];
+
 function CONVERSATION_LINK(user_id) { return '[data-reactid="' + user_id + '"] a' }
 function ID(id) { return '[id="' + id + '"]' }
 
@@ -176,9 +186,10 @@ function dockCount() {
 			text = text.textContent;
 			
 			/* Sometimes messages are bold when *you* have sent a message and the conversation is
-			unread. This stops that, all those begin with "You: " in a separate <span> */
+			unread. This stops that, all those begin with "You: " in a separate <span>, or a 
+			language-specific varient */
 			var messageHTML = document.querySelector(UNREAD_MESSAGE_TEXT).innerHTML;
-			if (messageHTML.indexOf("<span>You: </span>") != -1) {
+			if (messageHTML.indexOf("<span>" + YOU + "</span>") != -1) {
 				return
 			}
 			
