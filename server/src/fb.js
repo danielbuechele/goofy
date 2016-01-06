@@ -1,3 +1,39 @@
+// Facebook selectors
+var SETTINGS_BUTTON = '._30yy._2fug._p';
+var NEW_MESSAGE_BUTTON = '._36ic._5l-3 > a._30yy';
+var INFORMATION_BUTTON = '._fl3._30yy';
+
+var UPLOAD_BUTTON = '._m._4q60._3rzn._6a';
+var UPLOAD_FORM = '._4rv4 form';
+
+var TEXT_BOX = '._54-z';
+var TEXT_AREA = '._209g._2vxa';
+var SEARCH_BOX = '._58al';
+
+var TITLE_BAR = '._5743';
+var LAST_ACTIVE = '._2v6o';
+
+var CURRENT_CONVERSATION_NAME = TITLE_BAR + ' span';
+var CONVERSATION_LIST = '._2xhi ul';
+var SELECTED_CONVERSATION = '._1ht2';
+
+var _MENU_ITEMS = '._54nq._2i-c._558b._2n_z li';
+var SETTINGS_MENU_ITEM = _MENU_ITEMS + ':first-child';
+var LOGOUT_MENU_ITEM = _MENU_ITEMS + ':last-child';
+
+var UNREAD_CONVERSATION = '._1ht3';
+var UNREAD_MESSAGE_NAME = UNREAD_CONVERSATION + ' ._1ht6';
+var UNREAD_MESSAGE_TEXT = UNREAD_CONVERSATION + ' ._1htf';
+var UNREAD_MESSAGE_ROW = UNREAD_CONVERSATION + '._1ht1 div';
+var UNREAD_MESSAGE_PICTURE = '._1ht3 ._55lt > .img';
+
+var EMOTICONS = '.emoticon_text';
+var ALL_EMOJI = '.emoticon, ._1az';
+var MUTED = '_569x';
+
+function CONVERSATION_LINK(user_id) { return '[data-reactid="' + user_id + '"] a' }
+function ID(id) { return '[id="' + id + '"]' }
+
 var lastNotification;
 var lastNotificationTime;
 var dockCounter = "";
@@ -27,7 +63,7 @@ function init() {
 		updateTitle();
 		dockCount();
 
-		var uploadButton = document.querySelector('._m._4q60._3rzn._6a');
+		var uploadButton = document.querySelector(UPLOAD_BUTTON);
 		if (uploadButton && uploadButton.onclick==null) {
 			uploadButton.onclick = function (e) {
 				e.preventDefault();
@@ -40,18 +76,18 @@ function init() {
 
 	setTimeout(function() {
 		//render settings menu
-		document.querySelector('._30yy._2fug._p').click();
+		document.querySelector(SETTINGS_BUTTON).click();
 		mixpanel.track("loaded");
 		window.dispatchEvent(new Event('resize'));
 	}, 3000);
 
 	document.body.onkeypress=function(e) {
 		// If no inputs are focused, or we're at the start of the message input (to prevent system beep), focus the message input and trigger the keypress.
-		if ((!document.querySelector(':focus') || (document.querySelector('._54-z:focus') && window.getSelection().baseOffset === 0)) && !e.metaKey && !e.ctrlKey) {
+		if ((!document.querySelector(':focus') || (document.querySelector(TEXT_BOX + ':focus') && window.getSelection().baseOffset === 0)) && !e.metaKey && !e.ctrlKey) {
 			var char = event.which || event.keyCode;
 
 			// Focus the input at the end of any current text.
-			var el = document.querySelector('._54-z');
+			var el = document.querySelector(TEXT_BOX);
 			var range = document.createRange();
 			var sel = window.getSelection();
 			range.setStart(el, 1);
@@ -68,7 +104,7 @@ function init() {
 		}
 	};
 
-	document.querySelector('._5743').addEventListener("DOMSubtreeModified", function () {
+	document.querySelector(TITLE_BAR).addEventListener("DOMSubtreeModified", function () {
 		updateTitle();
 	});
 }
@@ -79,54 +115,54 @@ function uploadInfo() {
 
 function updateTitle() {
 	var a = ""
-	if (document.querySelector('._2v6o')) {
-		a = document.querySelector('._2v6o').textContent;
+	if (document.querySelector(LAST_ACTIVE)) {
+		a = document.querySelector(LAST_ACTIVE).textContent;
 	}
-	window.webkit.messageHandlers.notification.postMessage({type: 'SET_TITLE', title: document.querySelector('._5743 span').textContent, activity: a});
+	window.webkit.messageHandlers.notification.postMessage({type: 'SET_TITLE', title: document.querySelector(CURRENT_CONVERSATION_NAME).textContent, activity: a});
 }
 
 function newConversation() {
-	document.querySelector('._36ic._5l-3 > a._30yy').click();
+	document.querySelector(NEW_MESSAGE_BUTTON).click();
 }
 
 function gotoConversation(tag) {
 	if (tag==1) {
-		document.querySelector('._1ht2').nextElementSibling.querySelector('a').click();
+		document.querySelector(SELECTED_CONVERSATION).nextElementSibling.querySelector('a').click();
 	} else {
-		document.querySelector('._1ht2').previousElementSibling.querySelector('a').click();
+		document.querySelector(SELECTED_CONVERSATION).previousElementSibling.querySelector('a').click();
 	}
 }
 
 function gotoConversationAtIndex(index) {
-	document.querySelector('._2xhi ul li:nth-child(' + index + ') a').click()
+	document.querySelector(CONVERSATION_LIST + 'li:nth-child(' + index + ') a').click()
 }
 
 function reactivation(userid) {
 	if (userid) {
-		document.querySelector('[data-reactid="'+userid+'"] a').click();
+		document.querySelector(CONVERSATION_LINK(user_id)).click();
 	} else if (new Date().getTime() < lastNotificationTime + 1000*60) {
-		document.querySelector('._1ht3 a').click();
+		document.querySelector(UNREAD_CONVERSATION + ' a').click();
 	}
 }
 
 function logout() {
-	document.querySelector('._54nq._2i-c._558b._2n_z li:last-child a').click();
+	document.querySelector(LOGOUT_MENU_ITEM).click();
 }
 
 function info() {
-	document.querySelector('._fl3._30yy').click();
+	document.querySelector(INFORMATION_BUTTON).click();
 }
 
 function preferences() {
-	document.querySelector('._54nq._2i-c._558b._2n_z li:first-child a').click();
+	document.querySelector(SETTINGS_MENU_ITEM).click();
 }
 
 function search() {
-	document.querySelector('._58al').focus()
+	document.querySelector(SEARCH_BOX).focus()
 }
 
 function dockCount() {
-	var c = document.querySelectorAll('._1ht3').length;
+	var c = document.querySelectorAll(UNREAD_CONVERSATION).length;
 	if (c != dockCounter) {
 		window.webkit.messageHandlers.notification.postMessage({type: 'DOCK_COUNT', content: String(c)});
 		dockCounter = c;
@@ -135,29 +171,36 @@ function dockCount() {
 	convertEmoji();
 
 	if (c > 0) {
-		var text = document.querySelector('._1ht3 ._1htf');
+		var text = document.querySelector(UNREAD_MESSAGE_TEXT);
 		if (text) {
 			text = text.textContent;
-			var subtitle = document.querySelector('._1ht3 ._1ht6').textContent;
+			
+			/* Sometimes messages are bold when *you* have sent a message and the conversation is
+			unread. This stops that, all those begin with "You: " in a separate <span> */
+			var messageHTML = document.querySelector(UNREAD_MESSAGE_TEXT).innerHTML;
+			if (messageHTML.indexOf("<span>You: </span>") != -1) {
+				return
+			}
+			
+			var subtitle = document.querySelector(UNREAD_MESSAGE_NAME).textContent;
 			if (lastNotification != subtitle+text) {
-				var el = document.querySelector('._1ht3 ._1htf');
+				var el = document.querySelector(UNREAD_MESSAGE_TEXT);
 
-				[].forEach.call(document.querySelectorAll('.emoticon_text'), function(a) {
+				[].forEach.call(document.querySelectorAll(EMOTICONS), function(a) {
 					a.textContent = "";
 				});
 
-				text = document.querySelector('._1ht3 ._1htf').textContent;
+				text = document.querySelector(UNREAD_MESSAGE_TEXT).textContent;
 
-				var id = document.querySelector('._1ht1._1ht3 div').getAttribute('id');
-				var pictureUrl = document.querySelector('._1ht3 ._55lt > .img');
+				var id = document.querySelector(UNREAD_MESSAGE_ROW).getAttribute('id');
+				var pictureUrl = document.querySelector(UNREAD_MESSAGE_PICTURE);
 				if (pictureUrl) {
 					pictureUrl = pictureUrl.getAttribute('src');
 				} else {
 					pictureUrl = "";
 				}
 
-				//muted = ._569x
-				if (ignoreNotification || document.querySelector('[id="'+id+'"]').parentElement.classList.toString().indexOf('_569x') > -1) {
+				if (ignoreNotification || document.querySelector(ID(id)).parentElement.classList.toString().indexOf(MUTED) > -1) {
 					ignoreNotification = false;
 				} else {
 					window.webkit.messageHandlers.notification.postMessage({type: 'NOTIFICATION', title: subtitle, text: text, id: id, pictureUrl: pictureUrl});
@@ -172,13 +215,13 @@ function dockCount() {
 }
 
 function replyToNotification(userid, answer) {
-	document.querySelector('[id="'+userid+'"] a').click();
+	document.querySelector(ID(userid)).click();
 	setTimeout(function () {
 		var textEvent = document.createEvent('TextEvent');
 		textEvent.initTextEvent('textInput', true, true, null, answer, 9, "en-US");
-		document.querySelector('._209g._2vxa').dispatchEvent(textEvent);
+		document.querySelector(TEXT_AREA).dispatchEvent(textEvent);
 		ignoreNotification = true;
-		__triggerKeyboardEvent(document.querySelector('._209g._2vxa'),13,true);
+		__triggerKeyboardEvent(document.querySelector(TEXT_AREA),13,true);
 	},50);
 }
 
@@ -193,7 +236,7 @@ function getValueForFirstObjectKey(object) {
 // Handle pasted image data forwarded from the wrapper app.
 function pasteImage(base64Data) {
 	var blob = b64toBlob(base64Data, 'image/png');
-	var uploader = getValueForFirstObjectKey(getValueForFirstObjectKey(__REACT_DEVTOOLS_GLOBAL_HOOK__._renderers).ComponentTree.getClosestInstanceFromNode(document.querySelector('._4rv4 form').parentElement)._renderedChildren);
+	var uploader = getValueForFirstObjectKey(getValueForFirstObjectKey(__REACT_DEVTOOLS_GLOBAL_HOOK__._renderers).ComponentTree.getClosestInstanceFromNode(document.querySelector(UPLOAD_FORM).parentElement)._renderedChildren);
 	uploader._instance.uploadFiles([blob]);
 }
 
@@ -241,7 +284,7 @@ function __triggerKeyboardEvent(el, keyCode, meta) {
 }
 
 function convertEmoji() {
-	var emoticon = document.querySelectorAll('.emoticon, ._1az');
+	var emoticon = document.querySelectorAll(ALL_EMOJI);
 	[].forEach.call(emoticon, function(e) {
 		e.classList.toString().split(" ").forEach(function (c) {
 			if (EMOJI_TABLE[c]) {
