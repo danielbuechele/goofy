@@ -6,8 +6,7 @@ var INFORMATION_BUTTON = '._fl3._30yy';
 var UPLOAD_BUTTON = '._m._4q60._3rzn._6a';
 var UPLOAD_FORM = '._4rv4 form';
 
-var TEXT_BOX = '._54-z';
-var TEXT_AREA = '._209g._2vxa';
+var TEXT_BOX = '._5rpu';
 var SEARCH_BOX = '._58al';
 
 var TITLE_BAR = '._5743';
@@ -32,7 +31,7 @@ var ALL_EMOJI = '.emoticon, ._1az';
 var MUTED = '_569x';
 
 var _localeKeyword = Array.prototype.filter.call(document.body.classList, function(e) {
-	return e.startsWith("Locale"); 
+	return e.startsWith("Locale");
 })[0];
 
 // Resistant if Facebook stops exposing locale as a class
@@ -90,6 +89,7 @@ function init() {
 		mixpanel.track("loaded");
 		window.dispatchEvent(new Event('resize'));
 	}, 3000);
+
 
 	document.body.onkeypress=function(e) {
 		// If no inputs are focused, or we're at the start of the message input (to prevent system beep), focus the message input and trigger the keypress.
@@ -184,15 +184,15 @@ function dockCount() {
 		var text = document.querySelector(UNREAD_MESSAGE_TEXT);
 		if (text) {
 			text = text.textContent;
-			
+
 			/* Sometimes messages are bold when *you* have sent a message and the conversation is
-			unread. This stops that, all those begin with "You: " in a separate <span>, or a 
+			unread. This stops that, all those begin with "You: " in a separate <span>, or a
 			language-specific varient */
 			var messageHTML = document.querySelector(UNREAD_MESSAGE_TEXT).innerHTML;
 			if (messageHTML.indexOf("<span>" + YOU + "</span>") != -1) {
 				return
 			}
-			
+
 			var subtitle = document.querySelector(UNREAD_MESSAGE_NAME).textContent;
 			if (lastNotification != subtitle+text) {
 				var el = document.querySelector(UNREAD_MESSAGE_TEXT);
@@ -226,13 +226,13 @@ function dockCount() {
 }
 
 function replyToNotification(userid, answer) {
-	document.querySelector(ID(userid)).click();
+	document.querySelector(ID(userid) + ' a').click();
 	setTimeout(function () {
 		var textEvent = document.createEvent('TextEvent');
 		textEvent.initTextEvent('textInput', true, true, null, answer, 9, "en-US");
-		document.querySelector(TEXT_AREA).dispatchEvent(textEvent);
+		document.querySelector(TEXT_BOX).dispatchEvent(textEvent);
 		ignoreNotification = true;
-		__triggerKeyboardEvent(document.querySelector(TEXT_AREA),13,true);
+		__triggerKeyboardEvent(document.querySelector(TEXT_BOX),13,true);
 	},50);
 }
 
@@ -305,7 +305,6 @@ function convertEmoji() {
 	});
 }
 
-
 var EMOJI_TABLE = {
     "emoticon_smile": "😊",
     "emoticon_frown": "😞",
@@ -335,6 +334,7 @@ var EMOJI_TABLE = {
     "emoticon_penguin": "🐧",
     "emoticon_poop": "💩",
     "emoticon_putnam": ":putnam:",
+	"_1q3y": "😊",
     "_2c0": "🌂",
     "_2c1": "🌊",
     "_2c2": "🌙",
@@ -525,17 +525,17 @@ var EMOJI_TABLE = {
     "_2gz": "🙌",
     "_2g-": "🙍",
     "_2g_": "🙏",
-    "_2h0": "☝",
-    "_2h1": "☺",
-    "_2h2": "⚡",
+    "_2h0": "☝️",
+    "_2h1": "☺️",
+    "_2h2": "⚡️",
     "_2h3": "⛄",
     "_2h4": "✊",
     "_2h5": "✋",
-    "_2h6": "✌",
-    "_2h7": "☀",
-    "_2h8": "☁",
-    "_2h9": "☔",
-    "_2ha": "☕",
+    "_2h6": "✌️",
+    "_2h7": "☀️",
+    "_2h8": "☁️",
+    "_2h9": "☔️",
+    "_2ha": "☕️",
     "_2hb": "✨",
-    "_2hc": "❤"
+    "_2hc": "❤️"
 };
