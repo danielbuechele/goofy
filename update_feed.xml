@@ -12,9 +12,9 @@
             </sparkle:releaseNotesLink>
             <pubDate>Wed, 25 Nov 2015 11:20:11 +0000</pubDate>
             <link>http://www.goofyapp.com/version/2.2.html</link>
-            <enclosure url="https://github.com/danielbuechele/goofy/releases/download/v2.2.4/Goofy.app.zip"
-                sparkle:version="948"
-                sparkle:shortVersionString="2.2.4"
+            <enclosure url="https://github.com/danielbuechele/goofy/releases/download/v2.2.5/Goofy.app.zip"
+                sparkle:version="961"
+                sparkle:shortVersionString="2.2.5"
                 length="3381354"
                 type="application/octet-stream" />
         </item>
