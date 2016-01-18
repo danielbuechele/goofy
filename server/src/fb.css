@@ -3,8 +3,8 @@ html {
 }
 
 /* weird display of input bar above messages, fixes #148*/
-._4_j4{
-    display:block
+._4_j4 {
+    display: block;
 }
 
 /*  window wrapper */
@@ -45,12 +45,10 @@ html {
     display: block;
 }
 
-
 /* sidebar header */
 ._1enh ._36ic {
     display: none;
 }
-
 
 /* replace emojis */
 .emoticon, ._1az {
