@@ -28,7 +28,7 @@ var UNREAD_CONVERSATION = '._1ht3',
 
 var EMOTICONS = '.emoticon_text',
     ALL_EMOJI = '.emoticon, ._1az',
-    MUTED = '_569x';
+    MUTED = '._569x ._56ck';
 
 var _localeKeyword = Array.prototype.filter.call(document.body.classList, function(e) {
 	return e.startsWith("Locale");
@@ -202,7 +202,7 @@ function dockCount() {
 				    pictureUrl = document.querySelector(UNREAD_MESSAGE_PICTURE);
 				pictureUrl = pictureUrl ? pictureUrl.getAttribute('src') : "";
 
-				if (ignoreNotification || document.querySelector(ID(id)).parentElement.classList.toString().indexOf(MUTED) > -1) {
+				if (ignoreNotification || document.querySelector(ID(id) + ' ' + MUTED).length > 0) {
 					ignoreNotification = false;
 				} else {
 					window.webkit.messageHandlers.notification.postMessage({type: 'NOTIFICATION', title: subtitle, text: text, id: id, pictureUrl: pictureUrl});
