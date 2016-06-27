@@ -88,7 +88,7 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
         let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate;
         let id = notification.userInfo!["id"] as! String
         if (notification.activationType == NSUserNotificationActivationType.Replied){
-            let userResponse = notification.response?.string;
+            let userResponse = notification.response?.string.stringByReplacingOccurrencesOfString("\n", withString: "\\n");
             appDelegate.webView.evaluateJavaScript("replyToNotification('" + id + "','" + userResponse! + "')", completionHandler: nil);
         } else {
             appDelegate.webView.evaluateJavaScript("reactivation('" + id + "')", completionHandler: nil);
