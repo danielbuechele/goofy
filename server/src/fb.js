@@ -24,11 +24,10 @@ var UNREAD_CONVERSATION = '._1ht3',
     UNREAD_MESSAGE_NAME = UNREAD_CONVERSATION + ' ._1ht6',
     UNREAD_MESSAGE_TEXT = UNREAD_CONVERSATION + ' ._1htf',
     UNREAD_MESSAGE_ROW = UNREAD_CONVERSATION + '._1ht1 div',
-    UNREAD_MESSAGE_PICTURE = '._1ht3 ._55lt > .img';
+    UNREAD_MESSAGE_PICTURE = '._55lt > .img';
 
-var EMOTICONS = '.emoticon_text',
-    ALL_EMOJI = '.emoticon, ._1az',
-    MUTED = '._569x ._56ck';
+var EMOTICONS = '._1ift',
+    MUTED = '_569x';
 
 var _localeKeyword = Array.prototype.filter.call(document.body.classList, function(e) {
 	return e.startsWith("Locale");
@@ -173,8 +172,6 @@ function dockCount() {
 		dockCounter = c;
 	}
 
-	convertEmoji();
-
 	if (c > 0) {
 		var text = document.querySelector(UNREAD_MESSAGE_TEXT);
 		if (text) {
@@ -196,13 +193,14 @@ function dockCount() {
 					a.textContent = "";
 				});
 
+				document.querySelector(UNREAD_MESSAGE_TEXT + ' ' + EMOTICONS).textContent = findSurrogatePair(parseInt(document.querySelector(UNREAD_MESSAGE_TEXT + ' ' + EMOTICONS).getAttribute('src').split('/').reverse()[0].split('.')[0], 16)).map(function(a) {return String.fromCharCode(parseInt(a,16));}).join('');
 				text = document.querySelector(UNREAD_MESSAGE_TEXT).textContent;
 
 				var id = document.querySelector(UNREAD_MESSAGE_ROW).getAttribute('id'),
-				    pictureUrl = document.querySelector(UNREAD_MESSAGE_PICTURE);
+				    pictureUrl = document.querySelector(UNREAD_MESSAGE_ROW).querySelector(UNREAD_MESSAGE_PICTURE);
 				pictureUrl = pictureUrl ? pictureUrl.getAttribute('src') : "";
 
-				if (ignoreNotification || document.querySelectorAll(ID(id) + ' ' + MUTED).length > 0) {
+				if (ignoreNotification || document.querySelectorAll(ID(id).parentElement.classList.contains(MUTED)) {
 					ignoreNotification = false;
 				} else {
 					window.webkit.messageHandlers.notification.postMessage({type: 'NOTIFICATION', title: subtitle, text: text, id: id, pictureUrl: pictureUrl});
@@ -214,6 +212,14 @@ function dockCount() {
 			}
 		}
 	}
+}
+
+function findSurrogatePair(point) {
+	// assumes point > 0xffff
+	var offset = point - 0x10000,
+		lead = 0xd800 + (offset >> 10),
+		trail = 0xdc00 + (offset & 0x3ff);
+	return [lead.toString(16), trail.toString(16)];
 }
 
 function replyToNotification(userid, answer) {
@@ -279,249 +285,3 @@ function __triggerKeyboardEvent(el, keyCode, meta) {
 
 	el.dispatchEvent ? el.dispatchEvent(eventObj) : el.fireEvent("onkeydown", eventObj);
 }
-
-function convertEmoji() {
-	var emoticon = document.querySelectorAll(ALL_EMOJI);
-	[].forEach.call(emoticon, function(e) {
-		e.classList.toString().split(" ").forEach(function(c) {
-			if (EMOJI_TABLE[c]) {
-				e.parentNode.replaceChild(document.createTextNode(EMOJI_TABLE[c]), e);
-			}
-		});
-	});
-}
-
-var EMOJI_TABLE = {
-	"emoticon_smile": "😊",
-	"emoticon_frown": "😞",
-	"emoticon_tongue": "😛",
-	"emoticon_grin": "😀",
-	"emoticon_gasp": "😦",
-	"emoticon_wink": "😉",
-	"emoticon_pacman": ":v",
-	"emoticon_grumpy": "😠",
-	"emoticon_unsure": "😕",
-	"emoticon_cry": "😢",
-	"emoticon_kiki": "😊",
-	"emoticon_glasses": "8)",
-	"emoticon_sunglasses": "😎",
-	"emoticon_heart": "❤️",
-	"emoticon_devil": "😈",
-	"emoticon_angel": "😇",
-	"emoticon_squint": "😑",
-	"emoticon_confused": "😕",
-	"emoticon_confused_rev": "😕",
-	"emoticon_upset": "😠",
-	"emoticon_colonthree": ":3",
-	"emoticon_like": "👍",
-	"emoticon_kiss": "😘",
-	"emoticon_shark": "(^^^)",
-	"emoticon_robot": "🤖",
-	"emoticon_penguin": "🐧",
-	"emoticon_poop": "💩",
-	"emoticon_putnam": ":putnam:",
-	"_1q3y": "😊",
-	"_2c0": "🌂",
-	"_2c1": "🌊",
-	"_2c2": "🌙",
-	"_2c3": "🌟",
-	"_2c4": "🌱",
-	"_2c5": "🌴",
-	"_2c6": "🌵",
-	"_2c7": "🌷",
-	"_2c8": "🌸",
-	"_2c9": "🌹",
-	"_2ca": "🌺",
-	"_2cb": "🌻",
-	"_2cc": "🌾",
-	"_2cd": "🍀",
-	"_2ce": "🍁",
-	"_2cf": "🍂",
-	"_2cg": "🍃",
-	"_2ch": "🍊",
-	"_2ci": "🍎",
-	"_2cj": "🍓",
-	"_2ck": "🍔",
-	"_2cl": "🍸",
-	"_2cm": "🍺",
-	"_2cn": "🎁",
-	"_2co": "🎃",
-	"_2cp": "🎄",
-	"_2cq": "🎅",
-	"_2cr": "🎈",
-	"_2cs": "🎉",
-	"_2ct": "🎍",
-	"_2cu": "🎎",
-	"_2cv": "🎏",
-	"_2cw": "🎐",
-	"_2cx": "🎓",
-	"_2cy": "🎵",
-	"_2cz": "🎶",
-	"_2c-": "🎼",
-	"_2c_": "🐍",
-	"_2d0": "🐎",
-	"_2d1": "🐑",
-	"_2d2": "🐒",
-	"_2d3": "🐔",
-	"_2d4": "🐗",
-	"_2d5": "🐘",
-	"_2d6": "🐙",
-	"_2d7": "🐚",
-	"_2d8": "🐛",
-	"_2d9": "🐟",
-	"_2da": "🐠",
-	"_2db": "🐡",
-	"_2dc": "🐥",
-	"_2dd": "🐦",
-	"_2de": "🐧",
-	"_2df": "🐨",
-	"_2dg": "🐩",
-	"_2dh": "🐫",
-	"_2di": "🐬",
-	"_2dj": "🐭",
-	"_2dk": "🐮",
-	"_2dl": "🐯",
-	"_2dm": "🐰",
-	"_2dn": "🐱",
-	"_2do": "🐳",
-	"_2dp": "🐴",
-	"_2dq": "🐵",
-	"_2dr": "🐷",
-	"_2ds": "🐸",
-	"_2dt": "🐹",
-	"_2du": "🐺",
-	"_2dv": "🐻",
-	"_2dw": "🐾",
-	"_2dx": "👀",
-	"_2dy": "👂",
-	"_2dz": "👃",
-	"_2d-": "👄",
-	"_2d_": "👅",
-	"_2e0": "👆",
-	"_2e1": "👇",
-	"_2e2": "👈",
-	"_2e3": "👉",
-	"_2e4": "👊",
-	"_2e5": "👋",
-	"_2e6": "👌",
-	"_2e7": "👍",
-	"_2e8": "👎",
-	"_2e9": "👏",
-	"_2ea": "👐",
-	"_2eb": "👦",
-	"_2ec": "👧",
-	"_2ed": "👨",
-	"_2ee": "👩",
-	"_2ef": "👫",
-	"_2eg": "👮",
-	"_2eh": "👯",
-	"_2ei": "👱",
-	"_2ej": "👲",
-	"_2ek": "👳",
-	"_2el": "👴",
-	"_2em": "👵",
-	"_2en": "👶",
-	"_2eo": "👷",
-	"_2ep": "👸",
-	"_2eq": "👻",
-	"_2er": "👼",
-	"_2es": "👽",
-	"_2et": "👾",
-	"_2eu": "👿",
-	"_2ev": "💀",
-	"_2ew": "💂",
-	"_2ex": "💃",
-	"_2ey": "💅",
-	"_2ez": "💋",
-	"_2e-": "💏",
-	"_2e_": "💐",
-	"_2f0": "💑",
-	"_2f1": "💓",
-	"_2f2": "💔",
-	"_2f3": "💖",
-	"_2f4": "💗",
-	"_2f5": "💘",
-	"_2f6": "💙",
-	"_2f7": "💚",
-	"_2f8": "💛",
-	"_2f9": "💜",
-	"_2fa": "💝",
-	"_2fb": "💢",
-	"_2fc": "💤",
-	"_2fd": "💦",
-	"_2fe": "💨",
-	"_2ff": "💩",
-	"_2fg": "💪",
-	"_2fh": "💻",
-	"_2fi": "💽",
-	"_2fj": "💾",
-	"_2fk": "💿",
-	"_2fl": "📀",
-	"_2fm": "📞",
-	"_2fn": "📠",
-	"_2fo": "📱",
-	"_2fp": "📲",
-	"_2fq": "📺",
-	"_2fr": "🔔",
-	"_2fs": "😁",
-	"_2ft": "😂",
-	"_2fu": "😃",
-	"_2fv": "😄",
-	"_2fw": "😆",
-	"_2fx": "😉",
-	"_2fy": "😋",
-	"_2fz": "😌",
-	"_2f-": "😍",
-	"_2f_": "😏",
-	"_2g0": "😒",
-	"_2g1": "😓",
-	"_2g2": "😔",
-	"_2g3": "😖",
-	"_2g4": "😘",
-	"_2g5": "😚",
-	"_2g6": "😜",
-	"_2g7": "😝",
-	"_2g8": "😞",
-	"_2g9": "😠",
-	"_2ga": "😡",
-	"_2gb": "😢",
-	"_2gc": "😣",
-	"_2gd": "😤",
-	"_2ge": "😥",
-	"_2gf": "😨",
-	"_2gg": "😩",
-	"_2gh": "😪",
-	"_2gi": "😫",
-	"_2gj": "😭",
-	"_2gk": "😰",
-	"_2gl": "😱",
-	"_2gm": "😲",
-	"_2gn": "😳",
-	"_2go": "😵",
-	"_2gp": "😷",
-	"_2gq": "😸",
-	"_2gr": "😹",
-	"_2gs": "😺",
-	"_2gt": "😻",
-	"_2gu": "😼",
-	"_2gv": "😽",
-	"_2gw": "😿",
-	"_2gx": "🙀",
-	"_2gy": "🙋",
-	"_2gz": "🙌",
-	"_2g-": "🙍",
-	"_2g_": "🙏",
-	"_2h0": "☝️",
-	"_2h1": "☺️",
-	"_2h2": "⚡️",
-	"_2h3": "⛄",
-	"_2h4": "✊",
-	"_2h5": "✋",
-	"_2h6": "✌️",
-	"_2h7": "☀️",
-	"_2h8": "☁️",
-	"_2h9": "☔️",
-	"_2ha": "☕️",
-	"_2hb": "✨",
-	"_2hc": "❤️"
-};
