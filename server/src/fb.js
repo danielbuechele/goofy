@@ -200,7 +200,7 @@ function dockCount() {
 				    pictureUrl = document.querySelector(UNREAD_MESSAGE_ROW).querySelector(UNREAD_MESSAGE_PICTURE);
 				pictureUrl = pictureUrl ? pictureUrl.getAttribute('src') : "";
 
-				if (ignoreNotification || document.querySelectorAll(ID(id).parentElement.classList.contains(MUTED)) {
+				if (ignoreNotification || document.querySelector(ID(id)).parentElement.classList.contains(MUTED)) {
 					ignoreNotification = false;
 				} else {
 					window.webkit.messageHandlers.notification.postMessage({type: 'NOTIFICATION', title: subtitle, text: text, id: id, pictureUrl: pictureUrl});
