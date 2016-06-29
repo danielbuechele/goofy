@@ -193,7 +193,10 @@ function dockCount() {
 					a.textContent = "";
 				});
 
-				document.querySelector(UNREAD_MESSAGE_TEXT + ' ' + EMOTICONS).textContent = findSurrogatePair(parseInt(document.querySelector(UNREAD_MESSAGE_TEXT + ' ' + EMOTICONS).getAttribute('src').split('/').reverse()[0].split('.')[0], 16)).map(function(a) {return String.fromCharCode(parseInt(a,16));}).join('');
+				var emojiMessage = document.querySelector(UNREAD_MESSAGE_TEXT + ' ' + EMOTICONS);
+				if (emojiMessage) {
+					emojiMessage.textContent = findSurrogatePair(parseInt(document.querySelector(UNREAD_MESSAGE_TEXT + ' ' + EMOTICONS).getAttribute('src').split('/').reverse()[0].split('.')[0], 16)).map(function(a) {return String.fromCharCode(parseInt(a,16));}).join('');
+				}
 				text = document.querySelector(UNREAD_MESSAGE_TEXT).textContent;
 
 				var id = document.querySelector(UNREAD_MESSAGE_ROW).getAttribute('id'),
