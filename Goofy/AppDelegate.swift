@@ -172,8 +172,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     func initWindow(window: NSWindow) {
         window.backgroundColor = NSColor.whiteColor()
         window.minSize = NSSize(width: 380,height: 376)
-        window.makeMainWindow()
-        window.makeKeyWindow()
         window.titlebarAppearsTransparent = true
         window.titleVisibility = .Hidden
         window.delegate = self
