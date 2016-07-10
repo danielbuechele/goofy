@@ -27,7 +27,7 @@ class TitleLabel: NSViewController {
         activeLabel?.selectable = false
         activeLabel?.drawsBackground = false
         activeLabel?.alignment = .Center
-        activeLabel?.font = NSFont(name: "HelveticaNeue", size: 10.0)
+        activeLabel?.font = NSFont.systemFontOfSize(10.0)
         self.view.addSubview(activeLabel!)
         
         titleLabel = NSTextField(frame: CGRectMake(40, 0, self.view.frame.width, 36))
@@ -38,7 +38,7 @@ class TitleLabel: NSViewController {
         titleLabel?.drawsBackground = false
         titleLabel?.alignment = .Center
         titleLabel?.textColor = NSColor.blackColor()
-        titleLabel?.font = NSFont(name: "HelveticaNeue", size: 14.0)
+        titleLabel?.font = NSFont.systemFontOfSize(14.0)
         self.view.addSubview(titleLabel!)
         
         

@@ -2,6 +2,11 @@ html {
     overflow: hidden;
 }
 
+body, button, input, label, select, td, textarea {
+    font-family: system, -apple-system, BlinkMacSystemFont,
+                 "Helvetica Neue", "Lucida Grande" !important;
+}
+
 /* weird display of input bar above messages, fixes #148*/
 ._4_j4 {
     display: block;
