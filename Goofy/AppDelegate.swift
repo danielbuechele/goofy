@@ -93,6 +93,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
             showMenuBar()
         }
     }
+    
+    func webView(webView: WKWebView,
+                 createWebViewWithConfiguration configuration: WKWebViewConfiguration,
+                                                forNavigationAction navigationAction: WKNavigationAction,
+                                                                    windowFeatures: WKWindowFeatures) -> WKWebView? {
+        // Handle video playback and links opened in a new window.
+        if navigationAction.targetFrame == nil {
+            var url = navigationAction.request.URL!
+            if url.description.lowercaseString.rangeOfString("http://") != nil || url.description.lowercaseString.rangeOfString("https://") != nil || url.description.lowercaseString.rangeOfString("mailto:") != nil  {
+
+                NSWorkspace.sharedWorkspace().openURL(url)
+            }
+        }
+        return nil
+    }
 
     func webView(webView: WKWebView, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: ((WKNavigationActionPolicy) -> Void)) {
         
