@@ -1,7 +1,7 @@
 // Facebook selectors
 var SETTINGS_BUTTON = '._30yy._2fug._p',
     NEW_MESSAGE_BUTTON = '._36ic._5l-3 > a._30yy',
-    INFORMATION_BUTTON = '._fl3._30yy';
+    INFORMATION_BUTTON = '[data-testid="info_panel_button"]';
 
 var UPLOAD_BUTTON = '._m._4q60._3rzn._6a',
     UPLOAD_FORM = '._4rv4 form';
