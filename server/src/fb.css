@@ -66,3 +66,8 @@ body, button, input, label, select, td, textarea {
 ._s15 {
     display: none;
 }
+
+/* fixing typing indicator width */
+._4a0v._4a0x {
+    min-width: 28px;
+}
