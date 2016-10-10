@@ -218,6 +218,8 @@ function dockCount() {
 }
 
 function findSurrogatePair(point) {
+	// map facebook thumb up to regular thumb up
+	if (point===983040) point=128077;
 	// assumes point > 0xffff
 	var offset = point - 0x10000,
 		lead = 0xd800 + (offset >> 10),
