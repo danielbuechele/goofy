@@ -28,10 +28,23 @@ body, button, input, label, select, td, textarea {
     min-width: 280px;
 }
 
+@media all and (max-width: 800px) {
+    ._1ht5 ._1qt4, .safari.webkit ._1ht5 ._1qt4, .ie10 ._1ht5 ._1qt4 {
+        display: -webkit-box;
+    }
+    ._3rh8 {
+        display: block;
+    }
+}
+
 @media all and (max-width: 640px) {
     ._1enh {
         min-width: 74px;
         max-width: 74px;
+    }
+
+    ._3rh8, ._1ht5 ._1qt4, .safari.webkit ._1ht5 ._1qt4, .ie10 ._1ht5 ._1qt4 {
+        display: none;
     }
 }
 
