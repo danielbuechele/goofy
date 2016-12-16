@@ -67,7 +67,7 @@ class MenuHandler: NSObject {
         image.lockFocus();
         let bitmapRep = NSBitmapImageRep(focusedViewRect: NSMakeRect(0, 0, image.size.width, image.size.height));
         image.unlockFocus();
-        let imageData = bitmapRep?.representationUsingType(NSBitmapImageFileType.NSPNGFileType, properties: [:]);
+        let imageData = bitmapRep?.representationUsingType(NSBitmapImageFileType.PNG, properties: [:]);
         let base64String = imageData?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed);
         //println(base64String!)
         appDelegate.webView.evaluateJavaScript("pasteImage('\(base64String!)')", completionHandler: nil);
@@ -89,12 +89,12 @@ class MenuHandler: NSObject {
     
     @IBAction func gotoConversation(sender: AnyObject) {
         let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
-        appDelegate.webView.evaluateJavaScript("gotoConversation("+String(sender.tag())+")", completionHandler: nil);
+        appDelegate.webView.evaluateJavaScript("gotoConversation("+String(sender.tag)+")", completionHandler: nil);
     }
     
     @IBAction func gotoConversationAtIndex(sender: AnyObject) {
         let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
-        appDelegate.webView.evaluateJavaScript("gotoConversationAtIndex("+String(sender.tag())+")", completionHandler: nil);
+        appDelegate.webView.evaluateJavaScript("gotoConversationAtIndex("+String(sender.tag)+")", completionHandler: nil);
     }
 
     @IBAction func plus(sender: AnyObject) {

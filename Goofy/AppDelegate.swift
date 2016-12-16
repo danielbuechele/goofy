@@ -89,7 +89,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
 
     func webView(webView: WKWebView, didFinishNavigation navigation: WKNavigation!) {
         NSTimer.scheduledTimerWithTimeInterval(0.4, target: self, selector: Selector("endLoading"), userInfo: nil, repeats: false)
-        if webView.URL!.absoluteString.rangeOfString("messenger.com/login") == nil{
+        if webView.URL!.absoluteString!.rangeOfString("messenger.com/login") == nil{
             showMenuBar()
         }
     }
@@ -128,8 +128,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
                         do {
                             // Generate a NSRegularExpression to match our url, extracting the value of u= into it own regex group.
                             let regex = try NSRegularExpression(pattern: "(https://l.messenger.com/l.php\\?u=)(.+)(&h=.+)", options: [])
-                            let nsString = url.absoluteString as NSString
-                            let results = regex.firstMatchInString(url.absoluteString, options: [], range: NSMakeRange(0, nsString.length))
+                            let nsString = url.absoluteString! as NSString
+                            let results = regex.firstMatchInString(url.absoluteString!, options: [], range: NSMakeRange(0, nsString.length))
 
                             // Take the result, pull it out of our string, and decode the url string
                             let referenceString = nsString.substringWithRange(results!.rangeAtIndex(2)).stringByRemovingPercentEncoding!
