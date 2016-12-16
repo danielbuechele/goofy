@@ -22,6 +22,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     @IBOutlet var longLoading : NSTextField!
     @IBOutlet var reactivationMenuItem : NSMenuItem!
     @IBOutlet var statusItemMenuItem : NSMenuItem!
+    @IBOutlet weak var statusMenu: NSMenu!
     @IBOutlet var toolbarTrenner : NSToolbarItem!
     @IBOutlet var toolbarSpacing : NSToolbarItem!
     @IBOutlet var toolbar : NSToolbar!
@@ -315,21 +316,47 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
 
     func statusBarItemClicked() {
         webView.evaluateJavaScript("reactivation()", completionHandler: nil);
-        reopenWindow(self)
-        NSApp.activateIgnoringOtherApps(true)
+        
+        let currentEvent    = NSApp.currentEvent!
+        let isRightClicked  = (currentEvent.type == NSEventType.RightMouseUp) ? true : false
+        
+        if isRightClicked {
+            // Set up the statusMenu and show it.
+            statusItem.menu = statusMenu
+            statusItem.popUpStatusItemMenu(statusMenu)
+            statusItem.menu = nil
+        } else {
+            // A left click on the statusItem shows/hides the window
+            if !window.visible {
+                reopenWindow(self)
+                NSApp.activateIgnoringOtherApps(true)
+            } else {
+                window.setIsVisible(false)
+            }
+        }
     }
 
     func addStatusItem() {
         statusItem = NSStatusBar.systemStatusBar().statusItemWithLength(NSSquareStatusItemLength)
-
+        
+        
         if let button = statusItem.button {
 			changeStatusItemImage("StatusItem")
-            button.action = Selector("statusItemClicked:")
+            NSApp.setActivationPolicy(.Accessory) // Hide dock icon and menu bar
+            button.action = #selector(self.statusBarItemClicked)
+            button.sendActionOn([.LeftMouseUp, .RightMouseUp])
         }
     }
 
     func hideStatusItem() {
     	NSStatusBar.systemStatusBar().removeStatusItem(statusItem)
+        NSApp.setActivationPolicy(.Regular)
+        
+        if !window.visible {
+            reopenWindow(self)
+            NSApp.activateIgnoringOtherApps(true)
+            // Or could be just use to not show the window window.makeKeyWindow()
+        }
     }
 
     func changeStatusItemImage(newImage: String) {
@@ -367,6 +394,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     }
 
     @IBAction func toggleStatusItem(sender: AnyObject) {
+        
 		toggleStatusItemConfiguration()
         updateStatusItemVisibility()
     }

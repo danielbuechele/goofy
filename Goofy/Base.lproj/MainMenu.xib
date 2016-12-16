@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="15G1212" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9059"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -19,6 +20,7 @@
                 <outlet property="reactivationMenuItem" destination="tfP-aR-ouj" id="9qa-nu-U5w"/>
                 <outlet property="spinner" destination="Ac9-Ec-QfU" id="Z2D-Bs-P2j"/>
                 <outlet property="statusItemMenuItem" destination="eD5-qA-K11" id="8DY-O0-XgN"/>
+                <outlet property="statusMenu" destination="6sD-u2-FPi" id="FQL-b9-y2L"/>
                 <outlet property="titleLabel" destination="qLh-Hp-pnN" id="rR6-GM-Yi6"/>
                 <outlet property="toolbar" destination="hOM-Z7-ghb" id="kf3-qD-9Te"/>
                 <outlet property="toolbarSpacing" destination="TTq-Gl-gs8" id="rbg-uh-QPQ"/>
@@ -433,23 +435,20 @@
             <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="706" height="467"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="777"/>
             <view key="contentView" wantsLayer="YES" id="5iU-zi-Msx">
                 <rect key="frame" x="0.0" y="0.0" width="706" height="467"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="TeE-NN-cFD">
                         <rect key="frame" x="0.0" y="0.0" width="706" height="467"/>
-                        <animations/>
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" image="loading" id="JXy-9i-qU0"/>
                     </imageView>
                     <progressIndicator horizontalHuggingPriority="750" verticalHuggingPriority="750" alphaValue="0.5" maxValue="100" bezeled="NO" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="Ac9-Ec-QfU">
                         <rect key="frame" x="337" y="35" width="32" height="32"/>
-                        <animations/>
                     </progressIndicator>
                     <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8q9-2T-qDe">
                         <rect key="frame" x="18" y="10" width="670" height="17"/>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="It is taking unusually long to load the application. Try hitting ⌘+R..." id="Sl8-4D-drH">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
@@ -468,7 +467,6 @@
                     <constraint firstAttribute="trailing" secondItem="8q9-2T-qDe" secondAttribute="trailing" constant="20" id="Mpt-7x-6Ex"/>
                     <constraint firstItem="8q9-2T-qDe" firstAttribute="leading" secondItem="5iU-zi-Msx" secondAttribute="leading" constant="20" id="vTh-oR-lb8"/>
                 </constraints>
-                <animations/>
             </view>
             <toolbar key="toolbar" implicitIdentifier="44C7AFD1-E665-486E-99F2-1FAA1BC84FB1" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="regular" id="hOM-Z7-ghb">
                 <allowedToolbarItems>
@@ -494,7 +492,6 @@
                         <imageView key="view" hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="i1V-4R-UDb">
                             <rect key="frame" x="0.0" y="14" width="48" height="48"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <animations/>
                             <imageCell key="cell" enabled="NO" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="Oug-5w-R08"/>
                         </imageView>
                     </toolbarItem>
@@ -505,7 +502,6 @@
                         <imageView key="view" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="E8B-GL-IND">
                             <rect key="frame" x="0.0" y="14" width="48" height="48"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <animations/>
                             <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="Epm-8O-ecp"/>
                         </imageView>
                     </toolbarItem>
@@ -516,7 +512,6 @@
                         <customView key="view" id="K2v-PI-Lwx">
                             <rect key="frame" x="0.0" y="14" width="163" height="36"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <animations/>
                         </customView>
                     </toolbarItem>
                 </allowedToolbarItems>
@@ -530,6 +525,23 @@
             </toolbar>
             <point key="canvasLocation" x="548" y="515.5"/>
         </window>
+        <menu id="6sD-u2-FPi">
+            <items>
+                <menuItem title="Toggle Menubar Icon" id="sh8-aO-ss5">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="toggleStatusItem:" target="Voe-Tx-rLC" id="vfT-C1-FWD"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Quit Goofy" id="WLN-KV-h7d">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="terminate:" target="-1" id="DYx-6T-idD"/>
+                    </connections>
+                </menuItem>
+            </items>
+            <point key="canvasLocation" x="400" y="88"/>
+        </menu>
     </objects>
     <resources>
         <image name="Info" width="32" height="32"/>
