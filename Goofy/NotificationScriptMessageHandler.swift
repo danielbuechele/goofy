@@ -119,7 +119,7 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
         clipPath.addClip()
         
         let rect = NSRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
-        image.drawAtPoint(NSZeroPoint, fromRect: rect, operation: NSCompositingOperation.CompositeSourceOver, fraction: 1)
+        image.drawAtPoint(NSZeroPoint, fromRect: rect, operation: NSCompositingOperation.SourceOver, fraction: 1)
         roundedImage.unlockFocus()
         
         return roundedImage
