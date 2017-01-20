@@ -121,7 +121,6 @@ function init() {
 }
 
 function uploadInfo() {
-  console.log('CHOOSE IMAGE CLICKED');
 	window.webkit.messageHandlers.notification.postMessage({type: 'CHOOSE_IMAGE'});
 }
 
