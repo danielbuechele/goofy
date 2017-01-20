@@ -71,7 +71,7 @@ function init() {
 		dockCount();
 
 		var uploadButton = document.querySelector(UPLOAD_BUTTON);
-		if (uploadButton && uploadButton.onclick==null) {
+		if (uploadButton) {
 			uploadButton.onclick = function(e) {
 				e.preventDefault();
 				e.stopPropagation();
@@ -111,18 +111,28 @@ function init() {
 		}
 	};
 
-	document.querySelector(TITLE_BAR).addEventListener("DOMSubtreeModified", function() {
-		updateTitle();
-	});
+  var titleBar = document.querySelector(TITLE_BAR);
+
+  if (titleBar) {
+    titleBar.addEventListener("DOMSubtreeModified", function() {
+  		updateTitle();
+  	});
+  }
 }
 
 function uploadInfo() {
+  console.log('CHOOSE IMAGE CLICKED');
 	window.webkit.messageHandlers.notification.postMessage({type: 'CHOOSE_IMAGE'});
 }
 
 function updateTitle() {
 	var a = document.querySelector(LAST_ACTIVE) ? document.querySelector(LAST_ACTIVE).textContent : "";
-	window.webkit.messageHandlers.notification.postMessage({type: 'SET_TITLE', title: document.querySelector(CURRENT_CONVERSATION_NAME).textContent, activity: a});
+
+  var currentConversationName = document.querySelector(CURRENT_CONVERSATION_NAME);
+
+  if (!currentConversationName) return;
+
+	window.webkit.messageHandlers.notification.postMessage({type: 'SET_TITLE', title: currentConversationName.textContent, activity: a});
 }
 
 function newConversation() {
