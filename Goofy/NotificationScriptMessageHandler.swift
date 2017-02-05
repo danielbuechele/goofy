@@ -13,10 +13,12 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
 
     // MARK: - ContentController message handler
 
-    func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         
-        let type = message.body["type"] as! NSString
-        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate;
+        
+        let bodyValue = message.body as? NSDictionary
+        let type = bodyValue?["type"] as! String
+        let appDelegate = NSApplication.shared().delegate as! AppDelegate;
         
         switch type {
             case "NOT_LOGGED_IN":
@@ -24,23 +26,23 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
                 //appDelegate.notLoggedIn()
                 break
             case "LOADED":
-                appDelegate.loadingView?.hidden = true
+                appDelegate.loadingView?.isHidden = true
                 break
             case "NOTIFICATION":
-                let pictureUrl = NSURL(string: message.body["pictureUrl"] as! String)
-                displayNotification(message.body["title"] as! NSString, text: message.body["text"] as! NSString, id: message.body["id"] as! NSString, picture: NSImage(contentsOfURL: pictureUrl!))
+                let pictureUrl = URL(string: bodyValue?["pictureUrl"] as! String)
+                displayNotification(bodyValue?["title"] as! NSString, text: bodyValue?["text"] as! NSString, id: bodyValue?["id"] as! NSString, picture: NSImage(contentsOf: pictureUrl!))
                 break
             case "DOCK_COUNT":
-                dockCount(message.body["content"] as! String)
+                dockCount(bodyValue?["content"] as! String)
                 break
             case "SHOW_IMAGE":
-                appDelegate.quicklookMediaURL = NSURL(string: (message.body["url"] as! String))
+                appDelegate.quicklookMediaURL = URL(string: (bodyValue?["url"] as! String))
                 break
             case "CHOOSE_IMAGE":
                 appDelegate.menuHandler.sendImage(nil)
                 break
             case "SET_TITLE":
-                appDelegate.titleLabel.setTitle(message.body["title"] as! String, active: message.body["activity"] as! String)
+                appDelegate.titleLabel.setTitle(bodyValue?["title"] as! String, active: bodyValue?["activity"] as! String)
                 break
             case "LOG":
                 print(message.body)
@@ -52,14 +54,14 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
     
     // MARK: - Dock Badge counter, Status Item state
 
-    func dockCount(count: String) {
-        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate;
+    func dockCount(_ count: String) {
+        let appDelegate = NSApplication.shared().delegate as! AppDelegate;
 
         if (count == "0") {
-            NSApplication.sharedApplication().dockTile.badgeLabel = ""
+            NSApplication.shared().dockTile.badgeLabel = ""
             appDelegate.changeStatusItemImage("StatusItem")
         } else {
-            NSApplication.sharedApplication().dockTile.badgeLabel = count
+            NSApplication.shared().dockTile.badgeLabel = count
             appDelegate.changeStatusItemImage("StatusItemUnread")
         }
     }
@@ -67,28 +69,28 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
 
     // MARK: - OSX Notifications
 
-    func displayNotification(title: NSString, text: NSString, id: NSString, picture: NSImage?) {
+    func displayNotification(_ title: NSString, text: NSString, id: NSString, picture: NSImage?) {
         let notification:NSUserNotification = NSUserNotification()
         notification.title = title as String
         notification.informativeText = text as String
         if let contentImage = picture {
             notification.contentImage = roundCorners(contentImage)
         }
-        notification.deliveryDate = NSDate()
+        notification.deliveryDate = Date()
         notification.responsePlaceholder = "Reply"
         notification.hasReplyButton = true
         notification.userInfo = ["id":id]
 
-        let notificationcenter:NSUserNotificationCenter = NSUserNotificationCenter.defaultUserNotificationCenter()
+        let notificationcenter:NSUserNotificationCenter = NSUserNotificationCenter.default
         notificationcenter.delegate = self
         notificationcenter.scheduleNotification(notification)
     }
 
-    func userNotificationCenter(center: NSUserNotificationCenter, didActivateNotification notification: NSUserNotification) {
-        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate;
+    func userNotificationCenter(_ center: NSUserNotificationCenter, didActivate notification: NSUserNotification) {
+        let appDelegate = NSApplication.shared().delegate as! AppDelegate;
         let id = notification.userInfo!["id"] as! String
-        if (notification.activationType == NSUserNotificationActivationType.Replied){
-            let userResponse = notification.response?.string.stringByReplacingOccurrencesOfString("\n", withString: "\\n");
+        if (notification.activationType == NSUserNotification.ActivationType.replied){
+            let userResponse = notification.response?.string.replacingOccurrences(of: "\n", with: "\\n");
             appDelegate.webView.evaluateJavaScript("replyToNotification('" + id + "','" + userResponse! + "')", completionHandler: nil);
         } else {
             appDelegate.webView.evaluateJavaScript("reactivation('" + id + "')", completionHandler: nil);
@@ -98,7 +100,7 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
 
     // MARK: - Image Processing
     
-    func roundCorners(image: NSImage) -> NSImage {
+    func roundCorners(_ image: NSImage) -> NSImage {
         
         let existingImage = image
         let imageSize = existingImage.size
@@ -110,16 +112,16 @@ class NotificationScriptMessageHandler: NSObject, WKScriptMessageHandler, NSUser
         let roundedImage = NSImage(size: newSize)
         
         roundedImage.lockFocus()
-        let ctx = NSGraphicsContext.currentContext()
-        ctx?.imageInterpolation = NSImageInterpolation.High
+        let ctx = NSGraphicsContext.current()
+        ctx?.imageInterpolation = NSImageInterpolation.high
         
         let imageFrame = NSRect(x: 0, y: 0, width: width, height: height)
         let clipPath = NSBezierPath(roundedRect: imageFrame, xRadius: xRad, yRadius: yRad)
-        clipPath.windingRule = NSWindingRule.EvenOddWindingRule
+        clipPath.windingRule = NSWindingRule.evenOddWindingRule
         clipPath.addClip()
         
         let rect = NSRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
-        image.drawAtPoint(NSZeroPoint, fromRect: rect, operation: NSCompositingOperation.SourceOver, fraction: 1)
+        image.draw(at: NSZeroPoint, from: rect, operation: NSCompositingOperation.sourceOver, fraction: 1)
         roundedImage.unlockFocus()
         
         return roundedImage

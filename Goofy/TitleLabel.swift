@@ -20,25 +20,25 @@ class TitleLabel: NSViewController {
         super.viewDidLoad()
         // Do view setup here.
         
-        activeLabel = NSTextField(frame: CGRectMake(40, -18, self.view.frame.width, 36))
+        activeLabel = NSTextField(frame: CGRect(x: 40, y: -18, width: self.view.frame.width, height: 36))
         activeLabel?.stringValue = ""
-        activeLabel?.editable = false
-        activeLabel?.bezeled = false
-        activeLabel?.selectable = false
+        activeLabel?.isEditable = false
+        activeLabel?.isBezeled = false
+        activeLabel?.isSelectable = false
         activeLabel?.drawsBackground = false
-        activeLabel?.alignment = .Center
-        activeLabel?.font = NSFont.systemFontOfSize(10.0)
+        activeLabel?.alignment = .center
+        activeLabel?.font = NSFont.systemFont(ofSize: 10.0)
         self.view.addSubview(activeLabel!)
         
-        titleLabel = NSTextField(frame: CGRectMake(40, 0, self.view.frame.width, 36))
+        titleLabel = NSTextField(frame: CGRect(x: 40, y: 0, width: self.view.frame.width, height: 36))
         titleLabel?.stringValue = ""
-        titleLabel?.editable = false
-        titleLabel?.bezeled = false
-        titleLabel?.selectable = false
+        titleLabel?.isEditable = false
+        titleLabel?.isBezeled = false
+        titleLabel?.isSelectable = false
         titleLabel?.drawsBackground = false
-        titleLabel?.alignment = .Center
-        titleLabel?.textColor = NSColor.blackColor()
-        titleLabel?.font = NSFont.systemFontOfSize(14.0)
+        titleLabel?.alignment = .center
+        titleLabel?.textColor = NSColor.black
+        titleLabel?.font = NSFont.systemFont(ofSize: 14.0)
         self.view.addSubview(titleLabel!)
         
         
@@ -48,7 +48,7 @@ class TitleLabel: NSViewController {
     
     // MARK: - Title
     
-    func setTitle(title: String, active: String) {
+    func setTitle(_ title: String, active: String) {
         
         var rect :CGRect? = titleLabel?.frame
         var y :CGFloat = 0.0
@@ -68,7 +68,7 @@ class TitleLabel: NSViewController {
     func windowDidResize() {
         
         var toolbarItem : NSToolbarItem!
-        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate;
+        let appDelegate = NSApplication.shared().delegate as! AppDelegate;
         for item in appDelegate.toolbar.items {
             let i = item 
             if i.view == self.view {

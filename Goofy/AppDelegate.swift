@@ -33,7 +33,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
 
     // MARK: Properties
 
-    var timer : NSTimer!
+    var timer : Timer!
     var activatedFromBackground = false
     var isFullscreen = false
 
@@ -44,7 +44,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
 
     // MARK: - NSApplication
     
-    func applicationDidFinishLaunching(aNotification: NSNotification) {
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
         
 		// Init Window
         initWindow(window)
@@ -55,16 +55,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
 
 		// Create Webview
         webView = createWebview(createContentController())
-        view.addSubview(webView, positioned: NSWindowOrderingMode.Below, relativeTo: view);
+        view.addSubview(webView, positioned: NSWindowOrderingMode.below, relativeTo: view);
 
 		// Load URL
         let url : String = "https://messenger.com/login"
-        let req = NSMutableURLRequest(URL: NSURL(string: url)!)
-        webView.loadRequest(req);
+        let req = NSMutableURLRequest(url: URL(string: url)!)
+        webView.load(req as URLRequest);
     }
 
-    func applicationDidBecomeActive(aNotification: NSNotification) {
-        NSApplication.sharedApplication().dockTile.badgeLabel = ""
+    func applicationDidBecomeActive(_ aNotification: Notification) {
+        NSApplication.shared().dockTile.badgeLabel = ""
         if (self.activatedFromBackground) {
             if (self.reactivationMenuItem.state == 1) {
                 webView.evaluateJavaScript("reactivation()", completionHandler: nil)
@@ -76,11 +76,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         reopenWindow(self)
     }
 
-    func applicationShouldOpenUntitledFile(sender: NSApplication) -> Bool {
+    func applicationShouldOpenUntitledFile(_ sender: NSApplication) -> Bool {
         return true
     }
 
-    func applicationOpenUntitledFile(sender: NSApplication) -> Bool {
+    func applicationOpenUntitledFile(_ sender: NSApplication) -> Bool {
         reopenWindow(self)
         return true
     }
@@ -88,37 +88,37 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
 
     // MARK: - WKWebView
 
-    func webView(webView: WKWebView, didFinishNavigation navigation: WKNavigation!) {
-        NSTimer.scheduledTimerWithTimeInterval(0.4, target: self, selector: Selector("endLoading"), userInfo: nil, repeats: false)
-        if webView.URL!.absoluteString!.rangeOfString("messenger.com/login") == nil{
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        Timer.scheduledTimer(timeInterval: 0.4, target: self, selector: #selector(AppDelegate.endLoading), userInfo: nil, repeats: false)
+        if webView.url!.absoluteString.range(of: "messenger.com/login") == nil{
             showMenuBar()
         }
     }
     
-    func webView(webView: WKWebView,
-                 createWebViewWithConfiguration configuration: WKWebViewConfiguration,
-                                                forNavigationAction navigationAction: WKNavigationAction,
+    func webView(_ webView: WKWebView,
+                 createWebViewWith configuration: WKWebViewConfiguration,
+                                                for navigationAction: WKNavigationAction,
                                                                     windowFeatures: WKWindowFeatures) -> WKWebView? {
         // Handle video playback and links opened in a new window.
         if navigationAction.targetFrame == nil {
-            var url = navigationAction.request.URL!
-            if url.description.lowercaseString.rangeOfString("http://") != nil || url.description.lowercaseString.rangeOfString("https://") != nil || url.description.lowercaseString.rangeOfString("mailto:") != nil  {
+            let url = navigationAction.request.url!
+            if url.description.lowercased().range(of: "http://") != nil || url.description.lowercased().range(of: "https://") != nil || url.description.lowercased().range(of: "mailto:") != nil  {
 
-                NSWorkspace.sharedWorkspace().openURL(url)
+                NSWorkspace.shared().open(url)
             }
         }
         return nil
     }
 
-    func webView(webView: WKWebView, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: ((WKNavigationActionPolicy) -> Void)) {
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: (@escaping (WKNavigationActionPolicy) -> Void)) {
         
-        if let url = navigationAction.request.URL {
+        if let url = navigationAction.request.url {
             if let host = url.host {
-                let inApp = host.hasSuffix("messenger.com") && !url.path!.hasPrefix("/l.php");
-                let isLogin = host.hasSuffix("facebook.com") && (url.path!.hasPrefix("/login") || url.path!.hasPrefix("/checkpoint"));
+                let inApp = host.hasSuffix("messenger.com") && !url.path.hasPrefix("/l.php");
+                let isLogin = host.hasSuffix("facebook.com") && (url.path.hasPrefix("/login") || url.path.hasPrefix("/checkpoint"));
                 
                 if inApp || isLogin {
-                    decisionHandler(.Allow)
+                    decisionHandler(.allow)
                 } else {
 
                     // Check if the host is l.messenger.com
@@ -129,41 +129,41 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
                         do {
                             // Generate a NSRegularExpression to match our url, extracting the value of u= into it own regex group.
                             let regex = try NSRegularExpression(pattern: "(https://l.messenger.com/l.php\\?u=)(.+)(&h=.+)", options: [])
-                            let nsString = url.absoluteString! as NSString
-                            let results = regex.firstMatchInString(url.absoluteString!, options: [], range: NSMakeRange(0, nsString.length))
+                            let nsString = url.absoluteString as NSString
+                            let results = regex.firstMatch(in: url.absoluteString, options: [], range: NSMakeRange(0, nsString.length))
 
                             // Take the result, pull it out of our string, and decode the url string
-                            let referenceString = nsString.substringWithRange(results!.rangeAtIndex(2)).stringByRemovingPercentEncoding!
+                            let referenceString = nsString.substring(with: results!.rangeAt(2)).removingPercentEncoding!
 
                             // Open it up as a normal url
-                            NSWorkspace.sharedWorkspace().openURL(NSURL(string: referenceString)!)
-                            decisionHandler(.Cancel)
+                            NSWorkspace.shared().open(URL(string: referenceString)!)
+                            decisionHandler(.cancel)
                         } catch {
-                            NSWorkspace.sharedWorkspace().openURL(url)
-                            decisionHandler(.Cancel)
+                            NSWorkspace.shared().open(url)
+                            decisionHandler(.cancel)
                         }
                     } else {
-                        NSWorkspace.sharedWorkspace().openURL(url)
-                        decisionHandler(.Cancel)
+                        NSWorkspace.shared().open(url)
+                        decisionHandler(.cancel)
                     }
                 }
             } else {
-                decisionHandler(.Cancel)
+                decisionHandler(.cancel)
             }
         } else {
-            decisionHandler(.Cancel)
+            decisionHandler(.cancel)
         }
     }
 
-    func createWebview(contentController: WKUserContentController) -> WKWebView {
+    func createWebview(_ contentController: WKUserContentController) -> WKWebView {
         let configuration = WKWebViewConfiguration()
         configuration.userContentController = contentController
 
         let wv = WKWebView(frame: self.view.bounds, configuration: configuration)
         wv.configuration.preferences.setValue(true, forKey: "developerExtrasEnabled")
         wv.navigationDelegate = self
-        wv.UIDelegate = self
-        wv.autoresizingMask = [NSAutoresizingMaskOptions.ViewWidthSizable, NSAutoresizingMaskOptions.ViewHeightSizable]
+        wv.uiDelegate = self
+        wv.autoresizingMask = [NSAutoresizingMaskOptions.viewWidthSizable, NSAutoresizingMaskOptions.viewHeightSizable]
 
         return wv
     }
@@ -171,42 +171,42 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
 
     // MARK: - NSWindow
 
-    func windowDidEnterFullScreen(notification: NSNotification) {
+    func windowDidEnterFullScreen(_ notification: Notification) {
         isFullscreen = true
         sizeWindow(window)
     }
     
-    func windowDidExitFullScreen(notification: NSNotification) {
+    func windowDidExitFullScreen(_ notification: Notification) {
         isFullscreen = false
         sizeWindow(window)
     }
 
-    func windowDidResize(notification: NSNotification) {
+    func windowDidResize(_ notification: Notification) {
         sizeWindow(notification.object as! NSWindow)
     }
 
-    func initWindow(window: NSWindow) {
-        window.backgroundColor = NSColor.whiteColor()
+    func initWindow(_ window: NSWindow) {
+        window.backgroundColor = NSColor.white
         window.minSize = NSSize(width: 380,height: 376)
         window.titlebarAppearsTransparent = true
-        window.titleVisibility = .Hidden
+        window.titleVisibility = .hidden
         window.delegate = self
 	}
 
-    func sizeWindow(window: NSWindow) {
+    func sizeWindow(_ window: NSWindow) {
 
         if window.frame.width > 640.0 && !self.isFullscreen {
             toolbarTrenner.minSize = NSSize(width: 1, height: 100)
             toolbarTrenner.maxSize = NSSize(width: 1, height: 100)
-            toolbarTrenner.view?.frame = CGRectMake(0, 0, 1, 100)
-            toolbarTrenner.view?.layer?.backgroundColor = NSColor(white: 0.9, alpha: 1.0).CGColor
+            toolbarTrenner.view?.frame = CGRect(x: 0, y: 0, width: 1, height: 100)
+            toolbarTrenner.view?.layer?.backgroundColor = NSColor(white: 0.9, alpha: 1.0).cgColor
 
 
             toolbarSpacing.minSize = NSSize(width: 157, height: 100)
             toolbarSpacing.maxSize = NSSize(width: 157, height: 100)
-            toolbarSpacing.view = NSView(frame: CGRectMake(0, 0, 157, 100))
+            toolbarSpacing.view = NSView(frame: CGRect(x: 0, y: 0, width: 157, height: 100))
         } else {
-            toolbarTrenner.view?.layer?.backgroundColor = NSColor(white: 1.0, alpha: 0.0).CGColor
+            toolbarTrenner.view?.layer?.backgroundColor = NSColor(white: 1.0, alpha: 0.0).cgColor
 
             toolbarSpacing.minSize = NSSize(width: 0, height: 100)
             toolbarSpacing.maxSize = NSSize(width: 0, height: 100)
@@ -221,7 +221,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     func showMenuBar() {
         for item in toolbar.items {
             let i = item 
-            i.view?.hidden = false
+            i.view?.isHidden = false
             i.image = NSImage(named: i.label)
         }
         sizeWindow(window)
@@ -230,7 +230,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     func hideMenuBar() {
         for item in toolbar.items {
             let i = item 
-            i.view?.hidden = true
+            i.view?.isHidden = true
             i.image = NSImage(named: "White")
         }
     }
@@ -243,32 +243,32 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         let userContentController = WKUserContentController()
 
         #if DEBUG
-            let path = NSBundle.mainBundle().objectForInfoDictionaryKey("PROJECT_DIR") as! String
-            let source = (try! String(contentsOfFile: path+"/server/dist/fb.js", encoding: NSUTF8StringEncoding))+"init();"
+            let path = Bundle.main.object(forInfoDictionaryKey: "PROJECT_DIR") as! String
+            let source = (try! String(contentsOfFile: path+"/server/dist/fb.js", encoding: String.Encoding.utf8))+"init();"
         #else
-            let version = NSBundle.mainBundle().infoDictionary!["CFBundleShortVersionString"] as! String
+            let version = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String
             var jsurl = "https://dani.taurus.uberspace.de/goofyapp/fb" + version + ".js"
-            if (NSBundle.mainBundle().objectForInfoDictionaryKey("GoofyJavaScriptURL") != nil) {
-                jsurl = NSBundle.mainBundle().objectForInfoDictionaryKey("GoofyJavaScriptURL") as! String
+            if (Bundle.main.object(forInfoDictionaryKey: "GoofyJavaScriptURL") != nil) {
+                jsurl = Bundle.main.object(forInfoDictionaryKey: "GoofyJavaScriptURL") as! String
             }
             let source = "function getScript(url,success){ var script = document.createElement('script'); script.src = url; var head = document.getElementsByTagName('head')[0], done=false; script.onload = script.onreadystatechange = function(){ if (!done && (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete')) { done=true; success(); script.onload = script.onreadystatechange = null; head.removeChild(script); } }; head.appendChild(script); }" +
                 "getScript('" + jsurl + "', function() {init();});"
         #endif
 
-        let reactivationToggle : Bool? = NSUserDefaults.standardUserDefaults().objectForKey("reactivationToggle") as? Bool
+        let reactivationToggle : Bool? = UserDefaults.standard.object(forKey: "reactivationToggle") as? Bool
         if (reactivationToggle != nil && reactivationToggle==true) {
             self.reactivationMenuItem.state = 1
         }
 
-        let userScript = WKUserScript(source: source, injectionTime: .AtDocumentEnd, forMainFrameOnly: true)
-        let reactDevTools = WKUserScript(source: "Object.defineProperty(window, '__REACT_DEVTOOLS_GLOBAL_HOOK__', {value: {_renderers: {},helpers: {},inject: function(renderer) {var id = Math.random().toString(16).slice(2);this._renderers[id] = renderer;this.emit('renderer', {id, renderer});},_listeners: {},sub: function(evt, fn) {this.on(evt, fn);return function () {this.off(evt, fn)};},on: function(evt, fn) {if (!this._listeners[evt]) {this._listeners[evt] = [];}this._listeners[evt].push(fn);},off: function(evt, fn) {if (!this._listeners[evt]) {return;}var ix = this._listeners[evt].indexOf(fn);if (ix !== -1) {this._listeners[evt].splice(ix, 1);}if (!this._listeners[evt].length) {this._listeners[evt] = null;}},emit: function(evt, data) {if (this._listeners[evt]) {this._listeners[evt].map(function fn() {fn(data)});}}}});", injectionTime: .AtDocumentStart, forMainFrameOnly: true)
+        let userScript = WKUserScript(source: source, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+        let reactDevTools = WKUserScript(source: "Object.defineProperty(window, '__REACT_DEVTOOLS_GLOBAL_HOOK__', {value: {_renderers: {},helpers: {},inject: function(renderer) {var id = Math.random().toString(16).slice(2);this._renderers[id] = renderer;this.emit('renderer', {id, renderer});},_listeners: {},sub: function(evt, fn) {this.on(evt, fn);return function () {this.off(evt, fn)};},on: function(evt, fn) {if (!this._listeners[evt]) {this._listeners[evt] = [];}this._listeners[evt].push(fn);},off: function(evt, fn) {if (!this._listeners[evt]) {return;}var ix = this._listeners[evt].indexOf(fn);if (ix !== -1) {this._listeners[evt].splice(ix, 1);}if (!this._listeners[evt].length) {this._listeners[evt] = null;}},emit: function(evt, data) {if (this._listeners[evt]) {this._listeners[evt].map(function fn() {fn(data)});}}}});", injectionTime: .atDocumentStart, forMainFrameOnly: true)
 
 
         userContentController.addUserScript(userScript)
         userContentController.addUserScript(reactDevTools)
 
         let handler = NotificationScriptMessageHandler()
-        userContentController.addScriptMessageHandler(handler, name: "notification")
+        userContentController.add(handler, name: "notification")
 
         return userContentController
     }
@@ -277,30 +277,30 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     // MARK: - Content Loading
     
     func startLoading() {
-        loadingView?.layer?.backgroundColor = NSColor.whiteColor().CGColor
+        loadingView?.layer?.backgroundColor = NSColor.white.cgColor
 
-        loadingView?.hidden = false
+        loadingView?.isHidden = false
         spinner.startAnimation(self)
-        spinner.hidden = false
-        longLoading.hidden = true
-        timer = NSTimer.scheduledTimerWithTimeInterval(10, target: self, selector: Selector("longLoadingMessage"), userInfo: nil, repeats: false)
+        spinner.isHidden = false
+        longLoading.isHidden = true
+        timer = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(AppDelegate.longLoadingMessage), userInfo: nil, repeats: false)
         
         hideMenuBar()
     }
 
     func endLoading() {
         timer.invalidate()
-        loadingView?.hidden = true
+        loadingView?.isHidden = true
         spinner.stopAnimation(self)
-        spinner.hidden = true
-        longLoading.hidden = true
+        spinner.isHidden = true
+        longLoading.isHidden = true
 
         sizeWindow(window)
     }
 
     func longLoadingMessage() {
-        if (loadingView?.hidden == false) {
-            longLoading.hidden = false
+        if (loadingView?.isHidden == false) {
+            longLoading.isHidden = false
         }
     }
 
@@ -308,7 +308,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     // MARK: - Dock Icon
 
     func changeDockIcon() {
-        NSApplication.sharedApplication().applicationIconImage = NSImage(named: "Image")
+        NSApplication.shared().applicationIconImage = NSImage(named: "Image")
     }
 
 
@@ -318,18 +318,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         webView.evaluateJavaScript("reactivation()", completionHandler: nil);
         
         let currentEvent    = NSApp.currentEvent!
-        let isRightClicked  = (currentEvent.type == NSEventType.RightMouseUp) ? true : false
+        let isRightClicked  = (currentEvent.type == NSEventType.rightMouseUp) ? true : false
         
         if isRightClicked {
             // Set up the statusMenu and show it.
             statusItem.menu = statusMenu
-            statusItem.popUpStatusItemMenu(statusMenu)
+            statusItem.popUpMenu(statusMenu)
             statusItem.menu = nil
         } else {
             // A left click on the statusItem shows/hides the window
-            if !window.visible {
+            if !window.isVisible {
                 reopenWindow(self)
-                NSApp.activateIgnoringOtherApps(true)
+                NSApp.activate(ignoringOtherApps: true)
             } else {
                 window.setIsVisible(false)
             }
@@ -337,63 +337,63 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
     }
 
     func addStatusItem() {
-        statusItem = NSStatusBar.systemStatusBar().statusItemWithLength(NSSquareStatusItemLength)
+        statusItem = NSStatusBar.system().statusItem(withLength: NSSquareStatusItemLength)
         
         
         if let button = statusItem.button {
 			changeStatusItemImage("StatusItem")
-            NSApp.setActivationPolicy(.Accessory) // Hide dock icon and menu bar
+            NSApp.setActivationPolicy(.accessory) // Hide dock icon and menu bar
             button.action = #selector(self.statusBarItemClicked)
-            button.sendActionOn([.LeftMouseUp, .RightMouseUp])
+            button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         }
     }
 
     func hideStatusItem() {
-    	NSStatusBar.systemStatusBar().removeStatusItem(statusItem)
-        NSApp.setActivationPolicy(.Regular)
+    	NSStatusBar.system().removeStatusItem(statusItem)
+        NSApp.setActivationPolicy(.regular)
         
-        if !window.visible {
+        if !window.isVisible {
             reopenWindow(self)
-            NSApp.activateIgnoringOtherApps(true)
+            NSApp.activate(ignoringOtherApps: true)
             // Or could be just use to not show the window window.makeKeyWindow()
         }
     }
 
-    func changeStatusItemImage(newImage: String) {
+    func changeStatusItemImage(_ newImage: String) {
         if let button = statusItem.button {
             let image = NSImage(named: newImage)
-            image!.template = true
+            image!.isTemplate = true
             button.image = image
         }
     }
 
     func initStatusItem() {
-        if ((NSUserDefaults.standardUserDefaults().objectForKey(statusItemConfigurationKey)) == nil) {
-            NSUserDefaults.standardUserDefaults().setObject(statusItemDefault, forKey: statusItemConfigurationKey)
+        if ((UserDefaults.standard.object(forKey: statusItemConfigurationKey)) == nil) {
+            UserDefaults.standard.set(statusItemDefault, forKey: statusItemConfigurationKey)
         } else {
 			updateStatusItemVisibility()
         }
     }
 
     func toggleStatusItemConfiguration() {
-        print (NSUserDefaults.standardUserDefaults().boolForKey(statusItemConfigurationKey) )
-        if (NSUserDefaults.standardUserDefaults().boolForKey(statusItemConfigurationKey) == true) {
-            NSUserDefaults.standardUserDefaults().setObject(false, forKey: statusItemConfigurationKey)
+        print (UserDefaults.standard.bool(forKey: statusItemConfigurationKey) )
+        if (UserDefaults.standard.bool(forKey: statusItemConfigurationKey) == true) {
+            UserDefaults.standard.set(false, forKey: statusItemConfigurationKey)
         } else {
-            NSUserDefaults.standardUserDefaults().setObject(true, forKey: statusItemConfigurationKey)
+            UserDefaults.standard.set(true, forKey: statusItemConfigurationKey)
         }
 
     }
 
     func updateStatusItemVisibility() {
-        if (NSUserDefaults.standardUserDefaults().boolForKey(statusItemConfigurationKey) == true) {
+        if (UserDefaults.standard.bool(forKey: statusItemConfigurationKey) == true) {
             addStatusItem()
         } else {
             hideStatusItem()
         }
     }
 
-    @IBAction func toggleStatusItem(sender: AnyObject) {
+    @IBAction func toggleStatusItem(_ sender: AnyObject) {
         
 		toggleStatusItemConfiguration()
         updateStatusItemVisibility()
@@ -402,30 +402,30 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
 
     // MARK: - Interface Builder interface
 
-    @IBAction func reopenWindow(sender: AnyObject) {
+    @IBAction func reopenWindow(_ sender: AnyObject) {
         window.makeKeyAndOrderFront(self)
     }
 
-    @IBAction func toggleReactivation(sender: AnyObject) {
+    @IBAction func toggleReactivation(_ sender: AnyObject) {
         let i : NSMenuItem = sender as! NSMenuItem
 
         if (i.state == 0) {
             i.state = NSOnState
-            NSUserDefaults.standardUserDefaults().setObject(true, forKey: "reactivationToggle")
+            UserDefaults.standard.set(true, forKey: "reactivationToggle")
         } else {
             i.state = NSOffState
-            NSUserDefaults.standardUserDefaults().setObject(false, forKey: "reactivationToggle")
+            UserDefaults.standard.set(false, forKey: "reactivationToggle")
         }
-        NSUserDefaults.standardUserDefaults().synchronize()
+        UserDefaults.standard.synchronize()
     }
 
 
     // MARK: - URL handlers
 
-    var quicklookMediaURL: NSURL? {
+    var quicklookMediaURL: URL? {
         didSet {
             if quicklookMediaURL != nil {
-                QLPreviewPanel.sharedPreviewPanel().makeKeyAndOrderFront(nil);
+                QLPreviewPanel.shared().makeKeyAndOrderFront(nil);
             }
         }
     }
