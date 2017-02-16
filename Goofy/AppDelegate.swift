@@ -128,7 +128,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
                     if facebookFormattedLink {
                         do {
                             // Generate a NSRegularExpression to match our url, extracting the value of u= into it own regex group.
-                            let regex = try NSRegularExpression(pattern: "(https://l.messenger.com/l.php\\?u=)(.+)(&h=.+)", options: [])
+                            let regex = try NSRegularExpression(pattern: "(https?://l.messenger.com/l.php\\?u=)(.+)(&h=.+)", options: [])
                             let nsString = url.absoluteString! as NSString
                             let results = regex.firstMatchInString(url.absoluteString!, options: [], range: NSMakeRange(0, nsString.length))
 
