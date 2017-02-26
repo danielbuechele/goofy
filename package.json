@@ -1,7 +1,7 @@
 {
-  "name": "goofy-for-work-builder",
+  "name": "goofy-builder",
   "version": "1.0.4",
-  "description": "The electron-builder script to build Goofy for Work",
+  "description": "The electron-builder script to build Goofy",
   "main": "app/src/main.js",
   "scripts": {
     "lint": "eslint ./app",
@@ -10,10 +10,9 @@
     "build-mac": "node ./env.js && build -m --x64",
     "build-win": "node ./env.js && build -w --x64"
   },
-  "repository": "https://github.com/danielbuechele/GoofyForWork",
+  "repository": "https://github.com/danielbuechele/Goofy",
   "keywords": [
     "Facebook",
-    "Workplace",
     "chat",
     "messenger",
     "goofy"
@@ -26,9 +25,9 @@
     "electron-builder": "^10.8.0"
   },
   "build": {
-    "productName": "Goofy for Work",
+    "productName": "Goofy",
     "icon": "./icon/AppIcon",
-    "appId": "com.goofyapp.work",
+    "appId": "com.goofyapp.www",
     "win": {
       "target": ["nsis"],
       "iconUrl": "https://"

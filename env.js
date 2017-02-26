@@ -6,7 +6,7 @@ fs.writeFileSync(
 	JSON.stringify({
 		name: process.env.NODE_ENV || 'development',
 		appName: pjson.build.productName,
-		product: 'workplace', // 'workplace' or 'www'
+		product: 'www', // 'workplace' or 'www'
 		updateURL: 'https://goofy-nuts.herokuapp.com/update',
 	})
 );
