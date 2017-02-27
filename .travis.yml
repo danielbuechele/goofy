@@ -1,0 +1,12 @@
+os:
+  - osx
+osx_image: xcode8
+before_script:
+  - npm install --only=dev
+  - npm run postinstall
+script:
+  - npm run lint
+  - npm run build-mac
+branches:
+  only:
+  - master
