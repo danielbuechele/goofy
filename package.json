@@ -1,6 +1,6 @@
 {
   "name": "goofy-builder",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "The electron-builder script to build Goofy",
   "main": "app/src/main.js",
   "scripts": {
