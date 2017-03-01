@@ -13,7 +13,7 @@
             <pubDate>Wed, 01 Mar 2017 11:20:11 +0000</pubDate>
             <link>http://www.goofyapp.com/version/3.0.html</link>
             <enclosure url="https://github.com/danielbuechele/goofy/releases/download/v3.0.1/goofy-core-3.0.1-mac.zip"
-                sparkle:version="3.0.1.2"
+                sparkle:version="3.0.1"
                 sparkle:shortVersionString="2000"
                 length="40894464"
                 type="application/octet-stream" />
