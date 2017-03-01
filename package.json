@@ -27,7 +27,7 @@
   "build": {
     "productName": "Goofy",
     "icon": "./icon/AppIcon",
-    "appId": "com.goofyapp.www",
+    "appId": "cc.buechele.Goofy",
     "win": {
       "target": ["nsis"],
       "iconUrl": "https://"
