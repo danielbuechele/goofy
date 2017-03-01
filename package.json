@@ -33,7 +33,8 @@
       "iconUrl": "https://"
     },
     "mac": {
-      "target": ["zip"]
+      "target": ["zip"],
+      "bundleVersion": "2000"
     },
     "publish": ["github"]
   }
