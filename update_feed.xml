@@ -6,15 +6,15 @@
         <description>Most recent changes with links to updates.</description>
         <language>en</language>
         <item>
-            <title>Version 3.0.1</title>
+            <title>Version 3.0.3</title>
             <sparkle:releaseNotesLink>
                 http://www.goofyapp.com/version/3.0.html
             </sparkle:releaseNotesLink>
             <pubDate>Wed, 01 Mar 2017 11:20:11 +0000</pubDate>
             <link>http://www.goofyapp.com/version/3.0.html</link>
-            <enclosure url="https://github.com/danielbuechele/goofy/releases/download/v3.0.2/goofy-core-3.0.2-mac.zip"
+            <enclosure url="https://github.com/danielbuechele/goofy/releases/download/v3.0.3/goofy-core-3.0.3-mac.zip"
                 sparkle:version="2000"
-                sparkle:shortVersionString="3.0.2"
+                sparkle:shortVersionString="3.0.3"
                 length="40894464"
                 type="application/octet-stream" />
         </item>
