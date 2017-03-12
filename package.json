@@ -1,6 +1,6 @@
 {
   "name": "goofy-builder",
-  "version": "3.0.3",
+  "version": "3.1.0",
   "description": "The electron-builder script to build Goofy",
   "main": "app/src/main.js",
   "scripts": {
@@ -21,7 +21,7 @@
   "license": "MIT",
   "devDependencies": {
     "@sep/eslint-config-sep": "^1.0.14",
-    "electron": "^1.4.1",
+    "electron": "^1.6.3",
     "electron-builder": "^10.8.0"
   },
   "build": {
@@ -34,7 +34,7 @@
     },
     "mac": {
       "target": ["zip"],
-      "bundleVersion": "2000"
+      "bundleVersion": "2001"
     },
     "publish": ["github"]
   }
