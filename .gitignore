@@ -3,3 +3,4 @@ dist
 .DS_Store
 npm-debug.log
 app/src/config/env.json
+.idea

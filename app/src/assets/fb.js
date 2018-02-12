@@ -6,7 +6,6 @@ const NEW_MESSAGE_BUTTON = '._1enh ._36ic ._30yy._2oc8';
 const UNREAD_MESSAGE_COUNT = '#mercurymessagesCountValue';
 const MESSAGE_LIST = '._4u-c._9hq ul[role=grid]';
 const MESSAGE_PREVIEW = '._1htf';
-const MESSAGE_PREVIEW_EM = '._4qba';
 const MESSAGE_ID = '._5l-3._1ht5';
 const MESSAGE_SENDER = '._1ht6';
 const MESSAGE_SENDER_PICTURE = '._55lt img';
@@ -71,12 +70,12 @@ function messageWithEmojis(node) {
 	node.childNodes.forEach(n => {
 		if (n.nodeType === 3) {
 			message += n.textContent;
-		} else if (n.nodeName === 'IMG' && n.classList.contains(EMOJI)) {
-			const alt = n.getAttribute('alt');
-			message += alt;
-		} else if (n.nodeName === 'EM' && n.querySelector('[alt="󰀀"]')) {
+		} else if (n.nodeName === 'SPAN' && n.querySelector('img') && n.querySelector('img').getAttribute('alt') === '󰀀') {
 			// facebook thumb up
 			message += '👍';
+		}  else if (n.nodeName === 'IMG' && n.classList.contains(EMOJI)) {
+			const alt = n.getAttribute('alt');
+			message += alt;
 		}
 	});
 	return message;
@@ -110,10 +109,7 @@ setInterval(
 						const image = message.querySelector(MESSAGE_SENDER_PICTURE).getAttribute('src');
 
 						// check if it's a message from myself
-						const preview = message.querySelector(MESSAGE_PREVIEW_EM);
-						const isMessageFromSelf = preview &&
-							preview.hasAttribute('data-intl-translation') &&
-							preview.getAttribute('data-intl-translation') !== '{conversation_snippet}';
+						const isMessageFromSelf = message.querySelector(MESSAGE_PREVIEW).textContent.startsWith('You:');
 
 						const muted = message.classList.contains(MUTED);
 
