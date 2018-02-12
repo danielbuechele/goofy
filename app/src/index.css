@@ -2,6 +2,7 @@ body {
 	padding: 0;
 	margin: 0;
 	font: menu;
+	background: white;
 }
 webview {
 	height: 100vh;

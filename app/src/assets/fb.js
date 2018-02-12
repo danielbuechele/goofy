@@ -56,9 +56,12 @@ document.addEventListener('DOMContentLoaded', () => {
 	// load settings menu once, so it is inserted in the DOM
 	setTimeout(
 		() => {
-			document.querySelector(SETTINGS_BUTTON).click();
+			const button = document.querySelector(SETTINGS_BUTTON);
+			if (button) {
+				button.click();
+			}
 		},
-		500
+		1000
 	);
 });
 
