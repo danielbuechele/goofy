@@ -25,7 +25,8 @@ setInterval(() => {
 }, 500);
 
 document.addEventListener('DOMContentLoaded', () => {
-	ipcRenderer.sendToHost(constants.NOTIFICATION_COUNT, parseInt(document.querySelector(NOTIFICATION_COUNT).textContent) || 0);
+	const notificationCount = parseInt(document.querySelector(NOTIFICATION_COUNT).textContent) || 0;
+	ipcRenderer.sendToHost(constants.NOTIFICATION_COUNT, notificationCount);
 
 	document.querySelector(NOTIFICATION_COUNT).addEventListener('DOMSubtreeModified', e => {
 		ipcRenderer.sendToHost(constants.NOTIFICATION_COUNT, parseInt(e.target.textContent) || 0);

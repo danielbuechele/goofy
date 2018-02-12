@@ -22,8 +22,8 @@ module.exports = function FocusHandler(webview){
 				const y = height - wrapperHeight + 1;
 
 				// Click the top-left corner of the input area so we avoid the thumbs-up button etc
-				webview.sendInputEvent({type: 'mouseDown', x: x, y: y, button: 'left', clickCount: 1});
-				webview.sendInputEvent({type: 'mouseUp', x: x, y: y, button: 'left', clickCount: 1});
+				webview.sendInputEvent({ type: 'mouseDown', x: x, y: y, button: 'left', clickCount: 1 });
+				webview.sendInputEvent({ type: 'mouseUp', x: x, y: y, button: 'left', clickCount: 1 });
 			}).catch(() => {
 				// Fail silently
 			});
