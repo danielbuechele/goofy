@@ -48,10 +48,20 @@ ipcRenderer.on(constants.JUMP_TO_CONVERATION, (event, id) => {
 	}
 });
 
+
+let lastDockCount = null;
 document.addEventListener('DOMContentLoaded', () => {
 	// dock count
 	document.querySelector(UNREAD_MESSAGE_COUNT).addEventListener('DOMSubtreeModified', e => {
-		ipcRenderer.sendToHost(constants.DOCK_COUNT, parseInt(e.target.textContent) || 0);
+		const currentDockCount = parseInt(e.target.textContent) || 0;
+		ipcRenderer.sendToHost(constants.DOCK_COUNT, currentDockCount);
+		if (lastDockCount === null) {
+			lastDockCount = currentDockCount;
+		}
+		if (lastDockCount === currentDockCount) {
+		    return;
+        }
+        processNotifications();
 	});
 
 	// load settings menu once, so it is inserted in the DOM
@@ -82,74 +92,73 @@ function messageWithEmojis(node) {
 	return message;
 }
 
-setInterval(() => {}, 400);
+function processNotifications() {
+    // send notifications
+    if (document.querySelector(MESSAGE_LIST)) {
+        if (!latestMessages) {
+            // init latestMessages map
+            latestMessages = new Map();
+            document.querySelector(MESSAGE_LIST).childNodes.forEach(message => {
+                latestMessages.set(
+                    message.querySelector(MESSAGE_ID).getAttribute('id'),
+                    messageWithEmojis(message.querySelector(MESSAGE_PREVIEW))
+                );
+            });
+        } else {
+            document.querySelector(MESSAGE_LIST).childNodes.forEach(message => {
+                const id = message.querySelector(MESSAGE_ID).getAttribute('id');
+                const messageElement = message.querySelector(MESSAGE_PREVIEW);
+                const messageBody = messageWithEmojis(messageElement);
 
-setInterval(
-	() => {
-		// send notifications
-		if (document.querySelector(MESSAGE_LIST)) {
-			if (!latestMessages) {
-				// init latestMessages map
-				latestMessages = new Map();
-				document.querySelector(MESSAGE_LIST).childNodes.forEach(message => {
-					latestMessages.set(
-						message.querySelector(MESSAGE_ID).getAttribute('id'),
-						messageWithEmojis(message.querySelector(MESSAGE_PREVIEW))
-					);
-				});
-			} else {
-				document.querySelector(MESSAGE_LIST).childNodes.forEach(message => {
-					const id = message.querySelector(MESSAGE_ID).getAttribute('id');
-					const messageBody = messageWithEmojis(message.querySelector(MESSAGE_PREVIEW));
+                if (latestMessages.get(id) !== messageBody) {
+                    const name = message.querySelector(MESSAGE_SENDER).textContent;
+                    const image = message.querySelector(MESSAGE_SENDER_PICTURE).getAttribute('src');
 
-					if (latestMessages.get(id) !== messageBody) {
-						const name = message.querySelector(MESSAGE_SENDER).textContent;
-						const image = message.querySelector(MESSAGE_SENDER_PICTURE).getAttribute('src');
+                    // check if it's a message from myself
+                    const preview = message.querySelector(MESSAGE_PREVIEW_EM);
+                    const isMessageFromSelf = preview &&
+                        preview.hasAttribute('data-intl-translation') &&
+                        preview.getAttribute('data-intl-translation') !== '{conversation_snippet}' ||
+                        messageElement.childNodes[0] &&
+                        messageElement.childNodes[0].nodeName === '#text'
+                    ;
 
-						// check if it's a message from myself
-						const preview = message.querySelector(MESSAGE_PREVIEW_EM);
-						const isMessageFromSelf = preview &&
-							preview.hasAttribute('data-intl-translation') &&
-							preview.getAttribute('data-intl-translation') !== '{conversation_snippet}';
+                    const muted = message.classList.contains(MUTED);
 
-						const muted = message.classList.contains(MUTED);
+                    if (!isMessageFromSelf && !muted) {
+                        let notification = new Notification(name, { body: messageBody, icon: image, data: id, silent: true });
+                        notification.onclick = e => {
+                            document.querySelector(`[id="${e.target.data}"] ${ACTIVATE_CONVERSATION}`).click();
+                        };
+                    }
 
-						if (!isMessageFromSelf && !muted) {
-							let notification = new Notification(name, { body: messageBody, icon: image, data: id, silent: true });
-							notification.onclick = e => {
-								document.querySelector(`[id="${e.target.data}"] ${ACTIVATE_CONVERSATION}`).click();
-							};
-						}
+                    latestMessages.set(id, messageBody);
+                }
+            });
+        }
+    }
 
-						latestMessages.set(id, messageBody);
-					}
-				});
-			}
-		}
+    ipcRenderer.sendToHost(constants.TOUCH_BAR, []);
 
-		ipcRenderer.sendToHost(constants.TOUCH_BAR, []);
+    // update TouchBar
+    if (document.querySelector(MESSAGE_LIST)) {
+        const unreadLinks = [];
+        const readLinks = [];
 
-		// update TouchBar
-		if (document.querySelector(MESSAGE_LIST)) {
-			const unreadLinks = [];
-			const readLinks = [];
+        document.querySelector(MESSAGE_LIST).childNodes.forEach(message => {
+            const item = {
+                name: message.querySelector(MESSAGE_SENDER).textContent,
+                unread: message.classList.contains(MESSAGE_UNREAD),
+                active: message.classList.contains(MESSAGE_SELECTED),
+                id: message.childNodes[0].getAttribute('id'),
+            };
+            if (item.unread) {
+                unreadLinks.push(item);
+            } else {
+                readLinks.push(item);
+            }
+        });
 
-			document.querySelector(MESSAGE_LIST).childNodes.forEach(message => {
-				const item = {
-					name: message.querySelector(MESSAGE_SENDER).textContent,
-					unread: message.classList.contains(MESSAGE_UNREAD),
-					active: message.classList.contains(MESSAGE_SELECTED),
-					id: message.childNodes[0].getAttribute('id'),
-				};
-				if (item.unread) {
-					unreadLinks.push(item);
-				} else {
-					readLinks.push(item);
-				}
-			});
-
-			ipcRenderer.sendToHost(constants.TOUCH_BAR, JSON.stringify(unreadLinks.concat(readLinks).slice(0, 5)));
-		}
-	},
-	500
-);
+        ipcRenderer.sendToHost(constants.TOUCH_BAR, JSON.stringify(unreadLinks.concat(readLinks).slice(0, 5)));
+    }
+}
