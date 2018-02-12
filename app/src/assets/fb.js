@@ -92,10 +92,13 @@ setInterval(
 				// init latestMessages map
 				latestMessages = new Map();
 				document.querySelector(MESSAGE_LIST).childNodes.forEach(message => {
-					latestMessages.set(
-						message.querySelector(MESSAGE_ID).getAttribute('id'),
-						messageWithEmojis(message.querySelector(MESSAGE_PREVIEW))
-					);
+					const m = message.querySelector(MESSAGE_ID);
+					if (m) {
+						latestMessages.set(
+							m.getAttribute('id'),
+							messageWithEmojis(message.querySelector(MESSAGE_PREVIEW))
+						);
+					}
 				});
 			} else {
 				document.querySelector(MESSAGE_LIST).childNodes.forEach(message => {
