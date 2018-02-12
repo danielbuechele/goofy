@@ -1,0 +1,99 @@
+:root {
+	--nav-bar-height: 40px;
+	--nav-bar-padding: 3px;
+}
+
+body {
+	overflow: hidden !important;
+}
+
+.liquid div#globalContainer {
+	min-width: 0 !important;
+}
+
+/* Workplace toolbar */
+#pagelet_bluebar, #fb2k_pagelet_bluebar {
+	display: none;
+}
+
+/* "Get App"-banner */
+._s15 {
+	display: none !important;
+}
+
+/* container */
+._4sp8._li {
+	width: 100vw;
+}
+
+/* left column */
+._1enh {
+
+}
+	/* left column navbar */
+	._1enh ._36ic {
+		height: var(--nav-bar-height);
+		padding: var(--nav-bar-padding);
+		display: flex;
+		justify-content: flex-end;
+	}
+
+		/* preferences icon */
+		._1enh ._36ic ._4kzu {
+			visibility: hidden;
+		}
+
+		/* preferences menu */
+		._5v-0._53il {
+			position: absolute;
+			left: -999em;
+		}
+
+		/* "Work Chat" title */
+		._1enh ._36ic ._1tqi {
+			display: none;
+		}
+
+		/* New message button */
+		@media (max-width: 700px) {
+			._1enh ._36ic ._30yy._2oc8 {
+				position: relative;
+				left: 44px;
+			}
+		}
+		@media (max-width: 500px) {
+			._1enh ._36ic ._30yy._2oc8 {
+				display: none;
+			}
+		}
+
+
+/* right column */
+._1q5- {
+
+}
+	/* right column navbar: new conversation */
+	._2y8y {
+		min-height: var(--nav-bar-height) !important;
+		padding: 8px !important;
+	}
+	/* right column navbar */
+	._1q5- ._5742 {
+		height: var(--nav-bar-height);
+		padding: var(--nav-bar-padding);
+	}
+
+		/* conversation action icons (call, info, ...) */
+		._1q5- ._5742 ._fl2 {
+			padding: 4px 8px;
+		}
+
+			/* Call, video call button */
+			._1q5- ._5742 ._fl2 ._30yy:not([data-testid="info_panel_button"]) {
+				display: none;
+			}
+
+/* Fix broken conversation settings menu layout */
+._5v-0[style] {
+	left: auto !important;
+}

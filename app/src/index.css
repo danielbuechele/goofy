@@ -1,0 +1,86 @@
+body {
+	padding: 0;
+	margin: 0;
+	font: menu;
+}
+webview {
+	height: 100vh;
+	width: 100vw;
+	opacity: 1;
+	transition: opacity .5s;
+	z-index: 2;
+	background: white;
+	position: relative;
+}
+webview[src=""] {
+	display: none;
+}
+webview.hide {
+	opacity: 0;
+}
+#toolbar {
+	width: 100vw;
+	height: 42px;
+	-webkit-app-region: drag;
+	margin-bottom: -42px;
+}
+#logo {
+	margin: auto;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+#setup {
+	display: none;
+	position: absolute;
+	bottom: 20px;
+	left: 50%;
+	text-align: center;
+	transform: translateX(-50%);
+	color: #aaa;
+}
+
+#setup.active {
+	display: block;
+}
+
+#domain {
+	padding: 10px;
+	padding-right: 0;
+	margin-left: 42px;
+	border: 1px solid #e5e5e5;
+	border-right: 0;
+	text-align: right;
+	font-size: inherit;
+	font-family: inherit;
+	line-height: inherit;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+#domain:focus, #domain:active {
+	outline: none;
+}
+#setup label {
+	background-color: white;
+	border: 1px solid #e5e5e5;
+	padding: 10px;
+	padding-left: 0;
+	border-left: 0;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+#setup button {
+	background: none;
+	border: 0;
+	margin: 0;
+	margin-left: 5p;x
+	padding: 0;
+	line-height: 100%;
+	position: relative;
+	top: 11px;
+}
+#setup button:focus, #setup button:active {
+	outline: 0;
+}

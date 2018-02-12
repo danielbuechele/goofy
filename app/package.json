@@ -1,0 +1,14 @@
+{
+  "name": "goofy-core",
+  "version": "1.1.0",
+  "description": "Common core used by Goofy and Goofy for Work",
+  "main": "src/main.js",
+  "author": "Daniel Büchele",
+  "license": "MIT",
+  "dependencies": {
+    "electron-config": "^0.2.1",
+    "electron-default-menu": "^1.0.0",
+    "fs-jetpack": "^0.10.5",
+    "menubar": "^5.2.0"
+  }
+}

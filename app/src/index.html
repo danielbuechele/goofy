@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="./index.css">
+	</style>
+	</head>
+	<body>
+		<div id="toolbar"></div>
+		<img id="logo" width="300" />
+		<form id="setup" onsubmit="setDomain()">
+			Sign into your Workplace domain<br />
+			<input type="text" id="domain" /><label for="domain">.facebook.com</label>
+			<button type="submit">
+				<img src="./assets/arrow.png" width="32" />
+			</button>
+		</form>
+
+		<webview src="" id="webview" autosize="on" class="hide" preload="./assets/fb.js"></webview>
+	</body>
+	<script>
+		require('./renderer.js')
+	</script>
+</html>
