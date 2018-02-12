@@ -29,13 +29,19 @@
     "icon": "./icon/AppIcon",
     "appId": "cc.buechele.Goofy",
     "win": {
-      "target": ["nsis"],
+      "target": [
+        "nsis"
+      ],
       "iconUrl": "https://"
     },
     "mac": {
-      "target": ["zip"],
+      "target": [
+        "zip"
+      ],
       "bundleVersion": "2001"
     },
-    "publish": ["github"]
+    "publish": [
+      "github"
+    ]
   }
 }
