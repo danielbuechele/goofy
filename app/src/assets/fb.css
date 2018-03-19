@@ -31,7 +31,7 @@ body {
 
 }
 	/* left column navbar */
-	._1enh ._36ic {
+	._1enh ._3lz9 {
 		height: var(--nav-bar-height);
 		padding: var(--nav-bar-padding);
 		display: flex;
@@ -39,7 +39,7 @@ body {
 	}
 
 		/* preferences icon */
-		._1enh ._36ic ._4kzu {
+		._1enh ._3lz9 ._4kzu {
 			visibility: hidden;
 		}
 
@@ -50,19 +50,19 @@ body {
 		}
 
 		/* "Work Chat" title */
-		._1enh ._36ic ._1tqi {
+		._1enh ._3lz9 ._1tqi {
 			display: none;
 		}
 
 		/* New message button */
 		@media (max-width: 700px) {
-			._1enh ._36ic ._30yy._2oc8 {
+			._1enh ._3lz9 ._30yy._2oc8 {
 				position: relative;
 				left: 44px;
 			}
 		}
 		@media (max-width: 500px) {
-			._1enh ._36ic ._30yy._2oc8 {
+			._1enh ._3lz9 ._30yy._2oc8 {
 				display: none;
 			}
 		}
