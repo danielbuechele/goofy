@@ -34,7 +34,7 @@ onload = () => {
 	});
 
 	menu[0].submenu.splice(
-		1,
+		3,
 		0,
 		{
 			type: 'separator',
@@ -45,6 +45,22 @@ onload = () => {
 			click() {
 				webview.send(constants.SHOW_SETTINGS);
 			},
+		},
+		{
+			type: 'checkbox',
+			label: 'Block Typing Indicator',
+			checked: userConfig.get('blockTyping'),
+			click() {
+				userConfig.set('blockTyping', !userConfig.get('blockTyping'));
+			}
+		},
+		{
+			type: 'checkbox',
+			label: 'Block Seen Indicator',
+			checked: userConfig.get('blockSeen'),
+			click() {
+				userConfig.set('blockSeen', !userConfig.get('blockSeen'));
+			}
 		}
 	);
 
