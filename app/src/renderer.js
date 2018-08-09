@@ -52,7 +52,7 @@ onload = () => {
 			checked: userConfig.get('blockTyping'),
 			click() {
 				userConfig.set('blockTyping', !userConfig.get('blockTyping'));
-			}
+			},
 		},
 		{
 			type: 'checkbox',
@@ -60,7 +60,7 @@ onload = () => {
 			checked: userConfig.get('blockSeen'),
 			click() {
 				userConfig.set('blockSeen', !userConfig.get('blockSeen'));
-			}
+			},
 		}
 	);
 

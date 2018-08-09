@@ -9,8 +9,8 @@ module.exports = function RequestFilter(session) {
 		// TODO: Use getURL() or similar here instead?
 		urls: [
 			'https://*.facebook.com',
-			`https://*.facebook.com/*typ.php*`,
-			`https://*.facebook.com/*change_read_status.php*`,
+			'https://*.facebook.com/*typ.php*',
+			'https://*.facebook.com/*change_read_status.php*',
 		],
 	};
 
