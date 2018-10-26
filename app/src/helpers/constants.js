@@ -10,4 +10,5 @@ module.exports = {
 	PRODUCT_WORKPLACE: 'workplace',
 	PRODUCT_WWW: 'www',
 	SETTINGS_STORAGE: 'settings.json',
+	SETTINGS_MESSAGE_PREVIEW: 'messagePreview'
 };

@@ -153,25 +153,20 @@ onload = () => {
                 {
                     label: 'Message Preview in Notification',
                     type: 'checkbox',
-                    checked: userConfig.get('messagePreview'),
+                    checked: userConfig.get(constants.SETTINGS_MESSAGE_PREVIEW),
                     click() {
                         //Default to true by default
-                        const showMessagePreview = (typeof userConfig.get('messagePreview') !== 'undefined') ? userConfig.get('messagePreview') : true;
-                        userConfig.set('messagePreview', !showMessagePreview);
-                        console.log('this', this);
+                        userConfig.set(constants.SETTINGS_MESSAGE_PREVIEW, !userConfig.get(constants.SETTINGS_MESSAGE_PREVIEW));
                     }
                 },
                 {
-                    label: 'Test Notification',
+                    label: 'Create Test Notification',
                     click() {
-                        const showMessagePreview = (typeof userConfig.get('messagePreview') !== 'undefined') ? userConfig.get('messagePreview') : true;
+                        const showMessagePreview = userConfig.get(constants.SETTINGS_MESSAGE_PREVIEW);
                         const messageBody = showMessagePreview ? 'Test Notification!' : 'Hidden test notification.';
 
-                        console.log('creating notification!!!');
                         new Notification('Goofy', {
                             body: messageBody,
-                            // icon: image,
-                            // data: id,
                             silent: true,
                         });
                     }
