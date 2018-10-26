@@ -144,6 +144,42 @@ onload = () => {
 		});
 	}
 
+	menu.splice(
+		3,
+		0,
+		{
+			label: 'Notifications',
+			submenu: [
+                {
+                    label: 'Message Preview in Notification',
+                    type: 'checkbox',
+                    checked: userConfig.get('messagePreview'),
+                    click() {
+                        //Default to true by default
+                        const showMessagePreview = (typeof userConfig.get('messagePreview') !== 'undefined') ? userConfig.get('messagePreview') : true;
+                        userConfig.set('messagePreview', !showMessagePreview);
+                        console.log('this', this);
+                    }
+                },
+                {
+                    label: 'Test Notification',
+                    click() {
+                        const showMessagePreview = (typeof userConfig.get('messagePreview') !== 'undefined') ? userConfig.get('messagePreview') : true;
+                        const messageBody = showMessagePreview ? 'Test Notification!' : 'Hidden test notification.';
+
+                        console.log('creating notification!!!');
+                        new Notification('Goofy', {
+                            body: messageBody,
+                            // icon: image,
+                            // data: id,
+                            silent: true,
+                        });
+                    }
+                }
+			]
+		}
+	);
+
 	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 
 	webview.addEventListener('did-stop-loading', () => {
