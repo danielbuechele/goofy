@@ -144,36 +144,45 @@ onload = () => {
 		});
 	}
 
+	const notificationsMenu = {
+		label: 'Notifications',
+		submenu: [
+			{
+				label: 'Message Preview in Notification',
+				type: 'checkbox',
+				checked: userConfig.get(constants.SETTINGS_MESSAGE_PREVIEW),
+				click() {
+					//Default to true by default
+					userConfig.set(constants.SETTINGS_MESSAGE_PREVIEW, !userConfig.get(constants.SETTINGS_MESSAGE_PREVIEW));
+				}
+			}
+		]
+	};
+
 	menu.splice(
 		3,
 		0,
-		{
-			label: 'Notifications',
-			submenu: [
-                {
-                    label: 'Message Preview in Notification',
-                    type: 'checkbox',
-                    checked: userConfig.get(constants.SETTINGS_MESSAGE_PREVIEW),
-                    click() {
-                        //Default to true by default
-                        userConfig.set(constants.SETTINGS_MESSAGE_PREVIEW, !userConfig.get(constants.SETTINGS_MESSAGE_PREVIEW));
-                    }
-                },
-                {
-                    label: 'Create Test Notification',
-                    click() {
-                        const showMessagePreview = userConfig.get(constants.SETTINGS_MESSAGE_PREVIEW);
-                        const messageBody = showMessagePreview ? 'Test Notification!' : 'Hidden test notification.';
-
-                        new Notification('Goofy', {
-                            body: messageBody,
-                            silent: true,
-                        });
-                    }
-                }
-			]
-		}
+		notificationsMenu
 	);
+
+	if (env.name === 'development') {
+		notificationsMenu.submenu.push({
+			type: 'separator'
+		});
+
+		notificationsMenu.submenu.push({
+			label: 'Create Test Notification',
+			click() {
+				const showMessagePreview = userConfig.get(constants.SETTINGS_MESSAGE_PREVIEW);
+				const messageBody = showMessagePreview ? 'Test Notification!' : 'Hidden test notification.';
+
+				new Notification('Goofy', {
+					body: messageBody,
+					silent: true,
+				});
+			}
+		});
+	}
 
 	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 
