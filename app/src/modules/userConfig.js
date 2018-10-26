@@ -6,7 +6,7 @@ const userConfig = new Config();
 
 //Set default value
 if (typeof userConfig.get(constants.SETTINGS_MESSAGE_PREVIEW) === 'undefined') {
-    userConfig.set(constants.SETTINGS_MESSAGE_PREVIEW, true);
+	userConfig.set(constants.SETTINGS_MESSAGE_PREVIEW, true);
 }
 
 module.exports = userConfig;

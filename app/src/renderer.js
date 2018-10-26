@@ -154,9 +154,9 @@ onload = () => {
 				click() {
 					//Default to true by default
 					userConfig.set(constants.SETTINGS_MESSAGE_PREVIEW, !userConfig.get(constants.SETTINGS_MESSAGE_PREVIEW));
-				}
-			}
-		]
+				},
+			},
+		],
 	};
 
 	menu.splice(
@@ -167,7 +167,7 @@ onload = () => {
 
 	if (env.name === 'development') {
 		notificationsMenu.submenu.push({
-			type: 'separator'
+			type: 'separator',
 		});
 
 		notificationsMenu.submenu.push({
@@ -180,7 +180,7 @@ onload = () => {
 					body: messageBody,
 					silent: true,
 				});
-			}
+			},
 		});
 	}
 
