@@ -1,5 +1,6 @@
 const { ipcRenderer } = require('electron');
 const constants = require('../helpers/constants');
+const userConfig = require('../modules/userConfig');
 let latestMessages;
 
 const NEW_MESSAGE_BUTTON = '._1enh ._3lz9 ._30yy._2oc8';
@@ -130,9 +131,11 @@ function processNotifications() {
 
 					const muted = message.classList.contains(MUTED);
 
+					const showMessagePreview = userConfig.get(constants.SETTINGS_MESSAGE_PREVIEW);
+
 					if (!isMessageFromSelf && !muted) {
 						let notification = new Notification(name, {
-							body: messageBody,
+							body: showMessagePreview ? messageBody : '',
 							icon: image,
 							data: id,
 							silent: true,
