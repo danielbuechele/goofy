@@ -5,6 +5,8 @@ const constants = require('../helpers/constants');
 const userConfig = new Config();
 
 //Set default value
-userConfig.set(constants.SETTINGS_MESSAGE_PREVIEW, true);
+if (typeof userConfig.get(constants.SETTINGS_MESSAGE_PREVIEW) === 'undefined') {
+    userConfig.set(constants.SETTINGS_MESSAGE_PREVIEW, true);
+}
 
 module.exports = userConfig;
