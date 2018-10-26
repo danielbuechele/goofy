@@ -174,9 +174,9 @@ onload = () => {
 			label: 'Create Test Notification',
 			click() {
 				const showMessagePreview = userConfig.get(constants.SETTINGS_MESSAGE_PREVIEW);
-				const messageBody = showMessagePreview ? 'Test Notification!' : 'Hidden test notification.';
+				const messageBody = showMessagePreview ? 'Test Notification!' : '';
 
-				new Notification('Goofy', {
+				new Notification('Goofy Test Notification', {
 					body: messageBody,
 					silent: true,
 				});
