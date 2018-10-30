@@ -15,7 +15,7 @@ const EMOJI = '_1ift';
 const MUTED = '_569x';
 const SELECTED_CONVERSATION = '._1ht2';
 const ACTIVATE_CONVERSATION = 'a._1ht5';
-const SETTINGS_BUTTON = '._1enh ._3lz9 ._4kzu a';
+const SETTINGS_BUTTON = '._1enh ._36ic ._4kzu a';
 const SETTINGS_LINK = '._54ni.__MenuItem:first-child';
 
 ipcRenderer.on(constants.NEW_CONVERSATION, () => {
@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			const button = document.querySelector(SETTINGS_BUTTON);
 			if (button) {
 				button.click();
+				button.click();  // clicking again to hide
 			}
 		},
 		1000
