@@ -2,7 +2,7 @@ const { ipcRenderer } = require('electron');
 const constants = require('../helpers/constants');
 let latestMessages;
 
-const NEW_MESSAGE_BUTTON = '._1enh ._3lz9 ._30yy._2oc8';
+const NEW_MESSAGE_BUTTON = '._1enh ._36ic ._30yy._2oc8';
 const UNREAD_MESSAGE_COUNT = '#mercurymessagesCountValue';
 const MESSAGE_LIST = '._4u-c._9hq ul[role=grid]';
 const MESSAGE_PREVIEW = '._1htf';
