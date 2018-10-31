@@ -48,6 +48,46 @@ onload = () => {
 		}
 	);
 
+	let viewMenu = menu[menu.findIndex(item => item.label === 'View')];
+	viewMenu.submenu.splice(
+		0,
+		0,
+		{
+			type: 'separator',
+		},
+		{
+			label: 'Inbox',
+			accelerator: 'CmdOrCtrl+1',
+			click() {
+				webview.send(constants.SHOW_MESSAGE_LIST_INBOX);
+			},
+		},
+		{
+			label: 'Active contacts',
+			accelerator: 'CmdOrCtrl+2',
+			click() {
+				webview.send(constants.SHOW_MESSAGE_LIST_ACTIVE_CONTACTS);
+			},
+		},
+		{
+			label: 'Message requests',
+			accelerator: 'CmdOrCtrl+3',
+			click() {
+				webview.send(constants.SHOW_MESSAGE_LIST_MESSAGE_REQUESTS);
+			},
+		},
+		{
+			label: 'Archived threads',
+			accelerator: 'CmdOrCtrl+4',
+			click() {
+				webview.send(constants.SHOW_MESSAGE_LIST_ARCHIVED_THREADS);
+			},
+		},
+		{
+			type: 'separator',
+		}
+	);
+
 	let windowMenu = menu[menu.findIndex(item => item.label === 'Window')];
 	windowMenu.submenu.push(
 		{
