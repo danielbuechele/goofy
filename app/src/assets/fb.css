@@ -31,63 +31,52 @@ body {
 
 }
 	/* left column navbar */
-	._1enh ._3lz9 {
+	._1enh ._36ic._5l-3 {
 		height: var(--nav-bar-height);
 		padding: var(--nav-bar-padding);
 		display: flex;
 		justify-content: flex-end;
 	}
 
-		/* preferences icon */
-		._1enh ._36ic ._4kzu {
-			visibility: hidden;
-		}
-
 		/* "Work Chat" title */
-		._1enh ._3lz9 ._1tqi {
+		._1enh ._36ic._5l-3 ._1tqi {
 			display: none;
 		}
 
 		/* New message button */
 		@media (max-width: 700px) {
-			._1enh ._36ic ._30yy._2oc8 {
+			._1enh ._36ic._5l-3 ._30yy._2oc8 {
 				position: relative;
 				left: 44px;
 			}
 		}
 		@media (max-width: 500px) {
-			._1enh ._3lz9 ._30yy._2oc8 {
+			._1enh ._36ic._5l-3 ._30yy._2oc8 {
 				display: none;
 			}
 		}
 
-
 /* right column */
-._1q5- {
+._1t2u {
 
 }
 	/* right column navbar: new conversation */
-	._2y8y {
+	._1t2u ._2y8y._5l-3 {
 		min-height: var(--nav-bar-height) !important;
 		padding: 8px !important;
 	}
 	/* right column navbar */
-	._1q5- ._5742 {
+	._1t2u ._673w._1_fz {
 		height: var(--nav-bar-height);
 		padding: var(--nav-bar-padding);
 	}
 
 		/* conversation action icons (call, info, ...) */
-		._1q5- ._5742 ._fl2 {
+		._1t2u ._673w._1_fz ._fl2 {
 			padding: 4px 8px;
 		}
 
 			/* Call, video call button */
-			._1q5- ._5742 ._fl2 ._30yy:not([data-testid="info_panel_button"]) {
+			._1t2u ._673w._1_fz ._fl2 ._30yy:not([data-testid="info_panel_button"]) {
 				display: none;
 			}
-
-/* Fix broken conversation settings menu layout */
-._5v-0[style] {
-	left: auto !important;
-}

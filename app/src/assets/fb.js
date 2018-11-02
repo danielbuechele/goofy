@@ -1,6 +1,7 @@
 const { ipcRenderer } = require('electron');
 const constants = require('../helpers/constants');
 let latestMessages;
+let isShowingInbox = false;
 
 const NEW_MESSAGE_BUTTON = '._1enh ._36ic ._30yy._2oc8';
 const UNREAD_MESSAGE_COUNT = '#mercurymessagesCountValue';
@@ -17,10 +18,43 @@ const SELECTED_CONVERSATION = '._1ht2';
 const ACTIVATE_CONVERSATION = 'a._1ht5';
 const SETTINGS_BUTTON = '._1enh ._36ic ._4kzu a';
 const SETTINGS_LINK = '._54ni.__MenuItem:first-child';
+const MESSAGE_LIST_INBOX_LINK = '._1enh ._36ic ._30yy';
+const MESSAGE_LIST_ACTIVE_CONTACTS_LINK = '._54ni.__MenuItem:nth-child(3)';
+const MESSAGE_LIST_MESSAGE_REQUESTS_LINK = '._54ni.__MenuItem:nth-child(4)';
+const MESSAGE_LIST_ARCHIVED_THREADS_LINK = '._54ni.__MenuItem:nth-child(5)';
 
 ipcRenderer.on(constants.NEW_CONVERSATION, () => {
 	document.querySelector(NEW_MESSAGE_BUTTON).click();
 });
+
+ipcRenderer.on(constants.SHOW_MESSAGE_LIST_INBOX, () => {
+	if (!isShowingInbox) {
+		document.querySelector(MESSAGE_LIST_INBOX_LINK).click();
+		resetSettingsOptions();
+	}
+	isShowingInbox = true;
+});
+
+ipcRenderer.on(constants.SHOW_MESSAGE_LIST_ACTIVE_CONTACTS, () => {
+	openMessageList(MESSAGE_LIST_ACTIVE_CONTACTS_LINK);
+});
+
+ipcRenderer.on(constants.SHOW_MESSAGE_LIST_MESSAGE_REQUESTS, () => {
+	openMessageList(MESSAGE_LIST_MESSAGE_REQUESTS_LINK);
+});
+
+ipcRenderer.on(constants.SHOW_MESSAGE_LIST_ARCHIVED_THREADS, () => {
+	openMessageList(MESSAGE_LIST_ARCHIVED_THREADS_LINK);
+});
+
+function openMessageList(messageListLink) {
+	if (!isShowingInbox) {
+		document.querySelector(MESSAGE_LIST_INBOX_LINK).click();
+		resetSettingsOptions();
+	}
+	document.querySelector(messageListLink).click();
+	isShowingInbox = false;
+}
 
 ipcRenderer.on(constants.SHOW_SETTINGS, () => {
 	document.querySelector(SETTINGS_LINK).click();
@@ -66,15 +100,19 @@ document.addEventListener('DOMContentLoaded', () => {
 	// load settings menu once, so it is inserted in the DOM
 	setTimeout(
 		() => {
-			const button = document.querySelector(SETTINGS_BUTTON);
-			if (button) {
-				button.click();
-				button.click();  // clicking again to hide
-			}
+			resetSettingsOptions();
 		},
 		1000
 	);
 });
+
+function resetSettingsOptions() {
+	const button = document.querySelector(SETTINGS_BUTTON);
+	if (button) {
+		button.click();
+		button.click();  // clicking again to hide
+	}
+}
 
 function messageWithEmojis(node) {
 	let message = '';
