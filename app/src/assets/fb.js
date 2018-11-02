@@ -30,7 +30,7 @@ ipcRenderer.on(constants.NEW_CONVERSATION, () => {
 ipcRenderer.on(constants.SHOW_MESSAGE_LIST_INBOX, () => {
 	if (!isShowingInbox) {
 		document.querySelector(MESSAGE_LIST_INBOX_LINK).click();
-		resetSettingsOptions()
+		resetSettingsOptions();
 	}
 	isShowingInbox = true;
 });
@@ -50,10 +50,10 @@ ipcRenderer.on(constants.SHOW_MESSAGE_LIST_ARCHIVED_THREADS, () => {
 function openMessageList(messageListLink) {
 	if (!isShowingInbox) {
 		document.querySelector(MESSAGE_LIST_INBOX_LINK).click();
-		resetSettingsOptions()
+		resetSettingsOptions();
 	}
 	document.querySelector(messageListLink).click();
-	isShowingInbox = false
+	isShowingInbox = false;
 }
 
 ipcRenderer.on(constants.SHOW_SETTINGS, () => {
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	// load settings menu once, so it is inserted in the DOM
 	setTimeout(
 		() => {
-			resetSettingsOptions()
+			resetSettingsOptions();
 		},
 		1000
 	);
