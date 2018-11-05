@@ -254,6 +254,20 @@ onload = () => {
 		shell.openExternal(url);
 	});
 
+	app.setAsDefaultProtocolClient('goofy');
+	app.on('open-url', (event, url) => {
+		const parsedURL = new URL(url);
+		switch(parsedURL.pathname) {
+			case '//message': {
+				const id = parsedURL.searchParams.get('id');
+				if (id) {
+					webview.send(constants.JUMP_TO_CONVERATION, 'row_header_id_user:' + id);
+				}
+				break;
+			}
+		}
+	});
+
 	// Ensure focus propagates when the application is focused
 	const webviewFocusHandler = new FocusHandler(webview);
 	app.on('browser-window-focus', webviewFocusHandler);
