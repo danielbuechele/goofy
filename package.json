@@ -21,8 +21,8 @@
   "license": "MIT",
   "devDependencies": {
     "@sep/eslint-config-sep": "^1.0.14",
-    "electron": "^1.6.3",
-    "electron-builder": "^10.8.0"
+    "electron": "^2.0.13",
+    "electron-builder": "^20.32.0"
   },
   "build": {
     "productName": "Goofy",

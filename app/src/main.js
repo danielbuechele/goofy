@@ -49,7 +49,7 @@ function createWindow() {
 	const title = env.product === constants.PRODUCT_WORKPLACE ? 'Goofy at Work' : 'Goofy';
 
 	// Open the app at the same screen position and size as last time, if possible
-	let windowLayout = { width: 800, height: 600, titleBarStyle: 'hidden-inset', title };
+	let windowLayout = { width: 800, height: 600, titleBarStyle: 'hiddenInset', title };
 	const previousLayout = userConfig.get('windowLayout');
 	// BUG: Electron issue?
 	// The docs (https://github.com/electron/electron/blob/master/docs/api/screen.md)
