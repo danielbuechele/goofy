@@ -71,17 +71,17 @@ body {
 		padding: 8px !important;
 	}
 	/* right column navbar */
-	._1t2u ._673w._1_fz {
+	._1t2u ._673w {
 		height: var(--nav-bar-height);
 		padding: var(--nav-bar-padding);
 	}
 
 		/* conversation action icons (call, info, ...) */
-		._1t2u ._673w._1_fz ._fl2 {
+		._1t2u ._673w ._fl2 {
 			padding: 4px 8px;
 		}
 
 			/* Call, video call button */
-			._1t2u ._673w._1_fz ._fl2 ._30yy:not([data-testid="info_panel_button"]) {
+			._1t2u ._673w ._fl2 ._30yy:not([data-testid="info_panel_button"]) {
 				display: none;
 			}
