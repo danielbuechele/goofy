@@ -5,10 +5,10 @@
   "main": "app/src/main.js",
   "scripts": {
     "lint": "eslint ./app",
-    "postinstall": "install-app-deps",
+    "postinstall": "electron-builder install-app-deps",
     "start": "node ./env.js && electron ./app --enable-logging",
-    "build-mac": "node ./env.js && build -m --x64",
-    "build-win": "node ./env.js && build -w --x64"
+    "pack": "node ./env.js && electron-builder --dir",
+    "dist": "node ./env.js && electron-builder"
   },
   "repository": "https://github.com/danielbuechele/Goofy",
   "keywords": [
@@ -28,12 +28,6 @@
     "productName": "Goofy",
     "icon": "./icon/AppIcon",
     "appId": "cc.buechele.Goofy",
-    "win": {
-      "target": [
-        "nsis"
-      ],
-      "iconUrl": "https://"
-    },
     "mac": {
       "target": [
         "zip"

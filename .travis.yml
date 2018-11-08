@@ -6,7 +6,7 @@ before_script:
   - npm run postinstall
 script:
   - npm run lint
-  - npm run build-mac
+  - npm run dist
 branches:
   only:
   - master
