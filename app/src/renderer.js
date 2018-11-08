@@ -18,7 +18,7 @@ onload = () => {
 	const webview = document.getElementById('webview');
 	const setup = document.getElementById('setup');
 	const domain = userConfig.get('domain');
-	const menu = defaultMenu(app);
+	const menu = defaultMenu(app, shell);
 
 	menu.splice(menu.findIndex(item => item.label === 'Edit'), 0, {
 		label: 'File',
@@ -33,7 +33,8 @@ onload = () => {
 		],
 	});
 
-	menu[0].submenu.splice(
+	let mainMenu = menu[0];
+	mainMenu.submenu.splice(
 		1,
 		0,
 		{
@@ -47,6 +48,9 @@ onload = () => {
 			},
 		}
 	);
+
+	// Fix incorrect accelerator from defaultMenu()
+	mainMenu.submenu[mainMenu.submenu.findIndex(item => item.label === 'Hide Others')].accelerator = 'Command+Option+H';
 
 	let viewMenu = menu[menu.findIndex(item => item.label === 'View')];
 	viewMenu.submenu.splice(
