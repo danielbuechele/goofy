@@ -1,9 +1,12 @@
+language: node_js
+node_js:
+  - 10
 os:
   - osx
 osx_image: xcode8
 before_script:
   - npm install --only=dev
-  - npm run postinstall
+  - npm run electron-builder-postinstall
 script:
   - npm run lint
   - npm run dist
