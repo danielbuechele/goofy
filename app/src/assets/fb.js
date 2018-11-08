@@ -1,7 +1,7 @@
 const { ipcRenderer } = require('electron');
 const constants = require('../helpers/constants');
 let latestMessages;
-let isShowingInbox = false;
+let isShowingInbox = true;
 
 const NEW_MESSAGE_BUTTON = '._1enh ._36ic ._30yy._2oc8';
 const UNREAD_MESSAGE_COUNT = '#mercurymessagesCountValue';
@@ -31,8 +31,8 @@ ipcRenderer.on(constants.SHOW_MESSAGE_LIST_INBOX, () => {
 	if (!isShowingInbox) {
 		document.querySelector(MESSAGE_LIST_INBOX_LINK).click();
 		resetSettingsOptions();
+		isShowingInbox = true;
 	}
-	isShowingInbox = true;
 });
 
 ipcRenderer.on(constants.SHOW_MESSAGE_LIST_ACTIVE_CONTACTS, () => {
