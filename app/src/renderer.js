@@ -138,26 +138,7 @@ onload = () => {
 			{
 				label: env.product === constants.PRODUCT_WWW ? 'Logout' : `Logout from “${domain}”`,
 				click() {
-					const c = webview.getWebContents().session.cookies;
-					c.get({}, (error, cookies) => {
-						for (var i = cookies.length - 1; i >= 0; i--) {
-							const { name, domain, path, secure } = cookies[i];
-							const url = 'http' + (secure ? 's' : '') + '://' + domain + path;
-							c.remove(url, name, () => {});
-						}
-					});
-
-					// this waits for all cookies to be removed, it would be nicer to wait for all callbacks to be called
-					setTimeout(
-						() => {
-							if (env.product === constants.PRODUCT_WORKPLACE) {
-								userConfig.delete('domain');
-							}
-							app.relaunch();
-							app.exit(0);
-						},
-						500
-					);
+					logout();
 				},
 			}
 		);
@@ -229,26 +210,39 @@ onload = () => {
 	});
 
 	webview.addEventListener('did-get-redirect-request', ({ oldURL, newURL }) => {
-		if (oldURL.startsWith(getURL()) && newURL.indexOf('/login') > -1) {
-			loginWindow = new BrowserWindow({
-				parent: remote.getCurrentWindow(),
-				show: false,
-				minimizable: false,
-				maximizable: false,
-				webPreferences: {
-					nodeIntegration: false,
-				},
-			});
-			loginWindow.loadURL(oldURL);
-			loginWindow.once('ready-to-show', () => {
-				loginWindow.show();
-			});
-			loginWindow.webContents.on('will-navigate', (e, url) => {
-				if (url.startsWith(getURL())) {
-					loginWindow.close();
-					webview.loadURL(getURL());
-				}
-			});
+		if (oldURL.startsWith(getURL())) {
+			if (newURL.indexOf('/login') > -1) {
+				// User is logging in for the first time
+				loginWindow = new BrowserWindow({
+					parent: remote.getCurrentWindow(),
+					show: false,
+					minimizable: false,
+					maximizable: false,
+					webPreferences: {
+						nodeIntegration: false,
+					},
+				});
+
+				loginWindow.loadURL(oldURL);
+				loginWindow.once('ready-to-show', () => {
+					loginWindow.webContents.insertCSS('#pagelet_bluebar, #pageFooter{ display: none;}')
+				});
+				loginWindow.webContents.on('did-finish-load', function() {
+					loginWindow.show();
+			    });
+				loginWindow.webContents.on('will-navigate', (e, url) => {
+					if (url.startsWith(getURL())) {
+						loginWindow.close();
+						webview.loadURL(getURL());
+					}
+				});
+
+			} else if (newURL.indexOf('/index.php') > -1) {
+				// User was previously logged in but is now asked to log in 
+				// again. Log user out of Goofy and start login process again
+				logout();
+			}
+
 		} else if (newURL.startsWith(getURL()) && loginWindow) {
 			loginWindow.close();
 		}
@@ -262,3 +256,26 @@ onload = () => {
 	const webviewFocusHandler = new FocusHandler(webview);
 	app.on('browser-window-focus', webviewFocusHandler);
 };
+
+function logout() {
+	const c = webview.getWebContents().session.cookies;
+	c.get({}, (error, cookies) => {
+		for (var i = cookies.length - 1; i >= 0; i--) {
+			const { name, domain, path, secure } = cookies[i];
+			const url = 'http' + (secure ? 's' : '') + '://' + domain + path;
+			c.remove(url, name, () => {});
+		}
+	});
+
+	// this waits for all cookies to be removed, it would be nicer to wait for all callbacks to be called
+	setTimeout(
+		() => {
+			if (env.product === constants.PRODUCT_WORKPLACE) {
+				userConfig.delete('domain');
+			}
+			app.relaunch();
+			app.exit(0);
+		},
+		500
+	);
+}
