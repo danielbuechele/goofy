@@ -225,11 +225,11 @@ onload = () => {
 
 				loginWindow.loadURL(oldURL);
 				loginWindow.once('ready-to-show', () => {
-					loginWindow.webContents.insertCSS('#pagelet_bluebar, #pageFooter{ display: none;}')
+					loginWindow.webContents.insertCSS('#pagelet_bluebar, #pageFooter{ display: none;}');
 				});
 				loginWindow.webContents.on('did-finish-load', function() {
 					loginWindow.show();
-			    });
+				});
 				loginWindow.webContents.on('will-navigate', (e, url) => {
 					if (url.startsWith(getURL())) {
 						loginWindow.close();
@@ -258,6 +258,7 @@ onload = () => {
 };
 
 function logout() {
+	const webview = document.getElementById('webview');
 	const c = webview.getWebContents().session.cookies;
 	c.get({}, (error, cookies) => {
 		for (var i = cookies.length - 1; i >= 0; i--) {

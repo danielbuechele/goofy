@@ -106,7 +106,18 @@ function createWindow() {
 			// the user only tried to close the window
 			e.preventDefault();
 			if (mainWindow) {
-				mainWindow.hide();
+				if (!mainWindow.isFullScreen()) {
+					mainWindow.hide();
+					return;
+				}
+				mainWindow.setFullScreen(false);
+				// Wait for full screen animation to finish before hiding
+				setTimeout(
+					() => {
+						mainWindow.hide();
+					},
+					1000
+				);
 			}
 		}
 	});
