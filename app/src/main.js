@@ -1,11 +1,16 @@
 const electron = require('electron');
-const BrowserWindow = electron.BrowserWindow;
-const autoUpdater = electron.autoUpdater;
-const dialog = electron.dialog;
+const { 
+	BrowserWindow, 
+	autoUpdater, 
+	dialog, 
+	Notification,
+	app,
+	session, 
+	ipcMain, 
+	nativeImage,
+} = electron;
 const path = require('path');
 const url = require('url');
-const app = electron.app;
-const session = electron.session;
 const env = require('./config/env.js');
 const os = require('os');
 const constants = require('./helpers/constants');
@@ -122,6 +127,19 @@ function createWindow() {
 		}
 	});
 }
+
+ipcMain.on(constants.NEW_MESSAGE_NOTIFICATION, (event, params) => {
+	var notifParams = params.notifParams;
+	notifParams.icon = nativeImage.createFromDataURL(params.iconDataUrl);
+	let notification = new Notification(notifParams);
+	notification.on('click', () => {
+		if (mainWindow) {
+			mainWindow.show();
+		}
+		event.sender.send(constants.JUMP_TO_CONVERATION_BY_IMAGE_NAME, params.imageName);
+	});
+	notification.show();
+});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
