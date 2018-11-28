@@ -3,10 +3,6 @@ const constants = require('../helpers/constants');
 
 const NEW_MESSAGE_BUTTON = '._1enh ._36ic ._30yy._2oc8';
 const UNREAD_MESSAGE_COUNT = '#mercurymessagesCountValue';
-const MESSAGE_LIST = '._4u-c._9hq ul[role=grid]';
-const MESSAGE_SENDER = '._1ht6';
-const MESSAGE_UNREAD = '_1ht3';
-const MESSAGE_SELECTED = '_1ht2';
 const SELECTED_CONVERSATION = '._1ht2';
 const ACTIVATE_CONVERSATION = 'a._1ht5';
 
@@ -22,6 +18,7 @@ const MESSAGE_LIST_ARCHIVED_THREADS_LINK = '._54ni.__MenuItem:nth-child(5)';
 
 // Conversation dropdown
 const CONVERSATION_DROPDOWN_LINK_PREFIX = '._54ni.__MenuItem';
+const CONVERSATION_DROPDOWN_LINK_SUFFIX = ' ._5blh';
 
 const MUTE_CONVERSATION_LINK_INDEX                 = 1;
 const ARCHIVE_CONVERSATION_LINK_INDEX              = 3;
@@ -138,36 +135,41 @@ function bindKeyboardShortcuts() {
 	});
 
 	ipcRenderer.on(constants.REPORT_CONVERSATION_SPAM_OR_ABUSE, () => {
-		conversationAction(REPORT_CONVERSATION_SPAM_OR_ABUSE_LINK_INDEX, REPORT_GROUP_CONVERSATION_SPAM_OR_ABUSE_LINK_INDEX);
+		conversationAction(REPORT_CONVERSATION_SPAM_OR_ABUSE_LINK_INDEX, 
+			REPORT_GROUP_CONVERSATION_SPAM_OR_ABUSE_LINK_INDEX);
 	});
 
 	function conversationAction(index, groupIndex) {
-		const menuButton = document.querySelector(SELECTED_CONVERSATION + ' ._5blh');
-		if (!menuButton) {
+		const conversationMenuLink = document.querySelector(SELECTED_CONVERSATION + CONVERSATION_DROPDOWN_LINK_SUFFIX);
+		if (!conversationMenuLink) {
 			return;
 		}
-		menuButton.click();
+		conversationMenuLink.click();
 
-		const menu = document.querySelectorAll('._54nf')[1]
-		if (!menu) {
-			return;
-		}
+		// They could be multiple menus displaying - pick the correct one
+		document.querySelectorAll('._54nf').forEach(menu => {
+			const menuItemStrings = Array.from(menu.querySelectorAll(`${CONVERSATION_DROPDOWN_LINK_PREFIX}`))
+				.map(elem => { return elem.textContent; });
 
-		const archive = menu.querySelector(`${CONVERSATION_DROPDOWN_LINK_PREFIX}:nth-child(3)`);
-		if (archive.textContent === 'Archive') {
-			// Is not a group chat
+			const foundConversationMenu = menuItemStrings.includes('Mute');
+			if (!foundConversationMenu) {
+				return;
+			}
+
+			const isGroupConversation = menuItemStrings.includes('Leave Group');
+			if (isGroupConversation) {
+				const elem = menu.querySelector(`${CONVERSATION_DROPDOWN_LINK_PREFIX}:nth-child(${groupIndex})`);
+				if (elem) {
+					elem.click();
+				}
+				return;
+			}
+
 			const elem = menu.querySelector(`${CONVERSATION_DROPDOWN_LINK_PREFIX}:nth-child(${index})`);
 			if (elem) {
 				elem.click();
 			}
-			return;
-		}
-
-		// Is a group chat
-		const elem = menu.querySelector(`${CONVERSATION_DROPDOWN_LINK_PREFIX}:nth-child(${groupIndex})`);
-		if (elem) {
-			elem.click();
-		}
+		});
 	}
 	
 	// Window menu
