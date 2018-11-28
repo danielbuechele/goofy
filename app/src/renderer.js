@@ -248,54 +248,38 @@ function setupMenu() {
 			},
 			{
 				label: 'Archive',
-				// accelerator: 'CmdOrCtrl+N',
+				accelerator: 'CmdOrCtrl+shift+A',
 				click() {
-					// webview.send(constants.NEW_CONVERSATION);
+					webview.send(constants.ARCHIVE_CONVERSATION);
 				},
 			},
 			{
 				label: 'Delete',
-				// accelerator: 'CmdOrCtrl+N',
+				accelerator: 'CmdOrCtrl+shift+D',
 				click() {
-					// webview.send(constants.NEW_CONVERSATION);
+					webview.send(constants.DELETE_CONVERSATION);
 				},
 			},
 			{
 				type: 'separator',
 			},
 			{
-				label: 'Mark as Unread',
-				// accelerator: 'CmdOrCtrl+N',
+				label: 'Mark as Unread/read',
+				accelerator: 'CmdOrCtrl+shift+L',
 				click() {
-					// webview.send(constants.NEW_CONVERSATION);
+					webview.send(constants.MARK_CONVERSATION_UNREAD);
 				},
 			},
 			{
 				label: 'Mark as spam',
-				// accelerator: 'CmdOrCtrl+N',
 				click() {
-					// webview.send(constants.NEW_CONVERSATION);
+					webview.send(constants.MARK_CONVERSATION_SPAM);
 				},
 			},
 			{
 				label: 'Report Spam or Abuse',
-				// accelerator: 'CmdOrCtrl+N',
 				click() {
-					// webview.send(constants.NEW_CONVERSATION);
-				},
-			},
-			{
-				label: 'Ignore message',
-				// accelerator: 'CmdOrCtrl+N',
-				click() {
-					// webview.send(constants.NEW_CONVERSATION);
-				},
-			},
-			{
-				label: 'Block message',
-				// accelerator: 'CmdOrCtrl+N',
-				click() {
-					// webview.send(constants.NEW_CONVERSATION);
+					webview.send(constants.REPORT_CONVERSATION_SPAM_OR_ABUSE);
 				},
 			},
 		],
