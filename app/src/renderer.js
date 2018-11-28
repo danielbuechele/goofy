@@ -36,30 +36,48 @@ onload = () => {
 		if (env.name === 'development') {
 			webview.openDevTools();
 		}
+
+		remote.getCurrentWindow().setTouchBar(
+			new TouchBar(
+				[
+					new TouchBar.TouchBarButton({
+						label: '📝 New message',
+						click: () => {
+							webview.send(constants.NEW_CONVERSATION);
+						},
+					}),
+					new TouchBar.TouchBarButton({
+						label: '🤫 Mute',
+						click: () => {
+							webview.send(constants.MUTE_CONVERSATION);
+						},
+					}),
+					new TouchBar.TouchBarButton({
+						label: '🗄 Archive',
+						click: () => {
+							webview.send(constants.ARCHIVE_CONVERSATION);
+						},
+					}),
+					new TouchBar.TouchBarButton({
+						label: '🗑 Delete',
+						click: () => {
+							webview.send(constants.DELETE_CONVERSATION);
+						},
+					}),
+					new TouchBar.TouchBarButton({
+						label: '🔵  Read / unread',
+						click: () => {
+							webview.send(constants.MARK_CONVERSATION_UNREAD);
+						},
+					}),
+				]
+			)
+		);
 	});
 
 	webview.addEventListener('ipc-message', e => {
 		if (e.channel === constants.DOCK_COUNT) {
 			app.setBadgeCount(e.args[0]);
-		} else if (e.channel === constants.TOUCH_BAR) {
-			try {
-				const data = JSON.parse(e.args[0]);
-				remote.getCurrentWindow().setTouchBar(
-					new TouchBar(
-						data.map(
-							({ name, active, unread, id }) => new TouchBar.TouchBarButton({
-								label: unread ? `💬 ${name}` : name,
-								backgroundColor: active ? '#0084FF' : undefined,
-								click: () => {
-									webview.send(constants.JUMP_TO_CONVERATION, id);
-								},
-							})
-						)
-					)
-				);
-			} catch (e) {
-				//
-			}
 		}
 	});
 

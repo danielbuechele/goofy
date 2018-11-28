@@ -248,29 +248,6 @@ function bindDock() {
 			if (lastDockCount === currentDockCount) {
 				return;
 			}
-	
-			// update TouchBar
-			ipcRenderer.sendToHost(constants.TOUCH_BAR, []);
-			if (document.querySelector(MESSAGE_LIST)) {
-				const unreadLinks = [];
-				const readLinks = [];
-		
-				document.querySelector(MESSAGE_LIST).childNodes.forEach(message => {
-					const item = {
-						name: message.querySelector(MESSAGE_SENDER).textContent,
-						unread: message.classList.contains(MESSAGE_UNREAD),
-						active: message.classList.contains(MESSAGE_SELECTED),
-						id: message.childNodes[0].getAttribute('id'),
-					};
-					if (item.unread) {
-						unreadLinks.push(item);
-					} else {
-						readLinks.push(item);
-					}
-				});
-		
-				ipcRenderer.sendToHost(constants.TOUCH_BAR, JSON.stringify(unreadLinks.concat(readLinks).slice(0, 5)));
-			}
 		});
 	});
 }
