@@ -1,175 +1,29 @@
-const { BrowserWindow, app, shell } = require('electron').remote;
 const remote = require('electron').remote;
-const { Menu, autoUpdater, dialog, TouchBar } = remote;
+const { BrowserWindow, app, shell, Menu, autoUpdater, dialog, TouchBar } = remote;
 const defaultMenu = require('electron-default-menu');
 const fs = require('fs');
 const css = fs.readFileSync(__dirname + '/assets/fb.css', 'utf-8');
+
 const env = require('./config/env.js');
 const userConfig = require('./modules/userConfig');
 const constants = require('./helpers/constants');
 const FocusHandler = require('./modules/focusHandler');
+
 let loginWindow;
 
 const getURL = (domain = userConfig.get('domain')) =>
 	env.product === constants.PRODUCT_WWW ? 'https://www.facebook.com/messages' : `https://${domain}.facebook.com/chat`;
 
 onload = () => {
+	setupMenu();
+	
 	document.getElementById('logo').setAttribute('src', `./assets/${env.product}.png`);
+
 	const webview = document.getElementById('webview');
-	const setup = document.getElementById('setup');
-	const domain = userConfig.get('domain');
-	const menu = defaultMenu(app, shell);
-
-	menu.splice(menu.findIndex(item => item.label === 'Edit'), 0, {
-		label: 'File',
-		submenu: [
-			{
-				label: 'New Conversation',
-				accelerator: 'CmdOrCtrl+N',
-				click() {
-					webview.send(constants.NEW_CONVERSATION);
-				},
-			},
-		],
-	});
-
-	let mainMenu = menu[0];
-	mainMenu.submenu.splice(
-		1,
-		0,
-		{
-			type: 'separator',
-		},
-		{
-			label: 'Preferences...',
-			accelerator: 'CmdOrCtrl+,',
-			click() {
-				webview.send(constants.SHOW_SETTINGS);
-			},
-		}
-	);
-
-	// Fix incorrect accelerator from defaultMenu()
-	mainMenu.submenu[mainMenu.submenu.findIndex(item => item.label === 'Hide Others')].accelerator = 'Command+Option+H';
-
-	let viewMenu = menu[menu.findIndex(item => item.label === 'View')];
-	viewMenu.submenu.splice(
-		0,
-		0,
-		{
-			type: 'separator',
-		},
-		{
-			label: 'Inbox',
-			accelerator: 'CmdOrCtrl+1',
-			click() {
-				webview.send(constants.SHOW_MESSAGE_LIST_INBOX);
-			},
-		},
-		{
-			label: 'Active contacts',
-			accelerator: 'CmdOrCtrl+2',
-			click() {
-				webview.send(constants.SHOW_MESSAGE_LIST_ACTIVE_CONTACTS);
-			},
-		},
-		{
-			label: 'Message requests',
-			accelerator: 'CmdOrCtrl+3',
-			click() {
-				webview.send(constants.SHOW_MESSAGE_LIST_MESSAGE_REQUESTS);
-			},
-		},
-		{
-			label: 'Archived threads',
-			accelerator: 'CmdOrCtrl+4',
-			click() {
-				webview.send(constants.SHOW_MESSAGE_LIST_ARCHIVED_THREADS);
-			},
-		},
-		{
-			type: 'separator',
-		}
-	);
-
-	let windowMenu = menu[menu.findIndex(item => item.label === 'Window')];
-	windowMenu.submenu.push(
-		{
-			label: 'Select Next Conversation',
-			accelerator: 'CmdOrCtrl+]',
-			click() {
-				webview.send(constants.NEXT_CONVERSATION);
-			},
-		},
-		{
-			label: 'Select Previous Conversation',
-			accelerator: 'CmdOrCtrl+[',
-			click() {
-				webview.send(constants.PREV_CONVERSATION);
-			},
-		},
-		{
-			type: 'separator',
-		}
-	);
-
-	if (env.product === constants.PRODUCT_WORKPLACE) {
-		windowMenu.submenu.push({
-			label: 'Show notifications in menu bar',
-			type: 'checkbox',
-			checked: userConfig.get('menubar'),
-			click() {
-				userConfig.set('menubar', !userConfig.get('menubar'));
-				remote.app.relaunch();
-				remote.app.exit(0);
-			},
-		});
-	}
-
+	
 	if (env.product === constants.PRODUCT_WWW) {
-		document.getElementById('webview').setAttribute('src', getURL());
+		webview.setAttribute('src', getURL());
 	}
-
-	if (domain || env.product === constants.PRODUCT_WWW) {
-		menu[1].submenu.push(
-			{
-				type: 'separator',
-			},
-			{
-				label: env.product === constants.PRODUCT_WWW ? 'Logout' : `Logout from “${domain}”`,
-				click() {
-					logout();
-				},
-			}
-		);
-		document.getElementById('webview').setAttribute('src', getURL());
-	} else {
-		setup.className = 'active';
-		setup.onsubmit = () => {
-			let domain = setup.querySelector('input').value.trim();
-			userConfig.set('domain', domain);
-			document.getElementById('webview').setAttribute('src', getURL());
-		};
-	}
-
-	if (env.name === 'production') {
-		menu[0].submenu.splice(1, 0, {
-			label: 'Check for Update',
-			click() {
-				autoUpdater.on('update-not-available', () => {
-					autoUpdater.removeAllListeners('update-not-available');
-					dialog.showMessageBox({
-						message: 'No update available',
-						detail: `${env.appName} ${app.getVersion()} is the latest version available.`,
-						buttons: [ 'OK' ],
-					});
-				});
-				autoUpdater.checkForUpdates();
-			},
-		});
-	}
-
-	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 
 	webview.addEventListener('did-stop-loading', () => {
 		if (webview.getURL().startsWith(getURL())) {
@@ -209,6 +63,7 @@ onload = () => {
 		}
 	});
 
+	// Handle login / logged out etc
 	webview.addEventListener('did-get-redirect-request', ({ oldURL, newURL }) => {
 		if (oldURL.startsWith(getURL())) {
 			if (newURL.indexOf('/login') > -1) {
@@ -256,6 +111,233 @@ onload = () => {
 	const webviewFocusHandler = new FocusHandler(webview);
 	app.on('browser-window-focus', webviewFocusHandler);
 };
+
+function setupMenu() {
+	const menu = defaultMenu(app, shell);
+	const webview = document.getElementById('webview');
+
+	// File menu
+	menu.splice(menu.findIndex(item => item.label === 'Edit'), 0, {
+		label: 'File',
+		submenu: [
+			{
+				label: 'New Conversation',
+				accelerator: 'CmdOrCtrl+N',
+				click() {
+					webview.send(constants.NEW_CONVERSATION);
+				},
+			},
+		],
+	});
+
+	const domain = userConfig.get('domain');
+	if (domain || env.product === constants.PRODUCT_WWW) {
+		menu[1].submenu.push(
+			{
+				type: 'separator',
+			},
+			{
+				label: env.product === constants.PRODUCT_WWW ? 'Logout' : `Logout from “${domain}”`,
+				click() {
+					logout();
+				},
+			}
+		);
+		webview.setAttribute('src', getURL());
+	} else {
+		const setup = document.getElementById('setup');
+		setup.className = 'active';
+		setup.onsubmit = () => {
+			const domain = setup.querySelector('input').value.trim();
+			userConfig.set('domain', domain);
+			webview.setAttribute('src', getURL());
+		};
+	}
+
+	// Main menu
+	let mainMenu = menu[0];
+	mainMenu.submenu.splice(
+		1,
+		0,
+		{
+			type: 'separator',
+		},
+		{
+			label: 'Preferences...',
+			accelerator: 'CmdOrCtrl+,',
+			click() {
+				webview.send(constants.SHOW_SETTINGS);
+			},
+		}
+	);
+
+	if (env.name === 'production') {
+		menu[0].submenu.splice(1, 0, {
+			label: 'Check for Update',
+			click() {
+				autoUpdater.on('update-not-available', () => {
+					autoUpdater.removeAllListeners('update-not-available');
+					dialog.showMessageBox({
+						message: 'No update available',
+						detail: `${env.appName} ${app.getVersion()} is the latest version available.`,
+						buttons: [ 'OK' ],
+					});
+				});
+				autoUpdater.checkForUpdates();
+			},
+		});
+	}
+
+	// Fix incorrect accelerator for "Hide Others" (imported from defaultMenu())
+	mainMenu.submenu[mainMenu.submenu.findIndex(item => item.label === 'Hide Others')].accelerator = 'Command+Option+H';
+
+	// View menu
+	let viewMenu = menu[menu.findIndex(item => item.label === 'View')];
+	viewMenu.submenu.splice(
+		0,
+		0,
+		{
+			type: 'separator',
+		},
+		{
+			label: 'Inbox',
+			accelerator: 'CmdOrCtrl+1',
+			click() {
+				webview.send(constants.SHOW_MESSAGE_LIST_INBOX);
+			},
+		},
+		{
+			label: 'Active contacts',
+			accelerator: 'CmdOrCtrl+2',
+			click() {
+				webview.send(constants.SHOW_MESSAGE_LIST_ACTIVE_CONTACTS);
+			},
+		},
+		{
+			label: 'Message requests',
+			accelerator: 'CmdOrCtrl+3',
+			click() {
+				webview.send(constants.SHOW_MESSAGE_LIST_MESSAGE_REQUESTS);
+			},
+		},
+		{
+			label: 'Archived threads',
+			accelerator: 'CmdOrCtrl+4',
+			click() {
+				webview.send(constants.SHOW_MESSAGE_LIST_ARCHIVED_THREADS);
+			},
+		},
+		{
+			type: 'separator',
+		}
+	);
+
+	// Conversation menu
+	menu.splice(menu.findIndex(item => item.label === 'Window'), 0, {
+		label: 'Conversation',
+		submenu: [
+			{
+				label: 'Mute',
+				accelerator: 'CmdOrCtrl+shift+M',
+				click() {
+					webview.send(constants.MUTE_CONVERSATION);
+				},
+			},
+			{
+				type: 'separator',
+			},
+			{
+				label: 'Archive',
+				// accelerator: 'CmdOrCtrl+N',
+				click() {
+					// webview.send(constants.NEW_CONVERSATION);
+				},
+			},
+			{
+				label: 'Delete',
+				// accelerator: 'CmdOrCtrl+N',
+				click() {
+					// webview.send(constants.NEW_CONVERSATION);
+				},
+			},
+			{
+				type: 'separator',
+			},
+			{
+				label: 'Mark as Unread',
+				// accelerator: 'CmdOrCtrl+N',
+				click() {
+					// webview.send(constants.NEW_CONVERSATION);
+				},
+			},
+			{
+				label: 'Mark as spam',
+				// accelerator: 'CmdOrCtrl+N',
+				click() {
+					// webview.send(constants.NEW_CONVERSATION);
+				},
+			},
+			{
+				label: 'Report Spam or Abuse',
+				// accelerator: 'CmdOrCtrl+N',
+				click() {
+					// webview.send(constants.NEW_CONVERSATION);
+				},
+			},
+			{
+				label: 'Ignore message',
+				// accelerator: 'CmdOrCtrl+N',
+				click() {
+					// webview.send(constants.NEW_CONVERSATION);
+				},
+			},
+			{
+				label: 'Block message',
+				// accelerator: 'CmdOrCtrl+N',
+				click() {
+					// webview.send(constants.NEW_CONVERSATION);
+				},
+			},
+		],
+	});
+
+	// Window Menu
+	let windowMenu = menu[menu.findIndex(item => item.label === 'Window')];
+	windowMenu.submenu.push(
+		{
+			label: 'Select Next Conversation',
+			accelerator: 'CmdOrCtrl+]',
+			click() {
+				webview.send(constants.NEXT_CONVERSATION);
+			},
+		},
+		{
+			label: 'Select Previous Conversation',
+			accelerator: 'CmdOrCtrl+[',
+			click() {
+				webview.send(constants.PREV_CONVERSATION);
+			},
+		},
+		{
+			type: 'separator',
+		}
+	);
+
+	if (env.product === constants.PRODUCT_WORKPLACE) {
+		windowMenu.submenu.push({
+			label: 'Show notifications in menu bar',
+			type: 'checkbox',
+			checked: userConfig.get('menubar'),
+			click() {
+				userConfig.set('menubar', !userConfig.get('menubar'));
+				remote.app.relaunch();
+				remote.app.exit(0);
+			},
+		});
+	}
+
+	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
+}
 
 function logout() {
 	const webview = document.getElementById('webview');
