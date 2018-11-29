@@ -36,49 +36,7 @@ onload = () => {
 		if (env.name === 'development') {
 			webview.openDevTools();
 		}
-
-		remote.getCurrentWindow().setTouchBar(
-			new TouchBar(
-				[
-					new TouchBar.TouchBarButton({
-						label: '📝',
-						click: () => {
-							webview.send(constants.NEW_CONVERSATION);
-						},
-					}),
-					new TouchBar.TouchBarButton({
-						label: '🤫',
-						click: () => {
-							webview.send(constants.MUTE_CONVERSATION);
-						},
-					}),
-					new TouchBar.TouchBarButton({
-						label: '🗄',
-						click: () => {
-							webview.send(constants.ARCHIVE_CONVERSATION);
-						},
-					}),
-					new TouchBar.TouchBarButton({
-						label: '🗑',
-						click: () => {
-							webview.send(constants.DELETE_CONVERSATION);
-						},
-					}),
-					new TouchBar.TouchBarButton({
-						label: '🔵',
-						click: () => {
-							webview.send(constants.MARK_CONVERSATION_UNREAD);
-						},
-					}),
-					new TouchBar.TouchBarButton({
-						label: '👍',
-						click: () => {
-							// webview.send(constants.MARK_CONVERSATION_UNREAD);
-						},
-					}),
-				]
-			)
-		);
+		setupTouchBar();
 	});
 
 	webview.addEventListener('ipc-message', e => {
@@ -345,6 +303,51 @@ function setupMenu() {
 	}
 
 	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
+}
+
+function setupTouchBar() {
+	remote.getCurrentWindow().setTouchBar(
+		new TouchBar(
+			[
+				new TouchBar.TouchBarButton({
+					label: '📝',
+					click: () => {
+						webview.send(constants.NEW_CONVERSATION);
+					},
+				}),
+				new TouchBar.TouchBarButton({
+					label: '🤫',
+					click: () => {
+						webview.send(constants.MUTE_CONVERSATION);
+					},
+				}),
+				new TouchBar.TouchBarButton({
+					label: '🗄',
+					click: () => {
+						webview.send(constants.ARCHIVE_CONVERSATION);
+					},
+				}),
+				new TouchBar.TouchBarButton({
+					label: '🗑',
+					click: () => {
+						webview.send(constants.DELETE_CONVERSATION);
+					},
+				}),
+				new TouchBar.TouchBarButton({
+					label: '🔵',
+					click: () => {
+						webview.send(constants.MARK_CONVERSATION_UNREAD);
+					},
+				}),
+				new TouchBar.TouchBarButton({
+					label: '👍',
+					click: () => {
+						webview.send(constants.LIKE_CONVERSATION);
+					},
+				}),
+			]
+		)
+	);
 }
 
 function logout() {

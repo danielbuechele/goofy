@@ -35,6 +35,9 @@ const MARK_GROUP_CONVERSATION_UNREAD_LINK_INDEX          = 7;
 const MARK_GROUP_CONVERSATION_SPAM_LINK_INDEX            = 8;
 const REPORT_GROUP_CONVERSATION_SPAM_OR_ABUSE_LINK_INDEX = 9;
 
+// Conversation actions
+const LIKE_CONVERSATION_LINK = '._4rv9._30yy._39bl';
+
 let lastDockCount = null;
 
 // Hijack WebView notifications and create our own
@@ -194,6 +197,21 @@ function bindKeyboardShortcuts() {
 		const nextConversation = document.querySelector(SELECTED_CONVERSATION).previousSibling;
 		if (nextConversation) {
 			nextConversation.querySelector(ACTIVATE_CONVERSATION).click();
+		}
+	});
+
+	// Touchbar
+	// - Like conversation
+	ipcRenderer.on(constants.LIKE_CONVERSATION, () => {
+		const like = document.querySelector(LIKE_CONVERSATION_LINK);
+		if (like) {
+			var mouseDown = document.createEvent('MouseEvents');
+			mouseDown.initEvent('mousedown', true, true);
+			like.dispatchEvent(mouseDown);
+
+			var mouseUp = document.createEvent('MouseEvents');
+			mouseUp.initEvent('mouseup', true, true);
+			like.dispatchEvent(mouseUp);
 		}
 	});
 }
