@@ -43,11 +43,6 @@ body {
 			display: none;
 		}
 
-		/* preferences icon / back button */
-		._1enh ._36ic._5l-3 a:nth-child(1) {
-			visibility: hidden;
-		}
-
 		/* New message button */
 		@media (max-width: 700px) {
 			._1enh ._36ic._5l-3 ._30yy._2oc8 {
