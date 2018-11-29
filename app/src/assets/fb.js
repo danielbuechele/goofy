@@ -17,8 +17,9 @@ const MESSAGE_LIST_MESSAGE_REQUESTS_LINK = '._54ni.__MenuItem:nth-child(4)';
 const MESSAGE_LIST_ARCHIVED_THREADS_LINK = '._54ni.__MenuItem:nth-child(5)';
 
 // Conversation dropdown
-const CONVERSATION_DROPDOWN_LINK_PREFIX = '._54ni.__MenuItem';
-const CONVERSATION_DROPDOWN_LINK_SUFFIX = ' ._5blh';
+const CONVERSATION_DROPDOWN_LINK_SUFFIX = '._5blh';
+const CONVERSATION_DROPDOWN = '._54nf';
+const CONVERSATION_DROPDOWN_ITEM_LINK_PREFIX = '._54ni.__MenuItem';
 
 const MUTE_CONVERSATION_LINK_INDEX                 = 1;
 const ARCHIVE_CONVERSATION_LINK_INDEX              = 3;
@@ -140,15 +141,15 @@ function bindKeyboardShortcuts() {
 	});
 
 	function conversationAction(index, groupIndex) {
-		const conversationMenuLink = document.querySelector(SELECTED_CONVERSATION + CONVERSATION_DROPDOWN_LINK_SUFFIX);
+		const conversationMenuLink = document.querySelector(`${SELECTED_CONVERSATION} ${CONVERSATION_DROPDOWN_LINK_SUFFIX}`);
 		if (!conversationMenuLink) {
 			return;
 		}
 		conversationMenuLink.click();
 
-		// They could be multiple menus displaying - pick the correct one
-		document.querySelectorAll('._54nf').forEach(menu => {
-			const menuItemStrings = Array.from(menu.querySelectorAll(`${CONVERSATION_DROPDOWN_LINK_PREFIX}`))
+		// There could be multiple menus displaying - pick the correct one
+		document.querySelectorAll(CONVERSATION_DROPDOWN).forEach(menu => {
+			const menuItemStrings = Array.from(menu.querySelectorAll(`${CONVERSATION_DROPDOWN_ITEM_LINK_PREFIX}`))
 				.map(elem => { return elem.textContent; });
 
 			const foundConversationMenu = menuItemStrings.includes('Mute');
@@ -156,16 +157,23 @@ function bindKeyboardShortcuts() {
 				return;
 			}
 
+			const rootMenuElem = menu.parentElement.parentElement.parentElement;
+			if (rootMenuElem) {
+				// Hide menu before displaying. Note, don't need to un-hide 
+				// after clicked as menu disappears after clicking
+				rootMenuElem.style.visibility = 'hidden';
+			}
+
 			const isGroupConversation = menuItemStrings.includes('Leave Group');
 			if (isGroupConversation) {
-				const elem = menu.querySelector(`${CONVERSATION_DROPDOWN_LINK_PREFIX}:nth-child(${groupIndex})`);
+				const elem = menu.querySelector(`${CONVERSATION_DROPDOWN_ITEM_LINK_PREFIX}:nth-child(${groupIndex})`);
 				if (elem) {
 					elem.click();
 				}
 				return;
 			}
 
-			const elem = menu.querySelector(`${CONVERSATION_DROPDOWN_LINK_PREFIX}:nth-child(${index})`);
+			const elem = menu.querySelector(`${CONVERSATION_DROPDOWN_ITEM_LINK_PREFIX}:nth-child(${index})`);
 			if (elem) {
 				elem.click();
 			}
