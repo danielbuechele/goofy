@@ -41,33 +41,39 @@ onload = () => {
 			new TouchBar(
 				[
 					new TouchBar.TouchBarButton({
-						label: '📝 New message',
+						label: '📝',
 						click: () => {
 							webview.send(constants.NEW_CONVERSATION);
 						},
 					}),
 					new TouchBar.TouchBarButton({
-						label: '🤫 Mute',
+						label: '🤫',
 						click: () => {
 							webview.send(constants.MUTE_CONVERSATION);
 						},
 					}),
 					new TouchBar.TouchBarButton({
-						label: '🗄 Archive',
+						label: '🗄',
 						click: () => {
 							webview.send(constants.ARCHIVE_CONVERSATION);
 						},
 					}),
 					new TouchBar.TouchBarButton({
-						label: '🗑 Delete',
+						label: '🗑',
 						click: () => {
 							webview.send(constants.DELETE_CONVERSATION);
 						},
 					}),
 					new TouchBar.TouchBarButton({
-						label: '🔵  Read / unread',
+						label: '🔵',
 						click: () => {
 							webview.send(constants.MARK_CONVERSATION_UNREAD);
+						},
+					}),
+					new TouchBar.TouchBarButton({
+						label: '👍',
+						click: () => {
+							// webview.send(constants.MARK_CONVERSATION_UNREAD);
 						},
 					}),
 				]
@@ -282,14 +288,14 @@ function setupMenu() {
 				type: 'separator',
 			},
 			{
-				label: 'Mark as Unread/read',
-				accelerator: 'CmdOrCtrl+shift+L',
+				label: 'Mark as Unread/Read',
+				accelerator: 'CmdOrCtrl+shift+U',
 				click() {
 					webview.send(constants.MARK_CONVERSATION_UNREAD);
 				},
 			},
 			{
-				label: 'Mark as spam',
+				label: 'Mark as Spam',
 				click() {
 					webview.send(constants.MARK_CONVERSATION_SPAM);
 				},
