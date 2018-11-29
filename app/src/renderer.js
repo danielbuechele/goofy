@@ -306,6 +306,7 @@ function setupMenu() {
 }
 
 function setupTouchBar() {
+	const webview = document.getElementById('webview');
 	remote.getCurrentWindow().setTouchBar(
 		new TouchBar(
 			[
