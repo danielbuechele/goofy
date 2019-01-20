@@ -12,7 +12,6 @@ const {
 const path = require('path');
 const url = require('url');
 const env = require('./config/env.js');
-const os = require('os');
 const constants = require('./helpers/constants');
 const menubar = require('menubar');
 const userConfig = require('./modules/userConfig');
@@ -178,14 +177,17 @@ app.on('activate', function() {
 autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
 	dialog.showMessageBox(
 		{
+			type: 'info',
 			title: 'Update available',
 			message: `A new version of ${env.appName} is available!`,
-			detail: `${env.appName} ${releaseName} is now available—you have ${app.getVersion()}.`,
-			buttons: [ 'Install and Restart' ],
+			detail: `${env.appName} ${releaseName} is now available—you have ${app.getVersion()}.  Restart the application to apply updates.`,
+			buttons: [ 'Restart', 'Later' ],
 		},
-		() => {
-			willQuitApp = true;
-			autoUpdater.quitAndInstall();
+		(response) => {
+			if (response === 0) {
+				willQuitApp = true;
+				autoUpdater.quitAndInstall();
+			}
 		}
 	);
 });
@@ -194,8 +196,6 @@ autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
 // code. You can also put them in separate files and require them here.
 
 if (env.name === 'production') {
-	const version = app.getVersion();
-	const platform = os.platform() === 'darwin' ? 'osx' : os.platform();
-	autoUpdater.setFeedURL(`${env.updateURL}/${platform}/${version}`);
+	autoUpdater.setFeedURL(`${env.updateURL}/${process.platform}-${process.arch}/${app.getVersion()}`);
 	autoUpdater.checkForUpdates();
 }

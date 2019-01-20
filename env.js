@@ -7,7 +7,7 @@ fs.writeFileSync(
 		name: process.env.NODE_ENV || 'development',
 		appName: pjson.build.productName,
 		product: 'www', // 'workplace' or 'www'
-		updateURL: 'https://goofy-nuts-www.herokuapp.com/update',
+		updateURL: 'https://update.electronjs.org/danielbuechele/goofy',
 	})
 );
 
