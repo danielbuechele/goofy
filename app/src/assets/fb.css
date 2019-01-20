@@ -11,6 +11,11 @@ body {
 	min-width: 0 !important;
 }
 
+/* Login - footer */
+._210n, #pageFooter {
+	display: none;
+}
+
 /* Workplace toolbar */
 #pagelet_bluebar, #fb2k_pagelet_bluebar {
 	display: none;

@@ -54,7 +54,15 @@ function createWindow() {
 	const title = env.product === constants.PRODUCT_WORKPLACE ? 'Goofy at Work' : 'Goofy';
 
 	// Open the app at the same screen position and size as last time, if possible
-	let windowLayout = { width: 800, height: 600, titleBarStyle: 'hiddenInset', title };
+	let options = { 
+		width: 800, 
+		height: 600, 
+		titleBarStyle: 'hiddenInset', 
+		title, 
+		webPreferences: {
+			nodeIntegration: true,
+		},
+	};
 	const previousLayout = userConfig.get('windowLayout');
 	// BUG: Electron issue?
 	// The docs (https://github.com/electron/electron/blob/master/docs/api/screen.md)
@@ -69,17 +77,17 @@ function createWindow() {
 			if (
 				previousLayout.width + previousLayout.x < screenWidth && previousLayout.height + previousLayout.y < screenHeight
 			) {
-				windowLayout.width = previousLayout.width;
-				windowLayout.height = previousLayout.height;
-				windowLayout.x = previousLayout.x;
-				windowLayout.y = previousLayout.y;
+				options.width = previousLayout.width;
+				options.height = previousLayout.height;
+				options.x = previousLayout.x;
+				options.y = previousLayout.y;
 			}
 		}
 	}
 
 	// Create the browser window.
-	mainWindow = new BrowserWindow(windowLayout);
-
+	mainWindow = new BrowserWindow(options);
+	
 	// Propagate retina resolution to requests if necessary
 	const requestFilter = new RequestFilter(session);
 	const display = electron.screen.getPrimaryDisplay();

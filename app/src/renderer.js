@@ -1,5 +1,5 @@
 const remote = require('electron').remote;
-const { BrowserWindow, app, shell, Menu, autoUpdater, dialog, TouchBar } = remote;
+const { app, shell, Menu, autoUpdater, dialog, TouchBar } = remote;
 const defaultMenu = require('electron-default-menu');
 const fs = require('fs');
 const css = fs.readFileSync(__dirname + '/assets/fb.css', 'utf-8');
@@ -9,10 +9,8 @@ const userConfig = require('./modules/userConfig');
 const constants = require('./helpers/constants');
 const FocusHandler = require('./modules/focusHandler');
 
-let loginWindow;
-
 const getURL = (domain = userConfig.get('domain')) =>
-	env.product === constants.PRODUCT_WWW ? 'https://www.facebook.com/messages' : `https://${domain}.facebook.com/chat`;
+	env.product === constants.PRODUCT_WWW ? 'https://www.messenger.com/login' : `https://${domain}.facebook.com/chat`;
 
 onload = () => {
 	setupMenu();
@@ -26,9 +24,7 @@ onload = () => {
 	}
 
 	webview.addEventListener('did-stop-loading', () => {
-		if (webview.getURL().startsWith(getURL())) {
-			webview.className = '';
-		}
+		webview.className = '';
 	});
 
 	webview.addEventListener('dom-ready', () => {
@@ -42,46 +38,6 @@ onload = () => {
 	webview.addEventListener('ipc-message', e => {
 		if (e.channel === constants.DOCK_COUNT) {
 			app.setBadgeCount(e.args[0]);
-		}
-	});
-
-	// Handle login / logged out etc
-	webview.addEventListener('did-get-redirect-request', ({ oldURL, newURL }) => {
-		if (oldURL.startsWith(getURL())) {
-			if (newURL.indexOf('/login') > -1) {
-				// User is logging in for the first time
-				loginWindow = new BrowserWindow({
-					parent: remote.getCurrentWindow(),
-					show: false,
-					minimizable: false,
-					maximizable: false,
-					webPreferences: {
-						nodeIntegration: false,
-					},
-				});
-
-				loginWindow.loadURL(oldURL);
-				loginWindow.once('ready-to-show', () => {
-					loginWindow.webContents.insertCSS('#pagelet_bluebar, #pageFooter{ display: none;}');
-				});
-				loginWindow.webContents.on('did-finish-load', function() {
-					loginWindow.show();
-				});
-				loginWindow.webContents.on('will-navigate', (e, url) => {
-					if (url.startsWith(getURL())) {
-						loginWindow.close();
-						webview.loadURL(getURL());
-					}
-				});
-
-			} else if (newURL.indexOf('/index.php') > -1) {
-				// User was previously logged in but is now asked to log in 
-				// again. Log user out of Goofy and start login process again
-				logout();
-			}
-
-		} else if (newURL.startsWith(getURL()) && loginWindow) {
-			loginWindow.close();
 		}
 	});
 

@@ -21,7 +21,7 @@
   "license": "MIT",
   "devDependencies": {
     "@sep/eslint-config-sep": "^1.0.14",
-    "electron": "^2.0.13",
+    "electron": "^4.0.1",
     "electron-builder": "^20.32.0"
   },
   "build": {
