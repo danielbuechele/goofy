@@ -29,9 +29,6 @@ onload = () => {
 
 	webview.addEventListener('dom-ready', () => {
 		webview.insertCSS(css);
-		if (env.name === 'development') {
-			webview.openDevTools();
-		}
 		setupTouchBar();
 	});
 
@@ -169,6 +166,25 @@ function setupMenu() {
 			type: 'separator',
 		}
 	);
+
+	if (env.name === 'development') {
+		viewMenu.submenu.splice(
+			viewMenu.submenu.length,
+			0,
+			{
+				type: 'separator',
+			},
+			{
+				label: 'Developer tools (inner webview)',
+				click() {
+					webview.openDevTools();
+				},
+			},
+			{
+				type: 'separator',
+			}
+		);
+	}
 
 	// Conversation menu
 	menu.splice(menu.findIndex(item => item.label === 'Window'), 0, {
