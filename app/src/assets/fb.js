@@ -57,7 +57,7 @@ window.Notification = (notification => {
 			canvas.height = image.height;
 			
 			const context = canvas.getContext('2d');
-			context.drawImage(image, image.width, image.height);
+			context.drawImage(image, 0, 0, image.width, image.height);
 
 			const imageName = icon.substring(icon.lastIndexOf('/') + 1, icon.indexOf('?'));
 
