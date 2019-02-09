@@ -249,9 +249,9 @@ function resetSettingsDropdown() {
 
 function bindLoadMessageIPCMessages() {
 	ipcRenderer.on(constants.JUMP_TO_CONVERSATION, (event, id) => {
-		const nextConversation = document.querySelector(`[id='${id}'] a`);
-		if (nextConversation) {
-			nextConversation.click();
+		const conversation = document.querySelector(`[id='${id}'] a`);
+		if (conversation) {
+			conversation.click();
 		}
 	});
 	
