@@ -261,6 +261,13 @@ function setupMenu() {
 		}
 	);
 
+	// Help Menu
+	let helpMenu = menu[menu.findIndex(item => item.label === 'Help')];
+	helpMenu.submenu[helpMenu.submenu.findIndex(item => item.label === 'Learn More')].click = function() { 
+		// Load goofy website
+		shell.openExternal('https://www.goofyapp.com') 
+	}
+
 	if (env.product === constants.PRODUCT_WORKPLACE) {
 		windowMenu.submenu.push({
 			label: 'Show notifications in menu bar',
