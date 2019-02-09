@@ -143,7 +143,7 @@ ipcMain.on(constants.NEW_MESSAGE_NOTIFICATION, (event, params) => {
 		if (mainWindow) {
 			mainWindow.show();
 		}
-		event.sender.send(constants.JUMP_TO_CONVERATION_BY_IMAGE_NAME, params.imageName);
+		event.sender.send(constants.JUMP_TO_CONVERSATION_BY_IMAGE_NAME, params.imageName);
 	});
 	notification.show();
 });
