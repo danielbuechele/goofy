@@ -136,7 +136,7 @@ function createWindow() {
 }
 
 ipcMain.on(constants.NEW_MESSAGE_NOTIFICATION, (event, params) => {
-	var notifParams = params.notifParams;
+	const notifParams = params.notifParams;
 	notifParams.icon = nativeImage.createFromDataURL(params.iconDataUrl);
 	let notification = new Notification(notifParams);
 	notification.on('click', () => {

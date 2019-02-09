@@ -327,7 +327,7 @@ function logout() {
 	const webview = document.getElementById('webview');
 	const c = webview.getWebContents().session.cookies;
 	c.get({}, (error, cookies) => {
-		for (var i = cookies.length - 1; i >= 0; i--) {
+		for (let i = cookies.length - 1; i >= 0; i--) {
 			const { name, domain, path, secure } = cookies[i];
 			const url = 'http' + (secure ? 's' : '') + '://' + domain + path;
 			c.remove(url, name, () => {});
