@@ -1,6 +1,6 @@
 {
   "name": "goofy-core",
-  "version": "3.3.5",
+  "version": "3.4.0",
   "description": "Common core used by Goofy and Goofy for Work",
   "main": "src/main.js",
   "author": "Daniel Büchele",
