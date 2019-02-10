@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require('fs');
 var pjson = require('./package.json');
 
@@ -6,7 +8,6 @@ fs.writeFileSync(
 	JSON.stringify({
 		name: process.env.NODE_ENV || 'development',
 		appName: pjson.build.productName,
-		product: 'www', // 'workplace' or 'www'
 		updateURL: 'https://update.electronjs.org/danielbuechele/goofy',
 	})
 );

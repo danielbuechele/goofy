@@ -13,36 +13,11 @@ const path = require('path');
 const url = require('url');
 const env = require('./config/env.js');
 const constants = require('./helpers/constants');
-const menubar = require('menubar');
 const userConfig = require('./modules/userConfig');
-const getMenuBarIconPath = require('./helpers/getMenuBarIconPath');
 const RequestFilter = require('./modules/requestFilter');
 
 app.setName(env.appName);
 app.disableHardwareAcceleration();
-
-// menubar widget only available for Workplace right now
-const menubarEnabled = env.product === constants.PRODUCT_WORKPLACE && userConfig.get('menubar');
-if (menubarEnabled) {
-	global.sharedObject = {
-		unread: 0,
-		mb: menubar({
-			index: 'file:///' + path.join(__dirname, 'menu.html'),
-			icon: getMenuBarIconPath(),
-			width: 300,
-			preloadWindow: true,
-			transparent: true,
-			showDockIcon: true,
-		}),
-	};
-
-	global.sharedObject.mb.on('show', () => {
-		global.sharedObject.mb.tray.setImage(getMenuBarIconPath(true, global.sharedObject.unread));
-	});
-	global.sharedObject.mb.on('hide', () => {
-		global.sharedObject.mb.tray.setImage(getMenuBarIconPath(false, global.sharedObject.unread));
-	});
-}
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -50,14 +25,12 @@ let mainWindow;
 let willQuitApp = false;
 
 function createWindow() {
-	const title = env.product === constants.PRODUCT_WORKPLACE ? 'Goofy at Work' : 'Goofy';
-
 	// Open the app at the same screen position and size as last time, if possible
 	let options = { 
 		width: 800, 
 		height: 600, 
 		titleBarStyle: 'hiddenInset', 
-		title, 
+		title: 'Goofy', 
 		webPreferences: {
 			nodeIntegration: true,
 		},

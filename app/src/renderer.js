@@ -9,19 +9,16 @@ const userConfig = require('./modules/userConfig');
 const constants = require('./helpers/constants');
 const FocusHandler = require('./modules/focusHandler');
 
-const getURL = (domain = userConfig.get('domain')) =>
-	env.product === constants.PRODUCT_WWW ? 'https://www.messenger.com/login' : `https://${domain}.facebook.com/chat`;
+const rootURL = 'https://www.messenger.com/login';
 
 onload = () => {
 	setupMenu();
 	
-	document.getElementById('logo').setAttribute('src', `./assets/${env.product}.png`);
+	document.getElementById('logo').setAttribute('src', `./assets/www.png`);
 
 	const webview = document.getElementById('webview');
 	
-	if (env.product === constants.PRODUCT_WWW) {
-		webview.setAttribute('src', getURL());
-	}
+	webview.setAttribute('src', rootURL);
 
 	webview.addEventListener('did-stop-loading', () => {
 		webview.className = '';
@@ -78,30 +75,18 @@ function setupMenu() {
 			},
 		],
 	});
-
-	const domain = userConfig.get('domain');
-	if (domain || env.product === constants.PRODUCT_WWW) {
-		menu[1].submenu.push(
-			{
-				type: 'separator',
+	menu[1].submenu.push(
+		{
+			type: 'separator',
+		},
+		{
+			label: 'Logout',
+			click() {
+				logout();
 			},
-			{
-				label: env.product === constants.PRODUCT_WWW ? 'Logout' : `Logout from “${domain}”`,
-				click() {
-					logout();
-				},
-			}
-		);
-		webview.setAttribute('src', getURL());
-	} else {
-		const setup = document.getElementById('setup');
-		setup.className = 'active';
-		setup.onsubmit = () => {
-			const domain = setup.querySelector('input').value.trim();
-			userConfig.set('domain', domain);
-			webview.setAttribute('src', getURL());
-		};
-	}
+		}
+	);
+	webview.setAttribute('src', rootURL);
 
 	// Main menu
 	let mainMenu = menu[0];
@@ -282,19 +267,6 @@ function setupMenu() {
 		shell.openExternal('https://www.goofyapp.com') 
 	}
 
-	if (env.product === constants.PRODUCT_WORKPLACE) {
-		windowMenu.submenu.push({
-			label: 'Show notifications in menu bar',
-			type: 'checkbox',
-			checked: userConfig.get('menubar'),
-			click() {
-				userConfig.set('menubar', !userConfig.get('menubar'));
-				remote.app.relaunch();
-				remote.app.exit(0);
-			},
-		});
-	}
-
 	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 }
 
@@ -358,9 +330,6 @@ function logout() {
 	// this waits for all cookies to be removed, it would be nicer to wait for all callbacks to be called
 	setTimeout(
 		() => {
-			if (env.product === constants.PRODUCT_WORKPLACE) {
-				userConfig.delete('domain');
-			}
 			app.relaunch();
 			app.exit(0);
 		},

@@ -1,7 +1,5 @@
 module.exports = {
 	// Core
-	PRODUCT_WORKPLACE: 'workplace',
-	PRODUCT_WWW: 'www',
 	SETTINGS_STORAGE: 'settings.json',
 
 	// Notifications
