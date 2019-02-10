@@ -10,21 +10,40 @@ const {
 	session, 
 	ipcMain, 
 	nativeImage,
+	shell,
 } = electron;
 const path = require('path');
-const url = require('url');
+const fs = require('fs');
+
 const env = require('./config/env.js');
 const constants = require('./helpers/constants');
 const userConfig = require('./modules/userConfig');
 const RequestFilter = require('./modules/requestFilter');
-
-app.setName(env.appName);
-app.disableHardwareAcceleration();
+const setupMenu = require('./menu');
+const setupTouchBar = require('./touch_bar');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 let willQuitApp = false;
+
+app.setName(env.appName);
+app.disableHardwareAcceleration();
+
+// goofy:// deep link
+app.setAsDefaultProtocolClient('goofy');
+app.on('open-url', (event, url) => {
+	const parsedURL = new URL(url);
+	switch(parsedURL.hostname) {
+		case 'message': {
+			const id = parsedURL.searchParams.get('id');
+			if (id) {
+				mainWindow.webContents.send(constants.JUMP_TO_CONVERSATION, 'row_header_id_user:' + id);
+			}
+			break;
+		}
+	}
+});
 
 function createWindow() {
 	// Open the app at the same screen position and size as last time, if possible
@@ -34,7 +53,8 @@ function createWindow() {
 		titleBarStyle: 'hiddenInset', 
 		title: 'Goofy', 
 		webPreferences: {
-			nodeIntegration: true,
+			nodeIntegration: false,
+			preload: path.join(__dirname, 'fb.js'),
 		},
 	};
 	const previousLayout = userConfig.get('windowLayout');
@@ -59,7 +79,6 @@ function createWindow() {
 		}
 	}
 
-	// Create the browser window.
 	mainWindow = new BrowserWindow(options);
 	
 	// Propagate retina resolution to requests if necessary
@@ -70,15 +89,9 @@ function createWindow() {
 		requestFilter.setRetinaCookie(scaleFactor);
 	}
 
-	// and load the index.html of the app.
-	mainWindow.loadURL(
-		url.format({
-			pathname: path.join(__dirname, 'index.html'),
-			protocol: 'file:',
-			slashes: true,
-		})
-	);
+	mainWindow.loadURL("https://messenger.com/login");
 
+	// Handle app closing
 	mainWindow.on('close', e => {
 		if (willQuitApp) {
 			// Store the main window's layout before quitting
@@ -108,6 +121,29 @@ function createWindow() {
 			}
 		}
 	});
+
+	// Misc
+
+	setupMenu(mainWindow.webContents);
+	setupTouchBar(mainWindow);
+	
+	mainWindow.webContents.on('dom-ready', () => {
+		mainWindow.webContents.insertCSS(fs.readFileSync(path.join(__dirname, '/assets/fb.css'), 'utf8'));
+	});
+
+	mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options) => {
+		event.preventDefault();
+
+		if (url === 'about:blank') {
+			if (frameName !== 'about:blank') {
+				options.titleBarStyle = 'default';
+				options.webPreferences.nodeIntegration = false;
+				event.newGuest = new electron.BrowserWindow(options);
+			}
+		} else {
+			shell.openExternal(url);
+		}
+	});
 }
 
 ipcMain.on(constants.NEW_MESSAGE_NOTIFICATION, (event, params) => {
@@ -121,6 +157,10 @@ ipcMain.on(constants.NEW_MESSAGE_NOTIFICATION, (event, params) => {
 		event.sender.send(constants.JUMP_TO_CONVERSATION_BY_IMAGE_NAME, params.imageName);
 	});
 	notification.show();
+});
+
+ipcMain.on(constants.DOCK_COUNT, (event, params) => {
+	app.setBadgeCount(params);
 });
 
 app.on('ready', createWindow);

@@ -7,6 +7,11 @@ body {
 	overflow: hidden !important;
 }
 
+/* navbar */
+._36ic._5l-3, ._673w {
+	-webkit-app-region: drag;
+}
+
 .liquid div#globalContainer {
 	min-width: 0 !important;
 }
@@ -80,8 +85,3 @@ body {
 		._1t2u ._673w ._fl2 {
 			padding: 4px 8px;
 		}
-
-			/* Call, video call button */
-			._1t2u ._673w ._fl2 ._30yy:not([data-testid="info_panel_button"]) {
-				display: none;
-			}

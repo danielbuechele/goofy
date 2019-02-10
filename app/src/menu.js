@@ -1,15 +1,14 @@
 'use strict';
 
-const remote = require('electron').remote;
-const { app, shell, Menu, autoUpdater, dialog } = remote;
+const electron = require('electron');
+const { app, shell, Menu, autoUpdater, dialog } = electron;
 const defaultMenu = require('electron-default-menu');
 
 const env = require('./config/env.js');
 const constants = require('./helpers/constants');
 
-function setupMenu() {
+function setupMenu(webContents) {
 	const menu = defaultMenu(app, shell);
-	const webview = document.getElementById('webview');
 
 	// File menu
 	menu.splice(menu.findIndex(item => item.label === 'Edit'), 0, {
@@ -19,7 +18,7 @@ function setupMenu() {
 				label: 'New Conversation',
 				accelerator: 'CmdOrCtrl+N',
 				click() {
-					webview.send(constants.NEW_CONVERSATION);
+					webContents.send(constants.NEW_CONVERSATION);
 				},
 			},
 		],
@@ -31,7 +30,7 @@ function setupMenu() {
 		{
 			label: 'Logout',
 			click() {
-				logout();
+				logout(webContents);
 			},
 		}
 	);
@@ -48,7 +47,7 @@ function setupMenu() {
 			label: 'Preferences...',
 			accelerator: 'CmdOrCtrl+,',
 			click() {
-				webview.send(constants.SHOW_SETTINGS);
+				webContents.send(constants.SHOW_SETTINGS);
 			},
 		}
 	);
@@ -85,53 +84,34 @@ function setupMenu() {
 			label: 'Inbox',
 			accelerator: 'CmdOrCtrl+1',
 			click() {
-				webview.send(constants.SHOW_MESSAGE_LIST_INBOX);
+				webContents.send(constants.SHOW_MESSAGE_LIST_INBOX);
 			},
 		},
 		{
 			label: 'Active contacts',
 			accelerator: 'CmdOrCtrl+2',
 			click() {
-				webview.send(constants.SHOW_MESSAGE_LIST_ACTIVE_CONTACTS);
+				webContents.send(constants.SHOW_MESSAGE_LIST_ACTIVE_CONTACTS);
 			},
 		},
 		{
 			label: 'Message requests',
 			accelerator: 'CmdOrCtrl+3',
 			click() {
-				webview.send(constants.SHOW_MESSAGE_LIST_MESSAGE_REQUESTS);
+				webContents.send(constants.SHOW_MESSAGE_LIST_MESSAGE_REQUESTS);
 			},
 		},
 		{
 			label: 'Archived threads',
 			accelerator: 'CmdOrCtrl+4',
 			click() {
-				webview.send(constants.SHOW_MESSAGE_LIST_ARCHIVED_THREADS);
+				webContents.send(constants.SHOW_MESSAGE_LIST_ARCHIVED_THREADS);
 			},
 		},
 		{
 			type: 'separator',
 		}
 	);
-
-	if (env.name === 'development') {
-		viewMenu.submenu.splice(
-			viewMenu.submenu.length,
-			0,
-			{
-				type: 'separator',
-			},
-			{
-				label: 'Developer tools (inner webview)',
-				click() {
-					webview.openDevTools();
-				},
-			},
-			{
-				type: 'separator',
-			}
-		);
-	}
 
 	// Conversation menu
 	menu.splice(menu.findIndex(item => item.label === 'Window'), 0, {
@@ -141,7 +121,7 @@ function setupMenu() {
 				label: 'Mute',
 				accelerator: 'CmdOrCtrl+shift+M',
 				click() {
-					webview.send(constants.MUTE_CONVERSATION);
+					webContents.send(constants.MUTE_CONVERSATION);
 				},
 			},
 			{
@@ -151,14 +131,14 @@ function setupMenu() {
 				label: 'Archive',
 				accelerator: 'CmdOrCtrl+shift+A',
 				click() {
-					webview.send(constants.ARCHIVE_CONVERSATION);
+					webContents.send(constants.ARCHIVE_CONVERSATION);
 				},
 			},
 			{
 				label: 'Delete',
 				accelerator: 'CmdOrCtrl+shift+D',
 				click() {
-					webview.send(constants.DELETE_CONVERSATION);
+					webContents.send(constants.DELETE_CONVERSATION);
 				},
 			},
 			{
@@ -168,19 +148,19 @@ function setupMenu() {
 				label: 'Mark as Unread/Read',
 				accelerator: 'CmdOrCtrl+shift+R',
 				click() {
-					webview.send(constants.MARK_CONVERSATION_UNREAD);
+					webContents.send(constants.MARK_CONVERSATION_UNREAD);
 				},
 			},
 			{
 				label: 'Mark as Spam',
 				click() {
-					webview.send(constants.MARK_CONVERSATION_SPAM);
+					webContents.send(constants.MARK_CONVERSATION_SPAM);
 				},
 			},
 			{
 				label: 'Report Spam or Abuse',
 				click() {
-					webview.send(constants.REPORT_CONVERSATION_SPAM_OR_ABUSE);
+					webContents.send(constants.REPORT_CONVERSATION_SPAM_OR_ABUSE);
 				},
 			},
 		],
@@ -193,14 +173,14 @@ function setupMenu() {
 			label: 'Select Next Conversation',
 			accelerator: 'CmdOrCtrl+]',
 			click() {
-				webview.send(constants.NEXT_CONVERSATION);
+				webContents.send(constants.NEXT_CONVERSATION);
 			},
 		},
 		{
 			label: 'Select Previous Conversation',
 			accelerator: 'CmdOrCtrl+[',
 			click() {
-				webview.send(constants.PREV_CONVERSATION);
+				webContents.send(constants.PREV_CONVERSATION);
 			},
 		},
 		{
@@ -218,9 +198,8 @@ function setupMenu() {
 	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 }
 
-function logout() {
-	const webview = document.getElementById('webview');
-	const c = webview.getWebContents().session.cookies;
+function logout(webContents) {
+	const c = webContents.session.cookies;
 	c.get({}, (error, cookies) => {
 		for (let i = cookies.length - 1; i >= 0; i--) {
 			const { name, domain, path, secure } = cookies[i];

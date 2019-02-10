@@ -1,49 +1,48 @@
 'use strict';
 
-const remote = require('electron').remote;
-const { TouchBar } = remote;
+const electron = require('electron');
+const { TouchBar } = electron;
 
 const constants = require('./helpers/constants');
 
-function setupTouchBar() {
-	const webview = document.getElementById('webview');
-	remote.getCurrentWindow().setTouchBar(
+function setupTouchBar(browserWindow) {
+	browserWindow.setTouchBar(
 		new TouchBar(
 			[
 				new TouchBar.TouchBarButton({
 					label: '📝',
 					click: () => {
-						webview.send(constants.NEW_CONVERSATION);
+						browserWindow.webContents.send(constants.NEW_CONVERSATION);
 					},
 				}),
 				new TouchBar.TouchBarButton({
 					label: '🤫',
 					click: () => {
-						webview.send(constants.MUTE_CONVERSATION);
+						browserWindow.webContents.send(constants.MUTE_CONVERSATION);
 					},
 				}),
 				new TouchBar.TouchBarButton({
 					label: '🗄',
 					click: () => {
-						webview.send(constants.ARCHIVE_CONVERSATION);
+						browserWindow.webContents.send(constants.ARCHIVE_CONVERSATION);
 					},
 				}),
 				new TouchBar.TouchBarButton({
 					label: '🗑',
 					click: () => {
-						webview.send(constants.DELETE_CONVERSATION);
+						browserWindow.webContents.send(constants.DELETE_CONVERSATION);
 					},
 				}),
 				new TouchBar.TouchBarButton({
 					label: '🔵',
 					click: () => {
-						webview.send(constants.MARK_CONVERSATION_UNREAD);
+						browserWindow.webContents.send(constants.MARK_CONVERSATION_UNREAD);
 					},
 				}),
 				new TouchBar.TouchBarButton({
 					label: '👍',
 					click: () => {
-						webview.send(constants.LIKE_CONVERSATION);
+						browserWindow.webContents.send(constants.LIKE_CONVERSATION);
 					},
 				}),
 			]

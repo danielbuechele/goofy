@@ -1,7 +1,8 @@
 'use strict';
 
 const { ipcRenderer } = require('electron');
-const constants = require('../helpers/constants');
+
+const constants = require('./helpers/constants');
 
 const NEW_MESSAGE_BUTTON = '._1enh ._36ic ._30yy._2oc8';
 const SELECTED_CONVERSATION = '._1ht2';
@@ -267,7 +268,6 @@ function bindLoadMessageIPCMessages() {
 
 function bindDock() {
 	document.addEventListener('DOMContentLoaded', () => {
-
 		const titleObserver = new MutationObserver(mutations => {
 			// dock count
 			if (mutations.length <= 0) {
@@ -275,12 +275,12 @@ function bindDock() {
 			}
 			const title = mutations[0].target.text;
 			if (!title.startsWith('(')) {
-				ipcRenderer.sendToHost(constants.DOCK_COUNT, 0);
+				ipcRenderer.send(constants.DOCK_COUNT, 0);
 				return;
 			}
 			
 			const currentDockCount = parseInt(title.substr(1, (title.lastIndexOf(')') - 1))) || 0;
-			ipcRenderer.sendToHost(constants.DOCK_COUNT, currentDockCount);
+			ipcRenderer.send(constants.DOCK_COUNT, currentDockCount);
 			if (lastDockCount === null) {
 				lastDockCount = currentDockCount;
 			}
