@@ -1,3 +1,5 @@
+'use strict';
+
 const remote = require('electron').remote;
 const { app, shell, Menu, autoUpdater, dialog, TouchBar } = remote;
 const defaultMenu = require('electron-default-menu');
@@ -262,10 +264,10 @@ function setupMenu() {
 
 	// Help Menu
 	let helpMenu = menu[menu.findIndex(item => item.label === 'Help')];
-	helpMenu.submenu[helpMenu.submenu.findIndex(item => item.label === 'Learn More')].click = function() { 
+	helpMenu.submenu[helpMenu.submenu.findIndex(item => item.label === 'Learn More')].click = () => { 
 		// Load goofy website
-		shell.openExternal('https://www.goofyapp.com') 
-	}
+		shell.openExternal('https://www.goofyapp.com');
+	};
 
 	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 }

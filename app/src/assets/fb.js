@@ -1,3 +1,5 @@
+'use strict';
+
 const { ipcRenderer } = require('electron');
 const constants = require('../helpers/constants');
 
