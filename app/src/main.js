@@ -47,7 +47,7 @@ app.on('open-url', (event, url) => {
 
 function createWindow() {
 	// Open the app at the same screen position and size as last time, if possible
-	let options = { 
+	const options = { 
 		width: 800, 
 		height: 600, 
 		titleBarStyle: 'hiddenInset', 

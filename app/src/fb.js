@@ -1,6 +1,11 @@
 'use strict';
 
 const { ipcRenderer } = require('electron');
+const remote = require('electron').remote;
+const webFrame = require('electron').webFrame;
+
+const SpellCheckProvider = require('electron-spell-check-provider');
+const buildEditorContextMenu = remote.require('electron-editor-context-menu');
 
 const constants = require('./helpers/constants');
 
@@ -41,6 +46,7 @@ const REPORT_GROUP_CONVERSATION_SPAM_OR_ABUSE_LINK_INDEX = 9;
 const LIKE_CONVERSATION_LINK = '._4rv9._30yy._39bl';
 
 let lastDockCount = null;
+let textSelection = {};
 
 // Hijack WebView notifications and create our own
 window.Notification = (notification => {
@@ -311,9 +317,50 @@ function bindDock() {
 	});
 }
 
+function bindSpellChecking() {
+	resetTextSelection();
+
+	window.addEventListener('mousedown', resetTextSelection);
+	
+	webFrame.setSpellCheckProvider(
+	  'en-US',
+	  true,
+	  new SpellCheckProvider('en-US').on('misspelling', function(suggestions) {
+		// Prime the context menu with spelling suggestions _if_ the user has selected text. Electron
+		// may sometimes re-run the spell-check provider for an outdated selection e.g. if the user
+		// right-clicks some misspelled text and then an image.
+		if (window.getSelection().toString()) {
+			textSelection.isMisspelled = true;
+			textSelection.spellingSuggestions = suggestions.slice(0, 5);
+		}
+	  }));
+	
+	window.addEventListener('contextmenu', function(e) {
+		if (!e.target.closest('textarea, input, [contenteditable="true"]')) {
+			return;
+		}
+		
+		// The 'contextmenu' event is emitted after 'selectionchange' has fired but possibly before the
+		// visible selection has changed. Try to wait to show the menu until after that, otherwise the
+		// visible selection will update after the menu dismisses and look weird.
+		setTimeout(function() {
+			const menu = buildEditorContextMenu(textSelection);
+			menu.popup(remote.getCurrentWindow());
+		}, 30);
+	});
+}
+
+function resetTextSelection() {
+	textSelection = {
+		isMisspelled: false,
+		spellingSuggestions: []
+	};
+}
+
 bindKeyboardShortcuts();
 bindLoadMessageIPCMessages();
 bindDock();
+bindSpellChecking();
 
 document.addEventListener('DOMContentLoaded', () => {
 	// load settings menu once, so it is inserted in the DOM

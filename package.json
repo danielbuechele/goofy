@@ -22,7 +22,8 @@
   "devDependencies": {
     "@sep/eslint-config-sep": "^1.0.14",
     "electron": "^4.0.1",
-    "electron-builder": "^20.32.0"
+    "electron-builder": "^20.32.0",
+    "electron-rebuild": "^1.8.4"
   },
   "build": {
     "productName": "Goofy",
@@ -37,5 +38,10 @@
     "publish": [
       "github"
     ]
+  },
+  "dependencies": {
+    "electron-editor-context-menu": "^1.1.1",
+    "electron-spell-check-provider": "^1.1.1",
+    "electron-text-substitutions": "^1.4.16"
   }
 }
