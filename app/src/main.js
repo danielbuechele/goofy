@@ -146,22 +146,7 @@ function createWindow() {
 	});
 }
 
-ipcMain.on(constants.NEW_MESSAGE_NOTIFICATION, (event, params) => {
-	const notifParams = params.notifParams;
-	notifParams.icon = nativeImage.createFromDataURL(params.iconDataUrl);
-	let notification = new Notification(notifParams);
-	notification.on('click', () => {
-		if (mainWindow) {
-			mainWindow.show();
-		}
-		event.sender.send(constants.JUMP_TO_CONVERSATION_BY_IMAGE_NAME, params.imageName);
-	});
-	notification.show();
-});
-
-ipcMain.on(constants.DOCK_COUNT, (event, params) => {
-	app.setBadgeCount(params);
-});
+// App lifecycle
 
 app.on('ready', createWindow);
 
@@ -183,6 +168,27 @@ app.on('activate', function() {
 		createWindow();
 	}
 });
+
+// Notifications / unread badge
+
+ipcMain.on(constants.NEW_MESSAGE_NOTIFICATION, (event, params) => {
+	const notifParams = params.notifParams;
+	notifParams.icon = nativeImage.createFromDataURL(params.iconDataUrl);
+	let notification = new Notification(notifParams);
+	notification.on('click', () => {
+		if (mainWindow) {
+			mainWindow.show();
+		}
+		event.sender.send(constants.JUMP_TO_CONVERSATION_BY_IMAGE_NAME, params.imageName);
+	});
+	notification.show();
+});
+
+ipcMain.on(constants.DOCK_COUNT, (event, params) => {
+	app.setBadgeCount(params);
+});
+
+// Auto-update
 
 autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
 	dialog.showMessageBox(
