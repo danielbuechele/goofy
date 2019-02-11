@@ -11,7 +11,3 @@ fs.writeFileSync(
 		updateURL: 'https://update.electronjs.org/danielbuechele/goofy',
 	})
 );
-
-const appPackage = JSON.parse(fs.readFileSync('app/package.json', 'utf8'));
-appPackage.version = pjson.version;
-fs.writeFileSync('app/package.json', JSON.stringify(appPackage, null, '  '));

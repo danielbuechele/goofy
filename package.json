@@ -1,12 +1,12 @@
 {
-  "name": "goofy-builder",
+  "name": "goofyapp",
   "version": "3.4.0",
   "description": "The electron-builder script to build Goofy",
   "main": "app/src/main.js",
   "scripts": {
     "lint": "eslint ./app",
     "electron-builder-postinstall": "electron-builder install-app-deps",
-    "start": "node ./env.js && electron ./app --enable-logging",
+    "start": "node ./env.js && electron . --enable-logging",
     "pack": "node ./env.js && electron-builder --dir",
     "dist": "node ./env.js && electron-builder"
   },
@@ -22,7 +22,7 @@
   "devDependencies": {
     "@sep/eslint-config-sep": "^1.0.14",
     "electron": "^4.0.1",
-    "electron-builder": "^20.32.0",
+    "electron-builder": "^20.38.5",
     "electron-rebuild": "^1.8.4"
   },
   "build": {
@@ -40,8 +40,12 @@
     ]
   },
   "dependencies": {
+    "electron-config": "^0.2.1",
+    "electron-default-menu": "^1.0.0",
     "electron-editor-context-menu": "^1.1.1",
     "electron-spell-check-provider": "^1.1.1",
-    "electron-text-substitutions": "^1.4.16"
+    "electron-text-substitutions": "^1.4.16",
+    "fs-jetpack": "^0.10.5",
+    "menubar": "^5.2.0"
   }
 }
