@@ -323,17 +323,18 @@ function bindSpellChecking() {
 	window.addEventListener('mousedown', resetTextSelection);
 	
 	webFrame.setSpellCheckProvider(
-	  'en-US',
-	  true,
-	  new SpellCheckProvider('en-US').on('misspelling', function(suggestions) {
+		'en-US',
+		true,
+		new SpellCheckProvider('en-US').on('misspelling', function(suggestions) {
 		// Prime the context menu with spelling suggestions _if_ the user has selected text. Electron
 		// may sometimes re-run the spell-check provider for an outdated selection e.g. if the user
 		// right-clicks some misspelled text and then an image.
-		if (window.getSelection().toString()) {
-			textSelection.isMisspelled = true;
-			textSelection.spellingSuggestions = suggestions.slice(0, 5);
-		}
-	  }));
+			if (window.getSelection().toString()) {
+				textSelection.isMisspelled = true;
+				textSelection.spellingSuggestions = suggestions.slice(0, 5);
+			}
+		})
+	);
 	
 	window.addEventListener('contextmenu', function(e) {
 		if (!e.target.closest('textarea, input, [contenteditable="true"]')) {
@@ -353,7 +354,7 @@ function bindSpellChecking() {
 function resetTextSelection() {
 	textSelection = {
 		isMisspelled: false,
-		spellingSuggestions: []
+		spellingSuggestions: [],
 	};
 }
 
