@@ -168,7 +168,7 @@ function bindKeyboardShortcuts() {
 			const menuItemStrings = Array.from(menu.querySelectorAll(`${CONVERSATION_DROPDOWN_ITEM_LINK_PREFIX}`))
 				.map(elem => { return elem.textContent; });
 
-			const foundConversationMenu = menuItemStrings.includes('Mute');
+			const foundConversationMenu = menuItemStrings.includes('Mute') || menuItemStrings.includes('Unmute');
 			if (!foundConversationMenu) {
 				return;
 			}
