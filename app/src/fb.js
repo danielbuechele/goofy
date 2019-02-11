@@ -119,27 +119,38 @@ function bindKeyboardShortcuts() {
 		openMessageList(MESSAGE_LIST_ARCHIVED_THREADS_LINK);
 	});
 	
+	function openMessageList(messageListLink) {
+		resetMessageListToInbox();
+		document.querySelector(messageListLink).click();
+	}
+	
 	// Conversation menu
+	// - Mute conversation
 	ipcRenderer.on(constants.MUTE_CONVERSATION, () => {
 		conversationAction(MUTE_CONVERSATION_LINK_INDEX, MUTE_GROUP_CONVERSATION_LINK_INDEX);
 	});
 	
+	// - Archive conversation
 	ipcRenderer.on(constants.ARCHIVE_CONVERSATION, () => {
 		conversationAction(ARCHIVE_CONVERSATION_LINK_INDEX, ARCHIVE_GROUP_CONVERSATION_LINK_INDEX);
 	});
 
+	// - Delete conversation
 	ipcRenderer.on(constants.DELETE_CONVERSATION, () => {
 		conversationAction(DELETE_CONVERSATION_LINK_INDEX, DELETE_GROUP_CONVERSATION_LINK_INDEX);
 	});
 
+	// - Mark read / unread conversation
 	ipcRenderer.on(constants.MARK_CONVERSATION_UNREAD, () => {
 		conversationAction(MARK_CONVERSATION_UNREAD_LINK_INDEX, MARK_GROUP_CONVERSATION_UNREAD_LINK_INDEX);
 	});
 
+	// - Mark spam conversation
 	ipcRenderer.on(constants.MARK_CONVERSATION_SPAM, () => {
 		conversationAction(MARK_CONVERSATION_SPAM_LINK_INDEX, MARK_GROUP_CONVERSATION_SPAM_LINK_INDEX);
 	});
 
+	// - Report conversation
 	ipcRenderer.on(constants.REPORT_CONVERSATION_SPAM_OR_ABUSE, () => {
 		conversationAction(REPORT_CONVERSATION_SPAM_OR_ABUSE_LINK_INDEX, 
 			REPORT_GROUP_CONVERSATION_SPAM_OR_ABUSE_LINK_INDEX);
@@ -231,11 +242,6 @@ function resetMessageListToInbox() {
 	}
 
 	resetSettingsDropdown();
-}
-	
-function openMessageList(messageListLink) {
-	resetMessageListToInbox();
-	document.querySelector(messageListLink).click();
 }
 
 /**

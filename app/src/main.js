@@ -89,7 +89,7 @@ function createWindow() {
 		requestFilter.setRetinaCookie(scaleFactor);
 	}
 
-	mainWindow.loadURL("https://messenger.com/login");
+	mainWindow.loadURL('https://messenger.com/login');
 
 	// Handle app closing
 	mainWindow.on('close', e => {
