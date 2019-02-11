@@ -280,6 +280,12 @@ function bindDock() {
 				return;
 			}
 			const title = mutations[0].target.text;
+			if (title.indexOf('messaged you') != -1) {
+				// Is flashing between "(1) Messenger" and "x messaged you", 
+				// do nothing when in "x messaged you"
+				return;
+			}
+			
 			if (!title.startsWith('(')) {
 				ipcRenderer.send(constants.DOCK_COUNT, 0);
 				return;
