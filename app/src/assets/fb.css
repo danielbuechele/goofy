@@ -7,10 +7,6 @@ body {
 	overflow: hidden !important;
 }
 
-/* navbar */
-._36ic._5l-3, ._673w {
-	-webkit-app-region: drag;
-}
 
 .liquid div#globalContainer {
 	min-width: 0 !important;
@@ -42,13 +38,14 @@ body {
 }
 	/* left column navbar */
 	._1enh ._36ic._5l-3 {
+		-webkit-app-region: drag;
 		height: var(--nav-bar-height);
 		padding: var(--nav-bar-padding);
 		display: flex;
 		justify-content: flex-end;
 	}
 
-		/* "Work Chat" title */
+		/* title */
 		._1enh ._36ic._5l-3 ._1tqi {
 			display: none;
 		}
@@ -72,11 +69,13 @@ body {
 }
 	/* right column navbar: new conversation */
 	._1t2u ._2y8y._5l-3 {
+		-webkit-app-region: drag;
 		min-height: var(--nav-bar-height) !important;
 		padding: 8px !important;
 	}
 	/* right column navbar */
 	._1t2u ._673w {
+		-webkit-app-region: drag;
 		height: var(--nav-bar-height);
 		padding: var(--nav-bar-padding);
 	}
