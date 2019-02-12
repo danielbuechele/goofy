@@ -1,5 +1,5 @@
 {
-  "name": "goofyapp",
+  "name": "goofy-core",
   "version": "3.4.0",
   "description": "The electron-builder script to build Goofy",
   "main": "app/src/main.js",
