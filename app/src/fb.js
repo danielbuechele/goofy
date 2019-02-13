@@ -7,6 +7,9 @@ const webFrame = require('electron').webFrame;
 const SpellCheckProvider = require('electron-spell-check-provider');
 const buildEditorContextMenu = remote.require('electron-editor-context-menu');
 
+const app = remote.require('electron').app;
+const APP_LOCALE = app.getLocale() || 'en-US';
+
 const constants = require('./helpers/constants');
 
 const NEW_MESSAGE_BUTTON = '._1enh ._36ic ._30yy._2oc8';
@@ -318,14 +321,19 @@ function bindDock() {
 }
 
 function bindSpellChecking() {
+	// electron-spell-check-provider: 'en-US' is the only supported language at present
+	if (APP_LOCALE !== 'en-US') {
+		return;
+	}
+	
 	resetTextSelection();
 
 	window.addEventListener('mousedown', resetTextSelection);
 	
 	webFrame.setSpellCheckProvider(
-		'en-US',
+		APP_LOCALE,
 		true,
-		new SpellCheckProvider('en-US').on('misspelling', function(suggestions) {
+		new SpellCheckProvider(APP_LOCALE).on('misspelling', function(suggestions) {
 		// Prime the context menu with spelling suggestions _if_ the user has selected text. Electron
 		// may sometimes re-run the spell-check provider for an outdated selection e.g. if the user
 		// right-clicks some misspelled text and then an image.
