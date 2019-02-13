@@ -11,7 +11,9 @@ Depending on the number of contributors and the progress of this app, I will sch
 Install all dependencies and run the app:
 
 ```bash
-npm i && npm start
+~$ npm i 
+~$ ./node_modules/.bin/electron-rebuild
+~$ npm start
 ```
 
 The developer tools will open automatically when running in development mode. You can also toggle them from the menu `View - Toggle Developer Tools` or by using <kbd>CMD + ALT + I</kbd>.
