@@ -1,15 +1,13 @@
 'use strict';
 
-const { ipcRenderer } = require('electron');
-const remote = require('electron').remote;
-const webFrame = require('electron').webFrame;
+const { ipcRenderer, remote, webFrame } = require('electron');
+const { app } = remote
 
 const SpellCheckProvider = require('electron-spell-check-provider');
 const buildEditorContextMenu = remote.require('electron-editor-context-menu');
 
-const app = remote.require('electron').app;
-const APP_LOCALE = app.getLocale() || 'en-US';
-
+const userConfig = require('./modules/userConfig');
+const store = userConfig.store;
 const constants = require('./helpers/constants');
 
 const NEW_MESSAGE_BUTTON = '._1enh ._36ic ._30yy._2oc8';
@@ -97,7 +95,7 @@ window.Notification = (notification => {
 function bindKeyboardShortcuts() {
 	// Main menu
 	// - Show Settings
-	ipcRenderer.on(constants.SHOW_SETTINGS, () => {
+	ipcRenderer.on(constants.SHOW_MESSENGER_SETTINGS, () => {
 		document.querySelector(SETTINGS_LINK).click();
 	});
 
@@ -321,8 +319,7 @@ function bindDock() {
 }
 
 function bindSpellChecking() {
-	// electron-spell-check-provider: 'en-US' is the only supported language at present
-	if (APP_LOCALE !== 'en-US') {
+	if (!store.get(userConfig.SPELL_CHECK_ENABLED, 'true')) {
 		return;
 	}
 	
@@ -330,10 +327,13 @@ function bindSpellChecking() {
 
 	window.addEventListener('mousedown', resetTextSelection);
 	
+	const userLocale = store.get(userConfig.SPELL_CHECK_LOCALE, '');
+	const locale = userLocale === '' ? app.getLocale() : userLocale;
+
 	webFrame.setSpellCheckProvider(
-		APP_LOCALE,
+		locale,
 		true,
-		new SpellCheckProvider(APP_LOCALE).on('misspelling', function(suggestions) {
+		new SpellCheckProvider(locale).on('misspelling', function(suggestions) {
 		// Prime the context menu with spelling suggestions _if_ the user has selected text. Electron
 		// may sometimes re-run the spell-check provider for an outdated selection e.g. if the user
 		// right-clicks some misspelled text and then an image.

@@ -1,14 +1,83 @@
 'use strict';
 
 const electron = require('electron');
-const { app, shell, Menu, autoUpdater, dialog } = electron;
+const { app, shell, Menu, autoUpdater, dialog, BrowserWindow } = electron;
+const path = require('path');
+
 const defaultMenu = require('electron-default-menu');
 
 const env = require('./config/env.js');
 const constants = require('./helpers/constants');
 
+let preferencesWindow = null;
+
 function setupMenu(webContents) {
 	const menu = defaultMenu(app, shell);
+
+	// Main menu
+	let mainMenu = menu[0];
+	mainMenu.submenu.splice(
+		1,
+		0,
+		{
+			type: 'separator',
+		},
+		{
+			label: 'Messenger Preferences...',
+			click() {
+				webContents.send(constants.SHOW_MESSENGER_SETTINGS);
+			},
+		},
+		{
+			label: 'Preferences...',
+			accelerator: 'CmdOrCtrl+,',
+			click() {
+				if (preferencesWindow != null) {
+					return;
+				}
+
+				preferencesWindow = new BrowserWindow({ 
+					width: 600, 
+					height: 600,
+					titleBarStyle: 'default', 
+					title: 'Preferences', 
+					webPreferences: {
+						nodeIntegration: true
+					},
+				});
+			
+				preferencesWindow.loadURL(`file://${path.join(__dirname, '/preferences/index.html')}`);
+			
+				preferencesWindow.once('ready-to-show', () => {
+					preferencesWindow.show();
+				});
+
+				preferencesWindow.on('close', () => {
+					preferencesWindow = null;
+				});
+			},
+		}
+	);
+
+	if (env.name === 'production') {
+		menu[0].submenu.splice(1, 0, {
+			label: 'Check for Update',
+			click() {
+				autoUpdater.on('update-not-available', () => {
+					autoUpdater.removeAllListeners('update-not-available');
+					dialog.showMessageBox({
+						message: 'No update available',
+						detail: `${env.appName} ${app.getVersion()} is the latest version available.`,
+						buttons: [ 'OK' ],
+					});
+				});
+				autoUpdater.checkForUpdates();
+			},
+		});
+	}
+
+	// Fix incorrect accelerator for "Hide Others" (imported from defaultMenu())
+	mainMenu.submenu[mainMenu.submenu.findIndex(item => item.label === 'Hide Others')].accelerator = 'Command+Option+H';
 
 	// File menu
 	menu.splice(menu.findIndex(item => item.label === 'Edit'), 0, {
@@ -34,43 +103,6 @@ function setupMenu(webContents) {
 			},
 		}
 	);
-
-	// Main menu
-	let mainMenu = menu[0];
-	mainMenu.submenu.splice(
-		1,
-		0,
-		{
-			type: 'separator',
-		},
-		{
-			label: 'Preferences...',
-			accelerator: 'CmdOrCtrl+,',
-			click() {
-				webContents.send(constants.SHOW_SETTINGS);
-			},
-		}
-	);
-
-	if (env.name === 'production') {
-		menu[0].submenu.splice(1, 0, {
-			label: 'Check for Update',
-			click() {
-				autoUpdater.on('update-not-available', () => {
-					autoUpdater.removeAllListeners('update-not-available');
-					dialog.showMessageBox({
-						message: 'No update available',
-						detail: `${env.appName} ${app.getVersion()} is the latest version available.`,
-						buttons: [ 'OK' ],
-					});
-				});
-				autoUpdater.checkForUpdates();
-			},
-		});
-	}
-
-	// Fix incorrect accelerator for "Hide Others" (imported from defaultMenu())
-	mainMenu.submenu[mainMenu.submenu.findIndex(item => item.label === 'Hide Others')].accelerator = 'Command+Option+H';
 
 	// View menu
 	let viewMenu = menu[menu.findIndex(item => item.label === 'View')];

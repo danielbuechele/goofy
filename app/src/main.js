@@ -18,6 +18,7 @@ const fs = require('fs');
 const env = require('./config/env.js');
 const constants = require('./helpers/constants');
 const userConfig = require('./modules/userConfig');
+const store = userConfig.store;
 const RequestFilter = require('./modules/requestFilter');
 const setupMenu = require('./menu');
 const setupTouchBar = require('./touch_bar');
@@ -57,7 +58,7 @@ function createWindow() {
 			preload: path.join(__dirname, 'fb.js'),
 		},
 	};
-	const previousLayout = userConfig.get('windowLayout');
+	const previousLayout = store.get(userConfig.WINDOW_LAYOUT);
 	// BUG: Electron issue?
 	// The docs (https://github.com/electron/electron/blob/master/docs/api/screen.md)
 	// say electron.screen should be available after the ready event has fired, but
@@ -89,7 +90,7 @@ function createWindow() {
 		requestFilter.setRetinaCookie(scaleFactor);
 	}
 
-	mainWindow.loadURL('https://messenger.com/login');
+	mainWindow.loadURL(`https://${store.get(userConfig.DOMAIN, userConfig.DEFAULT_DOMAIN)}`);
 
 	// Handle app closing
 	mainWindow.on('close', e => {
@@ -98,7 +99,7 @@ function createWindow() {
 			const [ width, height ] = mainWindow.getSize();
 			const [ x, y ] = mainWindow.getPosition();
 			const currentLayout = { width, height, x, y };
-			userConfig.set('windowLayout', currentLayout);
+			store.set(userConfig.WINDOW_LAYOUT, currentLayout);
 
 			// the user tried to quit the app
 			mainWindow = null;
