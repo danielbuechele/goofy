@@ -1,7 +1,7 @@
 'use strict';
 
 const { ipcRenderer, remote, webFrame } = require('electron');
-const { app } = remote
+const { app } = remote;
 
 const SpellCheckProvider = require('electron-spell-check-provider');
 const buildEditorContextMenu = remote.require('electron-editor-context-menu');

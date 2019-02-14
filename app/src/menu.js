@@ -42,7 +42,7 @@ function setupMenu(webContents) {
 					titleBarStyle: 'default', 
 					title: 'Preferences', 
 					webPreferences: {
-						nodeIntegration: true
+						nodeIntegration: true,
 					},
 				});
 			
