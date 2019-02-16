@@ -14,6 +14,7 @@ const {
 } = electron;
 const path = require('path');
 const fs = require('fs');
+const windowStateKeeper = require('electron-window-state');
 
 const env = require('./config/env.js');
 const constants = require('./helpers/constants');
@@ -47,10 +48,17 @@ app.on('open-url', (event, url) => {
 });
 
 function createWindow() {
+	let mainWindowState = windowStateKeeper({
+		defaultWidth: 800,
+		defaultHeight: 600,
+	});
+	
 	// Open the app at the same screen position and size as last time, if possible
 	const options = { 
-		width: 800, 
-		height: 600, 
+		x: mainWindowState.x,
+		y: mainWindowState.y,
+		width: mainWindowState.width,
+		height: mainWindowState.height,
 		titleBarStyle: 'hiddenInset', 
 		title: 'Goofy', 
 		webPreferences: {
@@ -58,30 +66,10 @@ function createWindow() {
 			preload: path.join(__dirname, 'fb.js'),
 		},
 	};
-	const previousLayout = store.get(userConfig.WINDOW_LAYOUT);
-	// BUG: Electron issue?
-	// The docs (https://github.com/electron/electron/blob/master/docs/api/screen.md)
-	// say electron.screen should be available after the ready event has fired, but
-	// sometimes it's null
-	if (electron.screen) {
-		const displaySize = electron.screen.getPrimaryDisplay().workAreaSize;
-		const screenWidth = displaySize.width;
-		const screenHeight = displaySize.height;
-		if (previousLayout) {
-			// Would the window fit on the screen with the previous layout?
-			if (
-				previousLayout.width + previousLayout.x < screenWidth && previousLayout.height + previousLayout.y < screenHeight
-			) {
-				options.width = previousLayout.width;
-				options.height = previousLayout.height;
-				options.x = previousLayout.x;
-				options.y = previousLayout.y;
-			}
-		}
-	}
 
 	mainWindow = new BrowserWindow(options);
-	
+	mainWindowState.manage(mainWindow);
+
 	// Propagate retina resolution to requests if necessary
 	const requestFilter = new RequestFilter(session);
 	const display = electron.screen.getPrimaryDisplay();
@@ -95,32 +83,30 @@ function createWindow() {
 	// Handle app closing
 	mainWindow.on('close', e => {
 		if (willQuitApp) {
-			// Store the main window's layout before quitting
-			const [ width, height ] = mainWindow.getSize();
-			const [ x, y ] = mainWindow.getPosition();
-			const currentLayout = { width, height, x, y };
-			store.set(userConfig.WINDOW_LAYOUT, currentLayout);
-
 			// the user tried to quit the app
 			mainWindow = null;
-		} else {
-			// the user only tried to close the window
-			e.preventDefault();
-			if (mainWindow) {
-				if (!mainWindow.isFullScreen()) {
-					mainWindow.hide();
-					return;
-				}
-				mainWindow.setFullScreen(false);
-				// Wait for full screen animation to finish before hiding
-				setTimeout(
-					() => {
-						mainWindow.hide();
-					},
-					1000
-				);
-			}
+			return;
 		}
+
+		// the user only tried to close the window
+		e.preventDefault();
+		if (!mainWindow) {
+			return;
+		}
+
+		if (!mainWindow.isFullScreen()) {
+			mainWindow.hide();
+			return;
+		}
+
+		mainWindow.setFullScreen(false);
+		// Wait for full screen animation to finish before hiding
+		setTimeout(
+			() => {
+				mainWindow.hide();
+			},
+			1000
+		);
 	});
 
 	// Misc
