@@ -20,14 +20,17 @@ function loadSettingsToUI() {
 	document.querySelector(SPELL_CHECK_ENABLED_CHECKBOX).checked = store.get(userConfig.SPELL_CHECK_ENABLED, true);
 
 	const locale = store.get(userConfig.SPELL_CHECK_LOCALE, '');
-	const languageSelectElem = document.querySelector(SPELL_CHECK_LOCALE_SELECT);
-	if (locale === 'en-GB') {
-		languageSelectElem.selectedIndex = 1;
-	} else if (locale === 'en-US') {
-		languageSelectElem.selectedIndex = 2;
-	} else {
-		languageSelectElem.selectedIndex = 0;
+	const localeSelectElem = document.querySelector(SPELL_CHECK_LOCALE_SELECT);
+
+	let localeSelectedIndex = 0;
+	for (let i = 0; i < localeSelectElem.options.length; i++) {
+		const optionElem = localeSelectElem[i];
+		if (optionElem.value === locale) {
+			localeSelectedIndex = i;
+			break;
+		}
 	}
+	localeSelectElem.localeSelectedIndex = localeSelectedIndex;
 
 	// Push notifications
 	document.querySelector(PUSH_NOTIFS_ENABLED_CHECKBOX).checked = store.get(userConfig.PUSH_NOTIFICATIONS_ENABLED, true);
