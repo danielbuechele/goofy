@@ -5,8 +5,14 @@ const store = userConfig.store;
 
 const SPELL_CHECK_ENABLED_CHECKBOX = '#spellCheckEnabled';
 const SPELL_CHECK_LOCALE_SELECT = '#spellCheckLocaleSelect';
+
 const PUSH_NOTIFS_ENABLED_CHECKBOX = '#pushNotifsEnabled';
 const PUSH_NOTIFS_SHOW_UNREAD_BADGE_CHECKBOX = '#pushNotifsShowUnreadBadge';
+const PUSH_NOTIFS_HIDE_MESSAGE_BODY_CHECKBOX = '#pushNotifsHideMessageBody';
+
+const PRIVACY_BLOCK_TYPING_INDICATOR_CHECKBOX = '#privacyBlockTypingIndicator';
+const PRIVACY_BLOCK_SEEN_INDICATOR_CHECKBOX = '#privacyBlockSeenIndicator';
+
 const DOMAIN_SELECT = '#domainSelect';
 
 function loadSettingsToUI() {
@@ -26,6 +32,11 @@ function loadSettingsToUI() {
 	// Push notifications
 	document.querySelector(PUSH_NOTIFS_ENABLED_CHECKBOX).checked = store.get(userConfig.PUSH_NOTIFICATIONS_ENABLED, true);
 	document.querySelector(PUSH_NOTIFS_SHOW_UNREAD_BADGE_CHECKBOX).checked = store.get(userConfig.PUSH_NOTIFICATIONS_SHOW_UNREAD_BADGE, true);
+	document.querySelector(PUSH_NOTIFS_HIDE_MESSAGE_BODY_CHECKBOX).checked = store.get(userConfig.PUSH_NOTIFICATIONS_HIDE_MESSAGE_BODY, false);
+
+	// Privacy
+	document.querySelector(PRIVACY_BLOCK_TYPING_INDICATOR_CHECKBOX).checked = store.get(userConfig.PRIVACY_BLOCK_TYPING_INDICATOR, false);
+	document.querySelector(PRIVACY_BLOCK_SEEN_INDICATOR_CHECKBOX).checked = store.get(userConfig.PRIVACY_BLOCK_SEEN_INDICATOR, false);
 
 	// Advanced
 	const domain = store.get(userConfig.DOMAIN, userConfig.DEFAULT_DOMAIN);
@@ -60,6 +71,23 @@ function bindUI() {
 	const pushNotifShowUnreadBadgeCheckboxElem = document.querySelector(PUSH_NOTIFS_SHOW_UNREAD_BADGE_CHECKBOX);
 	pushNotifShowUnreadBadgeCheckboxElem.addEventListener('change', () => {
 		store.set(userConfig.PUSH_NOTIFICATIONS_SHOW_UNREAD_BADGE, pushNotifShowUnreadBadgeCheckboxElem.checked);
+		loadSettingsToUI();
+	});
+	const pushNotifHideMessageBodyCheckboxElem = document.querySelector(PUSH_NOTIFS_HIDE_MESSAGE_BODY_CHECKBOX);
+	pushNotifHideMessageBodyCheckboxElem.addEventListener('change', () => {
+		store.set(userConfig.PUSH_NOTIFICATIONS_HIDE_MESSAGE_BODY, pushNotifHideMessageBodyCheckboxElem.checked);
+		loadSettingsToUI();
+	});
+
+	// Privacy
+	const privacyBlockTypingIndicatorCheckboxElem = document.querySelector(PRIVACY_BLOCK_TYPING_INDICATOR_CHECKBOX);
+	privacyBlockTypingIndicatorCheckboxElem.addEventListener('change', () => {
+		store.set(userConfig.PRIVACY_BLOCK_TYPING_INDICATOR, privacyBlockTypingIndicatorCheckboxElem.checked);
+		loadSettingsToUI();
+	});
+	const privacyBlockSeenIndicatorCheckboxElem = document.querySelector(PRIVACY_BLOCK_SEEN_INDICATOR_CHECKBOX);
+	privacyBlockSeenIndicatorCheckboxElem.addEventListener('change', () => {
+		store.set(userConfig.PRIVACY_BLOCK_SEEN_INDICATOR, privacyBlockSeenIndicatorCheckboxElem.checked);
 		loadSettingsToUI();
 	});
 

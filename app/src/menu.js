@@ -38,7 +38,7 @@ function setupMenu(webContents) {
 
 				preferencesWindow = new BrowserWindow({ 
 					width: 600, 
-					height: 800,
+					height: 700,
 					titleBarStyle: 'default', 
 					title: 'Preferences', 
 					webPreferences: {

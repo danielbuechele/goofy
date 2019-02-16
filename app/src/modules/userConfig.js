@@ -13,8 +13,12 @@ module.exports = {
 	DEFAULT_DOMAIN: 'messenger.com/login',
 	DOMAIN_FACEBOOK: 'facebook.com/messages',
 
-	PUSH_NOTIFICATIONS_ENABLED: 'pushNotifications.enabled',
-	PUSH_NOTIFICATIONS_SHOW_UNREAD_BADGE: 'pushNotifications.showUnreadBadge',
+	PUSH_NOTIFICATIONS_ENABLED: 'pushNotifications.enabled', // Default true
+	PUSH_NOTIFICATIONS_SHOW_UNREAD_BADGE: 'pushNotifications.showUnreadBadge',  // Default true
+	PUSH_NOTIFICATIONS_HIDE_MESSAGE_BODY: 'pushNotifications.hideMessageBody',  // Default false
+
+	PRIVACY_BLOCK_TYPING_INDICATOR: 'privacy.blockTypingIndicator',  // Default false
+	PRIVACY_BLOCK_SEEN_INDICATOR: 'privacy.blockSeenIndicator',  // Default false
 
 	store,
 };

@@ -179,6 +179,11 @@ ipcMain.on(constants.NEW_MESSAGE_NOTIFICATION, (event, params) => {
 
 	const notifParams = params.notifParams;
 	notifParams.icon = nativeImage.createFromDataURL(params.iconDataUrl);
+
+	if (store.get(userConfig.PUSH_NOTIFICATIONS_HIDE_MESSAGE_BODY, false)) {
+		notifParams.body = '[Hidden]';
+	}
+
 	let notification = new Notification(notifParams);
 	notification.on('click', () => {
 		if (mainWindow) {
