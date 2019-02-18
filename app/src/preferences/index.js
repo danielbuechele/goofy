@@ -30,7 +30,7 @@ function loadSettingsToUI() {
 			break;
 		}
 	}
-	localeSelectElem.localeSelectedIndex = localeSelectedIndex;
+	localeSelectElem.selectedIndex = localeSelectedIndex;
 
 	// Push notifications
 	loadCheckboxSettingToUI(PUSH_NOTIFS_ENABLED_CHECKBOX, userConfig.PUSH_NOTIFICATIONS_ENABLED, true);
