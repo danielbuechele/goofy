@@ -6,7 +6,6 @@ const store = userConfig.store;
 const SPELL_CHECK_ENABLED_CHECKBOX = '#spellCheckEnabled';
 const SPELL_CHECK_LOCALE_SELECT = '#spellCheckLocaleSelect';
 
-const PUSH_NOTIFS_ENABLED_CHECKBOX = '#pushNotifsEnabled';
 const PUSH_NOTIFS_SHOW_UNREAD_BADGE_CHECKBOX = '#pushNotifsShowUnreadBadge';
 const PUSH_NOTIFS_HIDE_MESSAGE_BODY_CHECKBOX = '#pushNotifsHideMessageBody';
 
@@ -33,7 +32,6 @@ function loadSettingsToUI() {
 	localeSelectElem.selectedIndex = localeSelectedIndex;
 
 	// Push notifications
-	loadCheckboxSettingToUI(PUSH_NOTIFS_ENABLED_CHECKBOX, userConfig.PUSH_NOTIFICATIONS_ENABLED, true);
 	loadCheckboxSettingToUI(PUSH_NOTIFS_SHOW_UNREAD_BADGE_CHECKBOX, userConfig.PUSH_NOTIFICATIONS_SHOW_UNREAD_BADGE, true);
 	loadCheckboxSettingToUI(PUSH_NOTIFS_HIDE_MESSAGE_BODY_CHECKBOX, userConfig.PUSH_NOTIFICATIONS_HIDE_MESSAGE_BODY, false);
 
@@ -66,7 +64,6 @@ function bindUI() {
 	});
 
 	// Push notifications
-	bindCheckboxUI(PUSH_NOTIFS_ENABLED_CHECKBOX, userConfig.PUSH_NOTIFICATIONS_ENABLED);
 	bindCheckboxUI(PUSH_NOTIFS_SHOW_UNREAD_BADGE_CHECKBOX, userConfig.PUSH_NOTIFICATIONS_SHOW_UNREAD_BADGE);
 	bindCheckboxUI(PUSH_NOTIFS_HIDE_MESSAGE_BODY_CHECKBOX, userConfig.PUSH_NOTIFICATIONS_HIDE_MESSAGE_BODY);
 

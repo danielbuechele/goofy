@@ -159,10 +159,6 @@ app.on('activate', function() {
 // Notifications / unread badge
 
 ipcMain.on(constants.NEW_MESSAGE_NOTIFICATION, (event, params) => {
-	if (!store.get(userConfig.PUSH_NOTIFICATIONS_ENABLED, true)) {
-		return;
-	}
-
 	const notifParams = params.notifParams;
 	notifParams.icon = nativeImage.createFromDataURL(params.iconDataUrl);
 
@@ -181,10 +177,9 @@ ipcMain.on(constants.NEW_MESSAGE_NOTIFICATION, (event, params) => {
 });
 
 ipcMain.on(constants.DOCK_COUNT, (event, params) => {
-	if (!store.get(userConfig.PUSH_NOTIFICATIONS_ENABLED, true) || !store.get(userConfig.PUSH_NOTIFICATIONS_SHOW_UNREAD_BADGE, true)) {
-		return;
+	if (store.get(userConfig.PUSH_NOTIFICATIONS_SHOW_UNREAD_BADGE, true)) {
+		app.setBadgeCount(params);
 	}
-	app.setBadgeCount(params);
 });
 
 // Auto-update

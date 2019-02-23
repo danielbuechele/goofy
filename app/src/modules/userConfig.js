@@ -11,7 +11,6 @@ module.exports = {
 	DEFAULT_DOMAIN: 'messenger.com/login',
 	DOMAIN_FACEBOOK: 'facebook.com/messages',
 
-	PUSH_NOTIFICATIONS_ENABLED: 'pushNotifications.enabled', // Default true
 	PUSH_NOTIFICATIONS_SHOW_UNREAD_BADGE: 'pushNotifications.showUnreadBadge',  // Default true
 	PUSH_NOTIFICATIONS_HIDE_MESSAGE_BODY: 'pushNotifications.hideMessageBody',  // Default false
 
