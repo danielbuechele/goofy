@@ -16,7 +16,7 @@ const DOMAIN_SELECT = '#domainSelect';
 
 function loadSettingsToUI() {
 	// Spell check
-	loadCheckboxSettingToUI(SPELL_CHECK_ENABLED_CHECKBOX, userConfig.SPELL_CHECK_ENABLED, true);
+	loadCheckboxSettingToUI(SPELL_CHECK_ENABLED_CHECKBOX, userConfig.SPELL_CHECK_ENABLED, false);
 
 	const locale = store.get(userConfig.SPELL_CHECK_LOCALE, '');
 	const localeSelectElem = document.querySelector(SPELL_CHECK_LOCALE_SELECT);

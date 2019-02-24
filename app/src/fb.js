@@ -317,7 +317,7 @@ function bindDock() {
 }
 
 function bindSpellChecking() {
-	if (!store.get(userConfig.SPELL_CHECK_ENABLED, 'true')) {
+	if (!store.get(userConfig.SPELL_CHECK_ENABLED, 'false')) {
 		return;
 	}
 
