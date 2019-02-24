@@ -45,8 +45,6 @@ const REPORT_GROUP_CONVERSATION_SPAM_OR_ABUSE_LINK_INDEX = 9;
 // Conversation actions
 const LIKE_CONVERSATION_LINK = '._4rv9._30yy._39bl';
 
-let lastDockCount = null;
-
 // Hijack WebView notifications and create our own
 window.Notification = (notification => {
 	const EmptyNotification = function (rawTitle, options) {
@@ -280,30 +278,30 @@ function bindLoadMessageIPCMessages() {
 function bindDock() {
 	document.addEventListener('DOMContentLoaded', () => {
 		const titleObserver = new MutationObserver(mutations => {
-			// dock count
 			if (mutations.length <= 0) {
 				return;
 			}
+
 			const title = mutations[0].target.text;
-			if (title.indexOf(' messaged ') != -1) {
-				// Is flashing between "(1) Messenger" and "x messaged you", 
-				// do nothing when in "x messaged you"
+			if (title === 'Messenger') {
+				// All notifications cleared, set to zero.
+				//
+				// Note, seems like most lanuages reset title back to 
+				// "Messenger" after notifications cleared
+				ipcRenderer.send(constants.DOCK_COUNT, 0);
 				return;
 			}
 			
 			if (!title.startsWith('(')) {
-				ipcRenderer.send(constants.DOCK_COUNT, 0);
+				// Flickers between "x messaged you" and "(x) Messenger".
+				//
+				// Note: We don't check text fragment here as "messaged you" 
+				// could be localized
 				return;
 			}
 			
 			const currentDockCount = parseInt(title.substr(1, (title.lastIndexOf(')') - 1))) || 0;
 			ipcRenderer.send(constants.DOCK_COUNT, currentDockCount);
-			if (lastDockCount === null) {
-				lastDockCount = currentDockCount;
-			}
-			if (lastDockCount === currentDockCount) {
-				return;
-			}
 		});
 		titleObserver.observe(
 			document.querySelector('title'), 
