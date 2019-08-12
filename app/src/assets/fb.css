@@ -1,6 +1,6 @@
 :root {
 	--nav-bar-height: 40px;
-	--nav-bar-padding: 3px;
+	--nav-bar-padding: 28px;
 }
 
 body {
@@ -44,6 +44,9 @@ body {
 		display: flex;
 		justify-content: flex-end;
 	}
+		._1enh._7q1s{
+			padding-top:25px;
+		}
 
 		/* title */
 		._1enh ._36ic._5l-3 ._1tqi {
