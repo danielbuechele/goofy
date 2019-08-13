@@ -22,6 +22,11 @@
 		-webkit-app-region: drag;
 	}
 
+	/* left column navbar - pre v3.4.4 */
+	._1enh ._36ic._5l-3 {
+		-webkit-app-region: drag;
+	}
+
 /* right column */
 ._1t2u._7sli {
 
@@ -30,7 +35,13 @@
 	._1t2u._7sli ._2y8y._6zw0._5l-3 {
 		-webkit-app-region: drag;
 	}
+
 	/* right column navbar */
 	._1t2u._7sli ._673w._6ynl {
+		-webkit-app-region: drag;
+	}
+
+	/* right column navbar - pre v3.4.4 */
+	._1t2u ._673w {
 		-webkit-app-region: drag;
 	}
