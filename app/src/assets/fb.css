@@ -1,7 +1,3 @@
-:root {
-	--nav-bar-padding: 28px;
-}
-
 /* Login - footer */
 ._210n, #pageFooter {
 	display: none;
@@ -14,7 +10,7 @@
 
 /* left column */
 ._1enh._7q1s {
-	padding-top: var(--nav-bar-padding);
+	padding-top: 28px;
 }
 
 	/* left column navbar */
@@ -31,6 +27,7 @@
 ._1t2u._7sli {
 
 }
+
 	/* right column navbar (new conversation) */
 	._1t2u._7sli ._2y8y._6zw0._5l-3 {
 		-webkit-app-region: drag;

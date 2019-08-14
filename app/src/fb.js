@@ -332,10 +332,29 @@ function bindSpellChecking() {
 	});
 }
 
+/**
+ * Handling the old messenger.com style (new version of messenger.com was 
+ * released ~May 2019 and slowly rolled out to all users). 
+ * 
+ * This method checks for a CSS class in the pre-May 2019 version and if 
+ * found, apply the old .css for it.  
+ */
+function bindPre343Css() {
+	document.addEventListener('DOMContentLoaded', () => {
+		if (document.querySelector('._1enh ._36ic._5l-3 ._1tqi') != null) {
+			const classList = document.querySelector('#facebook').classList;
+			if (!classList.contains("goofy343")) {
+				classList.add("goofy343");
+			}
+		}
+	});
+}
+
 bindKeyboardShortcuts();
 bindLoadMessageIPCMessages();
 bindDock();
 bindSpellChecking();
+bindPre343Css();
 
 document.addEventListener('DOMContentLoaded', () => {
 	// load settings menu once, so it is inserted in the DOM

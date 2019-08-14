@@ -1,0 +1,89 @@
+:root {
+	--nav-bar-height: 40px;
+	--nav-bar-padding: 3px;
+}
+
+html.goofy343 body {
+	overflow: hidden !important;
+}
+
+html.goofy343 .liquid div#globalContainer {
+	min-width: 0 !important;
+}
+
+/* Login - footer */
+html.goofy343 ._210n, #pageFooter {
+	display: none;
+}
+
+/* Workplace toolbar */
+html.goofy343 #pagelet_bluebar, #fb2k_pagelet_bluebar {
+	display: none;
+}
+
+/* "Get App"-banner */
+html.goofy343 ._s15 {
+	display: none !important;
+}
+
+/* container */
+html.goofy343 ._4sp8._li {
+	width: 100vw;
+}
+
+/* left column */
+html.goofy343 ._1enh {
+
+}
+
+	/* left column navbar */
+	html.goofy343 ._1enh ._36ic._5l-3 {
+		-webkit-app-region: drag;
+		height: var(--nav-bar-height);
+		padding: var(--nav-bar-padding);
+		display: flex;
+		justify-content: flex-end;
+	}
+
+		/* title */
+		html.goofy343 ._1enh ._36ic._5l-3 ._1tqi {
+			display: none;
+		}
+
+		/* New message button */
+		@media (max-width: 700px) {
+			html.goofy343 ._1enh ._36ic._5l-3 ._30yy._2oc8 {
+				position: relative;
+				left: 44px;
+			}
+		}
+		
+		@media (max-width: 500px) {
+			html.goofy343 ._1enh ._36ic._5l-3 ._30yy._2oc8 {
+				display: none;
+			}
+		}
+
+/* right column */
+html.goofy343 ._1t2u {
+
+}
+
+	/* right column navbar: new conversation */
+	html.goofy343 ._1t2u ._2y8y._5l-3 {
+		-webkit-app-region: drag;
+		min-height: var(--nav-bar-height) !important;
+		padding: 8px !important;
+	}
+	
+	/* right column navbar */
+	html.goofy343 ._1t2u ._673w {
+		-webkit-app-region: drag;
+		height: var(--nav-bar-height);
+		padding: var(--nav-bar-padding);
+	}
+
+		/* conversation action icons (call, info, ...) */
+		html.goofy343 ._1t2u ._673w ._fl2 {
+			padding: 4px 8px;
+		}
