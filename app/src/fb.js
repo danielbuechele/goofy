@@ -10,15 +10,18 @@ const store = userConfig.store;
 const constants = require('./helpers/constants');
 
 const NEW_MESSAGE_BUTTON = '._30yy._6-xp._6-xq';
+const NEW_MESSAGE_BUTTON_PREV = '._1enh ._36ic ._30yy._2oc8';
 const SELECTED_CONVERSATION = '._1ht2';
 const ACTIVATE_CONVERSATION = 'a._1ht5';
 
 // Settings dropdown
 const SETTINGS_BUTTON = '._1enh._7q1s ._30yy._6ymd._2agf._4o_4._p';  // The "cog" button which shows the Settings dropdown
+const SETTINGS_BUTTON_PREV = '._1enh ._36ic ._4kzu a';
 const SETTINGS_LINK = '._54ni.__MenuItem:first-child';  // The "Settings" link in the Settings dropdown
 
 // Following are Message List navigation options in the Settings dropdown
 const MESSAGE_LIST_INBOX_LINK = '._1enh._7q1s ._30yy._6-xf._6-xg';
+const MESSAGE_LIST_INBOX_LINK_PREV = '._1enh ._36ic ._30yy';
 const MESSAGE_LIST_ACTIVE_CONTACTS_LINK  = '._54ni.__MenuItem:nth-child(3)';
 const MESSAGE_LIST_MESSAGE_REQUESTS_LINK = '._54ni.__MenuItem:nth-child(4)';
 const MESSAGE_LIST_ARCHIVED_THREADS_LINK = '._54ni.__MenuItem:nth-child(5)';
@@ -44,6 +47,7 @@ const REPORT_GROUP_CONVERSATION_SPAM_OR_ABUSE_LINK_INDEX = 9;
 
 // Conversation actions
 const LIKE_CONVERSATION_LINK = '._5j_u._30yy._4rv9._6ymq._7kpj';
+const LIKE_CONVERSATION_LINK_PREV = '._4rv9._30yy._39bl';
 
 // Hijack WebView notifications and create our own
 window.Notification = (notification => {
@@ -98,7 +102,7 @@ function bindKeyboardShortcuts() {
 	// File menu
 	// - New Conversation
 	ipcRenderer.on(constants.NEW_CONVERSATION, () => {
-		document.querySelector(NEW_MESSAGE_BUTTON).click();
+		document.querySelector(isPreviousMessengerVersion() ? NEW_MESSAGE_BUTTON_PREV : NEW_MESSAGE_BUTTON).click();
 	});
 	
 	// View menu
@@ -219,7 +223,7 @@ function bindKeyboardShortcuts() {
 	// Touchbar
 	// - Like conversation
 	ipcRenderer.on(constants.LIKE_CONVERSATION, () => {
-		const like = document.querySelector(LIKE_CONVERSATION_LINK);
+		const like = document.querySelector(isPreviousMessengerVersion() ? LIKE_CONVERSATION_LINK_PREV : LIKE_CONVERSATION_LINK);
 		if (like) {
 			const mouseDown = document.createEvent('MouseEvents');
 			mouseDown.initEvent('mousedown', true, true);
@@ -239,7 +243,7 @@ function resetMessageListToInbox() {
 		return;
 	}
 
-	const messageListInbox = document.querySelector(MESSAGE_LIST_INBOX_LINK);
+	const messageListInbox = document.querySelector(isPreviousMessengerVersion() ? MESSAGE_LIST_INBOX_LINK_PREV : MESSAGE_LIST_INBOX_LINK);
 	if (messageListInbox) {
 		messageListInbox.click();
 	}
@@ -252,7 +256,7 @@ function resetMessageListToInbox() {
  * can get those link elements and activate them)
  */
 function resetSettingsDropdown() {
-	const button = document.querySelector(SETTINGS_BUTTON);
+	const button = document.querySelector(isPreviousMessengerVersion() ? SETTINGS_BUTTON_PREV : SETTINGS_BUTTON);
 	if (button) {
 		button.click();
 		button.click();  // clicking again to hide
@@ -341,13 +345,22 @@ function bindSpellChecking() {
  */
 function bindPre343Css() {
 	document.addEventListener('DOMContentLoaded', () => {
-		if (document.querySelector('._1enh ._36ic._5l-3 ._1tqi') != null) {
-			const classList = document.querySelector('#facebook').classList;
-			if (!classList.contains("goofy343")) {
-				classList.add("goofy343");
-			}
-		}
+		setTimeout(
+			() => {
+				if (isPreviousMessengerVersion()) {
+					const classList = document.querySelector('#facebook').classList;
+					if (!classList.contains('goofy343')) {
+						classList.add('goofy343');
+					}
+				}
+			},
+			1000
+		);
 	});
+}
+
+function isPreviousMessengerVersion() {
+	return document.querySelector('._1enh ._36ic._5l-3 ._1tqi') != null;
 }
 
 bindKeyboardShortcuts();
