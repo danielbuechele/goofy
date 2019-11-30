@@ -4,3 +4,4 @@ dist
 npm-debug.log
 app/src/config/env.json
 .idea
+.env
