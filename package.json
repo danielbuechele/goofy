@@ -21,9 +21,8 @@
   "license": "MIT",
   "devDependencies": {
     "@sep/eslint-config-sep": "^1.0.14",
-    "electron": "^4.0.1",
-    "electron-builder": "^20.38.5",
-    "electron-rebuild": "^1.8.4"
+    "electron": "^7.1.2",
+    "electron-builder": "^21.2.0"
   },
   "build": {
     "productName": "Goofy",
@@ -41,7 +40,7 @@
   },
   "dependencies": {
     "electron-default-menu": "^1.0.0",
-    "electron-spellchecker": "^1.1.2",
+    "electron-spellchecker": "^2.2.1",
     "electron-store": "^2.0.0",
     "electron-window-state": "^5.0.3",
     "fs-jetpack": "^0.10.5",
