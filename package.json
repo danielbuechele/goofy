@@ -21,17 +21,24 @@
   "license": "MIT",
   "devDependencies": {
     "@sep/eslint-config-sep": "^1.0.14",
+    "dotenv": "^8.2.0",
     "electron": "^7.1.2",
-    "electron-builder": "^21.2.0"
+    "electron-builder": "^21.2.0",
+    "electron-notarize": "^0.2.1"
   },
   "build": {
     "productName": "Goofy",
     "icon": "./icon/AppIcon",
     "appId": "cc.buechele.Goofy",
+    "afterSign": "scripts/notarize.js",
     "mac": {
       "target": [
-        "zip"
+        "zip",
+        "dmg"
       ],
+      "hardenedRuntime": true,
+      "entitlements": "./build/entitlements.mac.inherit.plist",
+      "entitlementsInherit": "./build/entitlements.mac.inherit.plist",
       "bundleVersion": "2001"
     },
     "publish": [
