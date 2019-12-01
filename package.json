@@ -1,6 +1,6 @@
 {
   "name": "goofy-core",
-  "version": "3.4.6",
+  "version": "3.4.8",
   "description": "The electron-builder script to build Goofy",
   "main": "app/src/main.js",
   "scripts": {
@@ -21,19 +21,24 @@
   "license": "MIT",
   "devDependencies": {
     "@sep/eslint-config-sep": "^1.0.14",
-    "electron": "^4.0.1",
-    "electron-builder": "^20.38.5",
-    "electron-rebuild": "^1.8.4"
+    "dotenv": "^8.2.0",
+    "electron": "^7.1.2",
+    "electron-builder": "^21.2.0",
+    "electron-notarize": "^0.2.1"
   },
   "build": {
     "productName": "Goofy",
     "icon": "./icon/AppIcon",
     "appId": "cc.buechele.Goofy",
+    "afterSign": "scripts/notarize.js",
+    "asar": false,
     "mac": {
       "target": [
-        "zip"
+        "dmg"
       ],
-      "bundleVersion": "2001"
+      "hardenedRuntime": true,
+      "entitlements": "./build/entitlements.mac.inherit.plist",
+      "entitlementsInherit": "./build/entitlements.mac.inherit.plist"
     },
     "publish": [
       "github"
@@ -41,7 +46,7 @@
   },
   "dependencies": {
     "electron-default-menu": "^1.0.0",
-    "electron-spellchecker": "^1.1.2",
+    "electron-spellchecker": "^2.2.1",
     "electron-store": "^2.0.0",
     "electron-window-state": "^5.0.3",
     "fs-jetpack": "^0.10.5",

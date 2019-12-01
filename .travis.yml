@@ -1,9 +1,9 @@
 language: node_js
 node_js:
-  - 10
+  - 13.2.0
 os:
   - osx
-osx_image: xcode8
+osx_image: xcode11
 before_script:
   - npm install --only=dev
   - npm run electron-builder-postinstall
