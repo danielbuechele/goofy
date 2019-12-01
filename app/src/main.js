@@ -29,7 +29,7 @@ const setupTouchBar = require('./touch_bar');
 let mainWindow;
 let willQuitApp = false;
 
-app.setName(env.appName);
+app.name = env.appName;
 app.disableHardwareAcceleration();
 
 // goofy:// deep link
