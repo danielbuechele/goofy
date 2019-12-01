@@ -142,6 +142,18 @@ function setupMenu(webContents) {
 		},
 		{
 			type: 'separator',
+		},
+		{
+			role: 'resetZoom',
+		},
+		{
+			role: 'zoomIn',
+		},
+		{
+			role: 'zoomOut',
+		},
+		{
+			type: 'separator',
 		}
 	);
 
