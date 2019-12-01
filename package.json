@@ -29,6 +29,9 @@
   "build": {
     "productName": "Goofy",
     "icon": "./icon/AppIcon",
+    "files": [
+      "**/*"
+    ],
     "appId": "cc.buechele.Goofy",
     "afterSign": "scripts/notarize.js",
     "mac": {
