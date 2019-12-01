@@ -186,21 +186,40 @@ ipcMain.on(constants.DOCK_COUNT, (event, params) => {
 // Auto-update
 
 autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
-	dialog.showMessageBox(
-		{
-			type: 'info',
-			title: 'Update available',
-			message: `A new version of ${env.appName} is available!`,
-			detail: `${env.appName} ${releaseName} is now available—you have ${app.getVersion()}.  Restart the application to apply updates.`,
-			buttons: [ 'Restart', 'Later' ],
-		},
-		(response) => {
-			if (response === 0) {
-				willQuitApp = true;
-				autoUpdater.quitAndInstall();
+	app.on('ready', () => {
+		dialog.showMessageBox(
+			{
+				type: 'info',
+				title: 'Update available',
+				message: `A new version of ${env.appName} is available!`,
+				detail: `${env.appName} ${releaseName} is now available—you have ${app.getVersion()}.  Restart the application to apply updates.`,
+				buttons: [ 'Restart', 'Later' ],
+			},
+			(response) => {
+				if (response === 0) {
+					willQuitApp = true;
+					autoUpdater.quitAndInstall();
+				}
 			}
-		}
-	);
+		);
+	});
+});
+
+autoUpdater.on('error', message => {
+	app.on('ready', () => {
+		dialog.showMessageBox(
+			{
+				type: 'info',
+				title: 'Error updating app',
+				message: `There was an error updating ${env.appName}`,
+				detail: `${message.message}`,
+				buttons: [ 'OK' ],
+			},
+			(response) => {
+				// TODO
+			}
+		);
+	});
 });
 
 if (env.name === 'production') {
