@@ -33,7 +33,6 @@
     "afterSign": "scripts/notarize.js",
     "mac": {
       "target": [
-        "zip",
         "dmg"
       ],
       "hardenedRuntime": true,
