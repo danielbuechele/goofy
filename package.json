@@ -29,9 +29,6 @@
   "build": {
     "productName": "Goofy",
     "icon": "./icon/AppIcon",
-    "files": [
-      "**/*"
-    ],
     "appId": "cc.buechele.Goofy",
     "afterSign": "scripts/notarize.js",
     "asar": false,
@@ -41,8 +38,7 @@
       ],
       "hardenedRuntime": true,
       "entitlements": "./build/entitlements.mac.inherit.plist",
-      "entitlementsInherit": "./build/entitlements.mac.inherit.plist",
-      "bundleVersion": "2001"
+      "entitlementsInherit": "./build/entitlements.mac.inherit.plist"
     },
     "publish": [
       "github"
