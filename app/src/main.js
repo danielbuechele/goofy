@@ -185,8 +185,8 @@ ipcMain.on(constants.DOCK_COUNT, (event, params) => {
 
 // Auto-update
 
-autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
-	app.on('ready', () => {
+app.on('ready', () => {
+	autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
 		dialog.showMessageBox(
 			{
 				type: 'info',
@@ -203,10 +203,8 @@ autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
 			}
 		);
 	});
-});
 
-autoUpdater.on('error', message => {
-	app.on('ready', () => {
+	autoUpdater.on('error', message => {
 		dialog.showMessageBox(
 			{
 				type: 'info',
