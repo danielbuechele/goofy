@@ -1,7 +1,7 @@
 'use strict';
 
 const electron = require('electron');
-const { 
+const {
 	BrowserWindow, 
 	autoUpdater, 
 	dialog, 
@@ -220,9 +220,6 @@ app.on('ready', () => {
 				message: `There was an error updating ${env.appName}`,
 				detail: `${message.message}`,
 				buttons: [ 'OK' ],
-			},
-			(response) => {
-				// TODO
 			}
 		);
 	});
