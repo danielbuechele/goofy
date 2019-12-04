@@ -177,6 +177,14 @@ ipcMain.on(constants.NEW_MESSAGE_NOTIFICATION, (event, params) => {
 	notification.show();
 });
 
+ipcMain.on(constants.OPEN_MESSENGER, (event, params) => {
+	if (mainWindow) {
+		mainWindow.show();
+	} else {
+		createWindow();
+	}
+});
+
 ipcMain.on(constants.DOCK_COUNT, (event, params) => {
 	if (store.get(userConfig.PUSH_NOTIFICATIONS_SHOW_UNREAD_BADGE, true)) {
 		app.setBadgeCount(params);
