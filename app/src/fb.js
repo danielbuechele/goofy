@@ -103,27 +103,32 @@ function bindKeyboardShortcuts() {
 	// - New Conversation
 	ipcRenderer.on(constants.NEW_CONVERSATION, () => {
 		document.querySelector(isPreviousMessengerVersion() ? NEW_MESSAGE_BUTTON_PREV : NEW_MESSAGE_BUTTON).click();
+		ipcRenderer.send(constants.OPEN_MESSENGER);
 	});
 	
 	// View menu
 	// - Inbox
 	ipcRenderer.on(constants.SHOW_MESSAGE_LIST_INBOX, () => {
 		resetMessageListToInbox();
+		ipcRenderer.send(constants.OPEN_MESSENGER);
 	});
 	
 	// - Active contacts
 	ipcRenderer.on(constants.SHOW_MESSAGE_LIST_ACTIVE_CONTACTS, () => {
 		openMessageList(MESSAGE_LIST_ACTIVE_CONTACTS_LINK);
+		ipcRenderer.send(constants.OPEN_MESSENGER);
 	});
 	
 	// - Message requests
 	ipcRenderer.on(constants.SHOW_MESSAGE_LIST_MESSAGE_REQUESTS, () => {
 		openMessageList(MESSAGE_LIST_MESSAGE_REQUESTS_LINK);
+		ipcRenderer.send(constants.OPEN_MESSENGER);
 	});
 	
 	// - Archived threads
 	ipcRenderer.on(constants.SHOW_MESSAGE_LIST_ARCHIVED_THREADS, () => {
 		openMessageList(MESSAGE_LIST_ARCHIVED_THREADS_LINK);
+		ipcRenderer.send(constants.OPEN_MESSENGER);
 	});
 	
 	function openMessageList(messageListLink) {
