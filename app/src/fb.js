@@ -381,3 +381,14 @@ document.addEventListener('DOMContentLoaded', () => {
 		1000
 	);
 });
+
+// Add drag handle for login screen
+document.addEventListener('DOMContentLoaded', () => {
+	const loginBodyElem = document.querySelector('._3v_o');
+	if (!loginBodyElem) {
+		return;
+	}
+	const draggableHeader = document.createElement('div');
+	draggableHeader.style = '-webkit-app-region: drag; height: 40px;';
+	document.querySelector('body').appendChild(draggableHeader);
+});
