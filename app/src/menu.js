@@ -7,7 +7,7 @@ const path = require('path');
 const defaultMenu = require('electron-default-menu');
 
 const env = require('./config/env.js');
-const constants = require('./helpers/constants');
+const constants = require('./constants');
 
 let preferencesWindow = null;
 

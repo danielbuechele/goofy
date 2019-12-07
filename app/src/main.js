@@ -17,7 +17,7 @@ const fs = require('fs');
 const windowStateKeeper = require('electron-window-state');
 
 const env = require('./config/env.js');
-const constants = require('./helpers/constants');
+const constants = require('./constants');
 const userConfig = require('./modules/userConfig');
 const store = userConfig.store;
 const RequestFilter = require('./modules/requestFilter');
@@ -63,7 +63,7 @@ function createWindow() {
 		title: 'Goofy', 
 		webPreferences: {
 			nodeIntegration: false,
-			preload: path.join(__dirname, 'fb.js'),
+			preload: path.join(__dirname, 'facebook', 'fb.js'),
 		},
 	};
 

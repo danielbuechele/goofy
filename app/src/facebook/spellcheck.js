@@ -5,7 +5,7 @@ const { app } = remote;
 
 const { SpellCheckHandler, ContextMenuListener, ContextMenuBuilder } = require('electron-spellchecker');
 
-const userConfig = require('./modules/userConfig');
+const userConfig = require('../modules/userConfig');
 const store = userConfig.store;
 
 function bindSpellCheck() {

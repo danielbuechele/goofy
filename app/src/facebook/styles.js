@@ -49,7 +49,7 @@ function bindMenuBarDragHandles() {
 
 function bindStyles(webContents) {
 	bindPre343Styles();
-	bindMenuBarDragHandles()
+	bindMenuBarDragHandles();
 }
 
 module.exports = bindStyles;

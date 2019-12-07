@@ -3,7 +3,7 @@
 const electron = require('electron');
 const { TouchBar } = electron;
 
-const constants = require('./helpers/constants');
+const constants = require('./constants');
 
 function setupTouchBar(browserWindow) {
 	browserWindow.setTouchBar(

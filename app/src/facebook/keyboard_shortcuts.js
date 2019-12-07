@@ -2,7 +2,7 @@
 
 const { ipcRenderer } = require('electron');
 
-const constants = require('./helpers/constants');
+const constants = require('../constants');
 const { whenUIChromeLoaded, isPreviousMessengerVersion } = require('./helpers/common');
 
 const NEW_MESSAGE_BUTTON = '._30yy._6-xp._6-xq';

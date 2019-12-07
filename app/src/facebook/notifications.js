@@ -2,7 +2,7 @@
 
 const { ipcRenderer } = require('electron');
 
-const constants = require('./helpers/constants');
+const constants = require('../constants');
 
 /**
  * Hijack WebView notifications and create our own
