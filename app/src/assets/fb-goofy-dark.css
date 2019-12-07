@@ -1,3 +1,20 @@
-._6-xo {
-	color: #999 !important;
+/* LHS */
+
+._6-xk {
+
+}
+
+	/* "Chat" header */
+	._6-xk ._6-xo {
+		color: #999 !important;
+	}
+
+	/* Back button */
+	._6-xk #ArrowLeft #Fill-1 {
+		fill: #999;
+	}
+
+/* Message input - Placeholder text */
+._1p1v {
+	-webkit-text-fill-color: #999;
 }
