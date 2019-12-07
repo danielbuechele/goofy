@@ -120,6 +120,7 @@ function createWindow() {
 
 		if (store.get(userConfig.DARK_MODE_ENABLED, 'false')) {
 			mainWindow.webContents.insertCSS(fs.readFileSync(path.join(__dirname, './assets/fb-messenger-dark.user.css'), 'utf8'));
+			mainWindow.webContents.insertCSS(fs.readFileSync(path.join(__dirname, './assets/fb-goofy-dark.css'), 'utf8'));
 		}
 	});
 
