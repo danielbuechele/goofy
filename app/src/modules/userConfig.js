@@ -4,6 +4,8 @@ const Store = require('electron-store');
 const store = new Store();
 
 module.exports = {
+	DARK_MODE_ENABLED: 'darkMode.enabled',
+	
 	SPELL_CHECK_ENABLED: 'spellCheck.enabled',
 	SPELL_CHECK_LOCALE: 'spellCheck.locale',
 	
