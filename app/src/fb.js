@@ -392,3 +392,56 @@ document.addEventListener('DOMContentLoaded', () => {
 	draggableHeader.style = '-webkit-app-region: drag; height: 40px;';
 	document.querySelector('body').appendChild(draggableHeader);
 });
+
+/**
+ * Note, has a bug where sometimes the callback gets called twice. For safety, 
+ * if calling this method is recommended to add a check to handle this case.
+ */
+function whenUIChromeLoaded(callback) {
+	let fired = false
+	document.addEventListener('DOMContentLoaded', () => {
+		const observer = new MutationObserver(mutations => {
+			if (fired || mutations.length <= 0) {
+				return;
+			}
+	
+			mutations.forEach((mutation) => {
+				switch(mutation.type) {
+					case 'childList':
+						// UI chrome is loaded once left column is loaded
+						if (!mutation.target.querySelector('._1enh._7q1s')) {
+							return;
+						}
+						callback();
+						fired = true;
+						observer.disconnect();
+						break;
+					default:
+						break;
+				}
+			});
+		});
+
+		observer.observe(
+			document.querySelector('body'),
+			{
+				subtree: true,
+				childList: true,
+			}
+		);
+	});
+}
+
+// Add drag handle for left column screen
+whenUIChromeLoaded(() => {
+	const leftColumnElem = document.querySelector('._1enh._7q1s');
+	const leftColumnBeforeElem = document.querySelector('._6-xk');
+	const draggableLeftColumnHeaderElem = document.querySelector('.draggableLeftColumnHeader');
+	if (!leftColumnElem || !leftColumnBeforeElem || draggableLeftColumnHeaderElem) {
+		return;
+	}
+	const draggableHeader = document.createElement('div');
+	draggableHeader.className = 'draggableLeftColumnHeader';
+	draggableHeader.style = '-webkit-app-region: drag; height: 28px;';
+	leftColumnElem.insertBefore(draggableHeader, leftColumnBeforeElem);
+});
