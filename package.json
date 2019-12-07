@@ -31,7 +31,6 @@
     "icon": "./icon/AppIcon",
     "appId": "cc.buechele.Goofy",
     "afterSign": "scripts/notarize.js",
-    "asar": false,
     "mac": {
       "target": [
         "dmg",
