@@ -3,6 +3,8 @@
 const userConfig = require('../modules/userConfig');
 const store = userConfig.store;
 
+const DARK_MODE_ENABLED_CHECKBOX = '#darkModeEnabled';
+
 const SPELL_CHECK_ENABLED_CHECKBOX = '#spellCheckEnabled';
 const SPELL_CHECK_LOCALE_SELECT = '#spellCheckLocaleSelect';
 
@@ -15,6 +17,9 @@ const PRIVACY_BLOCK_SEEN_INDICATOR_CHECKBOX = '#privacyBlockSeenIndicator';
 const DOMAIN_SELECT = '#domainSelect';
 
 function loadSettingsToUI() {
+	// Dark mode
+	loadCheckboxSettingToUI(DARK_MODE_ENABLED_CHECKBOX, userConfig.DARK_MODE_ENABLED, false);
+
 	// Spell check
 	loadCheckboxSettingToUI(SPELL_CHECK_ENABLED_CHECKBOX, userConfig.SPELL_CHECK_ENABLED, false);
 
@@ -54,6 +59,9 @@ function loadCheckboxSettingToUI(checkboxSelector, storeKey, defaultVal) {
 }
 
 function bindUI() {
+	// Dark mode
+	bindCheckboxUI(DARK_MODE_ENABLED_CHECKBOX, userConfig.DARK_MODE_ENABLED);
+
 	// Spell check
 	bindCheckboxUI(SPELL_CHECK_ENABLED_CHECKBOX, userConfig.SPELL_CHECK_ENABLED);
 	

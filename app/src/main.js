@@ -117,6 +117,11 @@ function createWindow() {
 	mainWindow.webContents.on('dom-ready', () => {
 		mainWindow.webContents.insertCSS(fs.readFileSync(path.join(__dirname, '/assets/fb.css'), 'utf8'));
 		mainWindow.webContents.insertCSS(fs.readFileSync(path.join(__dirname, '/assets/fb-3.4.3.css'), 'utf8'));
+
+		if (store.get(userConfig.DARK_MODE_ENABLED, 'false')) {
+			mainWindow.webContents.insertCSS(fs.readFileSync(path.join(__dirname, './assets/fb-messenger-dark.user.css'), 'utf8'));
+			mainWindow.webContents.insertCSS(fs.readFileSync(path.join(__dirname, './assets/fb-goofy-dark.css'), 'utf8'));
+		}
 	});
 
 	mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options) => {
