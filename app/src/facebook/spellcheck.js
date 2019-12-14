@@ -9,7 +9,7 @@ const userConfig = require('../modules/userConfig');
 const store = userConfig.store;
 
 function bindSpellCheck() {
-	if (!store.get(userConfig.SPELL_CHECK_ENABLED, 'false')) {
+	if (!store.get(userConfig.SPELL_CHECK_ENABLED, false)) {
 		return;
 	}
 
