@@ -20,7 +20,7 @@ const MESSAGE_LIST_INBOX_LINK = '._1enh._7q1s ._30yy._6-xf._6-xg';
 const MESSAGE_LIST_INBOX_LINK_PREV = '._1enh ._36ic ._30yy';
 const MESSAGE_LIST_ACTIVE_CONTACTS_LINK  = '._54ni.__MenuItem:nth-child(3)';
 const MESSAGE_LIST_MESSAGE_REQUESTS_LINK = '._54ni.__MenuItem:nth-child(4)';
-const MESSAGE_LIST_ARCHIVED_THREADS_LINK = '._54ni.__MenuItem:nth-child(5)';
+const MESSAGE_LIST_HIDE_CHATS_LINK = '._54ni.__MenuItem:nth-child(5)';
 
 // Conversation dropdown
 const CONVERSATION_DROPDOWN_LINK_SUFFIX = '._5blh';
@@ -28,14 +28,14 @@ const CONVERSATION_DROPDOWN = '._54nf';
 const CONVERSATION_DROPDOWN_ITEM_LINK_PREFIX = '._54ni.__MenuItem';
 
 const MUTE_CONVERSATION_LINK_INDEX                 = 1;
-const ARCHIVE_CONVERSATION_LINK_INDEX              = 3;
+const HIDE_CHAT_LINK_INDEX                         = 3;
 const DELETE_CONVERSATION_LINK_INDEX               = 4;
 const MARK_CONVERSATION_UNREAD_LINK_INDEX          = 6;
 const MARK_CONVERSATION_SPAM_LINK_INDEX            = 7;
 const REPORT_CONVERSATION_SPAM_OR_ABUSE_LINK_INDEX = 8;
 
 const MUTE_GROUP_CONVERSATION_LINK_INDEX                 = 1;
-const ARCHIVE_GROUP_CONVERSATION_LINK_INDEX              = 4;
+const HIDE_GROUP_CONVERSATION_LINK_INDEX                 = 4;
 const DELETE_GROUP_CONVERSATION_LINK_INDEX               = 5;
 const MARK_GROUP_CONVERSATION_UNREAD_LINK_INDEX          = 7;
 const MARK_GROUP_CONVERSATION_SPAM_LINK_INDEX            = 8;
@@ -88,9 +88,15 @@ function bindKeyboardShortcuts() {
 		ipcRenderer.send(constants.OPEN_MESSENGER);
 	});
 	
-	// - Archived threads
-	ipcRenderer.on(constants.SHOW_MESSAGE_LIST_ARCHIVED_THREADS, () => {
-		openMessageList(MESSAGE_LIST_ARCHIVED_THREADS_LINK);
+	// - Hidden chats
+	ipcRenderer.on(constants.SHOW_MESSAGE_LIST_HIDDEN_CHATS, () => {
+		openMessageList(MESSAGE_LIST_HIDE_CHATS_LINK);
+		ipcRenderer.send(constants.OPEN_MESSENGER);
+	});
+
+	// - Unread chats
+	ipcRenderer.on(constants.SHOW_MESSAGE_LIST_UNREAD_CHATS, () => {
+		openMessageList(MESSAGE_LIST_HIDE_CHATS_LINK);
 		ipcRenderer.send(constants.OPEN_MESSENGER);
 	});
 	
@@ -100,9 +106,9 @@ function bindKeyboardShortcuts() {
 		conversationAction(MUTE_CONVERSATION_LINK_INDEX, MUTE_GROUP_CONVERSATION_LINK_INDEX);
 	});
 	
-	// - Archive conversation
-	ipcRenderer.on(constants.ARCHIVE_CONVERSATION, () => {
-		conversationAction(ARCHIVE_CONVERSATION_LINK_INDEX, ARCHIVE_GROUP_CONVERSATION_LINK_INDEX);
+	// - Hide conversation
+	ipcRenderer.on(constants.HIDE_CHAT, () => {
+		conversationAction(HIDE_CHAT_LINK_INDEX, HIDE_GROUP_CONVERSATION_LINK_INDEX);
 	});
 
 	// - Delete conversation

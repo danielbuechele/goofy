@@ -134,10 +134,17 @@ function setupMenu(webContents) {
 			},
 		},
 		{
-			label: 'Archived threads',
+			label: 'Hidden chats',
 			accelerator: 'CmdOrCtrl+4',
 			click() {
-				webContents.send(constants.SHOW_MESSAGE_LIST_ARCHIVED_THREADS);
+				webContents.send(constants.SHOW_MESSAGE_LIST_HIDDEN_CHATS);
+			},
+		},
+		{
+			label: 'Unread chats',
+			accelerator: 'CmdOrCtrl+5',
+			click() {
+				webContents.send(constants.SHOW_MESSAGE_LIST_UNREAD_CHATS);
 			},
 		},
 		{
@@ -172,10 +179,10 @@ function setupMenu(webContents) {
 				type: 'separator',
 			},
 			{
-				label: 'Archive',
+				label: 'Hide',
 				accelerator: 'CmdOrCtrl+shift+A',
 				click() {
-					webContents.send(constants.ARCHIVE_CONVERSATION);
+					webContents.send(constants.HIDE_CHAT);
 				},
 			},
 			{

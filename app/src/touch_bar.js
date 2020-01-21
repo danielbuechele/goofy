@@ -24,7 +24,7 @@ function setupTouchBar(browserWindow) {
 				new TouchBar.TouchBarButton({
 					label: '🗄',
 					click: () => {
-						browserWindow.webContents.send(constants.ARCHIVE_CONVERSATION);
+						browserWindow.webContents.send(constants.HIDE_CHAT);
 					},
 				}),
 				new TouchBar.TouchBarButton({
