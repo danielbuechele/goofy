@@ -10,7 +10,7 @@
 
 /* left column */
 ._1enh._7q1s {
-	
+	background-color: #f5f5f5;
 }
 
 	/* left column navbar */
@@ -21,6 +21,12 @@
 	/* left column navbar - pre v3.4.4 */
 	._1enh ._36ic._5l-3 {
 		-webkit-app-region: drag;
+	}
+
+	/* left column highlight */
+	._1ht1._1ht2 ._6zkc {
+		background-color: rgba(0, 0, 0, .07) !important;
+		/* background-color: green !important; */
 	}
 
 /* right column */
