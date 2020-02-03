@@ -15,6 +15,7 @@ const PRIVACY_BLOCK_TYPING_INDICATOR_CHECKBOX = '#privacyBlockTypingIndicator';
 const PRIVACY_BLOCK_SEEN_INDICATOR_CHECKBOX = '#privacyBlockSeenIndicator';
 
 const DOMAIN_SELECT = '#domainSelect';
+const COLLAPSE_LEFTBAR_CHECKBOX = '#collapseLeftbar';
 
 function loadSettingsToUI() {
 	// Dark mode
@@ -52,6 +53,7 @@ function loadSettingsToUI() {
 	} else {
 		domainSelectElem.selectedIndex = 1;
 	}
+	loadCheckboxSettingToUI(COLLAPSE_LEFTBAR_CHECKBOX, userConfig.COLLAPSE_LEFTBAR, false);
 }
 
 function loadCheckboxSettingToUI(checkboxSelector, storeKey, defaultVal) {
@@ -64,7 +66,7 @@ function bindUI() {
 
 	// Spell check
 	bindCheckboxUI(SPELL_CHECK_ENABLED_CHECKBOX, userConfig.SPELL_CHECK_ENABLED);
-	
+
 	const localeSelectElem = document.querySelector(SPELL_CHECK_LOCALE_SELECT);
 	localeSelectElem.addEventListener('change', () => {
 		store.set(userConfig.SPELL_CHECK_LOCALE, localeSelectElem.value);
@@ -79,12 +81,13 @@ function bindUI() {
 	bindCheckboxUI(PRIVACY_BLOCK_TYPING_INDICATOR_CHECKBOX, userConfig.PRIVACY_BLOCK_TYPING_INDICATOR);
 	bindCheckboxUI(PRIVACY_BLOCK_SEEN_INDICATOR_CHECKBOX, userConfig.PRIVACY_BLOCK_SEEN_INDICATOR);
 
-	// Advanced	
+	// Advanced
 	const domainSelectElem = document.querySelector(DOMAIN_SELECT);
 	domainSelectElem.addEventListener('change', () => {
 		store.set(userConfig.DOMAIN, domainSelectElem.value);
 		loadSettingsToUI();
 	});
+	bindCheckboxUI(COLLAPSE_LEFTBAR_CHECKBOX, userConfig.COLLAPSE_LEFTBAR);
 }
 
 function bindCheckboxUI(checkboxSelector, storeKey) {

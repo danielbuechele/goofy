@@ -5,10 +5,10 @@ const store = new Store();
 
 module.exports = {
 	DARK_MODE_ENABLED: 'darkMode.enabled',
-	
+
 	SPELL_CHECK_ENABLED: 'spellCheck.enabled',
 	SPELL_CHECK_LOCALE: 'spellCheck.locale',
-	
+
 	DOMAIN: 'root_domain',
 	DEFAULT_DOMAIN: 'messenger.com/login',
 	DOMAIN_FACEBOOK: 'facebook.com/messages',
@@ -18,6 +18,8 @@ module.exports = {
 
 	PRIVACY_BLOCK_TYPING_INDICATOR: 'privacy.blockTypingIndicator',  // Default false
 	PRIVACY_BLOCK_SEEN_INDICATOR: 'privacy.blockSeenIndicator',  // Default false
+
+	COLLAPSE_LEFTBAR: 'advanced.collapseLeftbar',  // Default false
 
 	store,
 };

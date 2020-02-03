@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <html lang="en">
-    
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -12,12 +12,12 @@
 <body>
 
 <div class="container">
-  
+
   <div class="mt-4 mb-4" style="color: red;">(Changes to any setting requires a restart)</div>
 
   <form>
     <h2 class="mt-4">Dark mode</h2>
-    
+
     <div class="form-group row mt-4">
       <div class="col-sm-2">
         <label class="form-check-label" for="darkModeEnabled">
@@ -32,11 +32,11 @@
     </div>
 
     <div class="mt-4 small" style="color: #888888;">Dark mode theme implemented from <a href="https://github.com/auscompgeek/fb-messenger-dark"></a>https://github.com/auscompgeek/fb-messenger-dark</a></div>
-    
+
     <hr class="mt-5">
 
     <h2 class="mt-4">Spell check</h2>
-    
+
     <div class="form-group row mt-4">
       <div class="col-sm-2">
         <label class="form-check-label" for="spellCheckEnabled">
@@ -197,7 +197,7 @@
     <hr class="mt-5">
 
     <h2 class="mt-4">Push notifications</h2>
-    
+
     <div class="form-group row mt-4">
       <div class="col-sm-4">
         <label class="form-check-label" for="pushNotifsShowUnreadBadge">
@@ -210,7 +210,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="form-group row mt-4">
       <div class="col-sm-4">
         <label class="form-check-label" for="pushNotifsHideMessageBody">
@@ -223,13 +223,13 @@
         </div>
       </div>
     </div>
-  
+
     <div class="mt-4 small" style="color: #888888;">Ensure Push Notification are also enabled in Goofy -> Messenger Preferences -> Desktop notifications enabled</div>
 
     <hr class="mt-5">
 
     <h2 class="mt-4">Privacy</h2>
-    
+
     <div class="form-group row mt-4">
       <div class="col-sm-5">
         <label class="form-check-label" for="privacyBlockTypingIndicator">
@@ -242,7 +242,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="form-group row mt-4">
       <div class="col-sm-5">
         <label class="form-check-label" for="privacyBlockSeenIndicator">
@@ -255,18 +255,31 @@
         </div>
       </div>
     </div>
-    
+
     <hr class="mt-5">
 
     <h2 class="mt-4">Advanced</h2>
 
-    <div class="form-group row mt-4 mb-5">
+    <div class="form-group row mt-4">
       <label for="domainSelect" class="col-sm-2 col-form-label">Domain</label>
       <div class="col-sm-10">
         <select class="custom-select" id="domainSelect">
           <option value="messenger.com/login">https://messenger.com</option>
           <option value="facebook.com/messages">https://facebook.com/messages</option>
         </select>
+      </div>
+    </div>
+
+    <div class="form-group row mt-4 mb-5">
+      <div class="col-sm-5">
+        <label class="form-check-label" for="collapseLeftbar">
+          Always collapse the leftbar
+        </label>
+      </div>
+      <div class="col-sm-7">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="collapseLeftbar">
+        </div>
       </div>
     </div>
   </form>

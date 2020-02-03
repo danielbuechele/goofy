@@ -1,0 +1,59 @@
+/* Left bar */
+._1enh._7q1s {
+	flex-basis: 74px;
+	min-width: 80px !important;
+}
+
+/* Header */
+._6-xk {
+	justify-content: center;
+}
+._6-xk ._6-xo,
+._6-xv,
+._6-xl {
+	display: none;
+}
+._7sta._87u_ {
+	display: none;
+}
+._6-xp {
+	margin-left: 0 !important;
+}
+._6ymu {
+	display: none !important;
+}
+
+/* Search input */
+._1nq2._7vup {
+	display: none;
+}
+
+/* Chat heads */
+._6zkc {
+	padding-left: 4px;
+	padding-right: 4px;
+}
+._7t1l {
+	justify-content: center;
+}
+._1ht1 ._1qt3._6-5k {
+	margin-right: 0 !important;
+}
+._1ht3._1ht1._6zk9 {
+	background-color: rgba(0, 132, 255, 0.2);
+	transition: background-color 0.5s;
+}
+._1ht1._6zk9._1ht2 {
+	transition: background-color 0.5s;
+}
+._7vuq {
+	display: block;
+}
+._1ht5 ._1qt4._7vuo,
+.safari.webkit ._1ht5 ._1qt4._7vuo,
+.ie10 ._1ht5 ._1qt4._7vuo {
+	display: none;
+}
+._1ht1 ._2j6._6zkg {
+	display: none;
+}

@@ -2,13 +2,13 @@
 
 const electron = require('electron');
 const {
-	BrowserWindow, 
-	autoUpdater, 
-	dialog, 
+	BrowserWindow,
+	autoUpdater,
+	dialog,
 	Notification,
 	app,
-	session, 
-	ipcMain, 
+	session,
+	ipcMain,
 	nativeImage,
 	shell,
 } = electron;
@@ -52,15 +52,15 @@ function createWindow() {
 		defaultWidth: 800,
 		defaultHeight: 600,
 	});
-	
+
 	// Open the app at the same screen position and size as last time, if possible
-	const options = { 
+	const options = {
 		x: mainWindowState.x,
 		y: mainWindowState.y,
 		width: mainWindowState.width,
 		height: mainWindowState.height,
-		titleBarStyle: 'hiddenInset', 
-		title: 'Goofy', 
+		titleBarStyle: 'hiddenInset',
+		title: 'Goofy',
 		webPreferences: {
 			nodeIntegration: false,
 			preload: path.join(__dirname, 'facebook', 'fb.js'),
@@ -113,10 +113,13 @@ function createWindow() {
 
 	setupMenu(mainWindow.webContents);
 	setupTouchBar(mainWindow);
-	
+
 	mainWindow.webContents.on('dom-ready', () => {
 		mainWindow.webContents.insertCSS(fs.readFileSync(path.join(__dirname, '/assets/fb.css'), 'utf8'));
 		mainWindow.webContents.insertCSS(fs.readFileSync(path.join(__dirname, '/assets/fb-3.4.3.css'), 'utf8'));
+		if (store.get(userConfig.COLLAPSE_LEFTBAR, false)) {
+			mainWindow.webContents.insertCSS(fs.readFileSync(path.join(__dirname, '/assets/fb-collapse-leftbar.css'), 'utf8'));
+		}
 
 		if (store.get(userConfig.DARK_MODE_ENABLED, false)) {
 			mainWindow.webContents.insertCSS(fs.readFileSync(path.join(__dirname, './assets/fb-messenger-dark.user.css'), 'utf8'));
