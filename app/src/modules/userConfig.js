@@ -19,5 +19,7 @@ module.exports = {
 	PRIVACY_BLOCK_TYPING_INDICATOR: 'privacy.blockTypingIndicator',  // Default false
 	PRIVACY_BLOCK_SEEN_INDICATOR: 'privacy.blockSeenIndicator',  // Default false
 
+	COLLAPSE_SIDEBAR: 'ui.collapseSidebar',  // Default false
+
 	store,
 };

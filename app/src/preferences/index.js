@@ -15,6 +15,7 @@ const PRIVACY_BLOCK_TYPING_INDICATOR_CHECKBOX = '#privacyBlockTypingIndicator';
 const PRIVACY_BLOCK_SEEN_INDICATOR_CHECKBOX = '#privacyBlockSeenIndicator';
 
 const DOMAIN_SELECT = '#domainSelect';
+const COLLAPSE_SIDEBAR_CHECKBOX = '#collapseSidebar';
 
 function loadSettingsToUI() {
 	// Dark mode
@@ -52,6 +53,8 @@ function loadSettingsToUI() {
 	} else {
 		domainSelectElem.selectedIndex = 1;
 	}
+	
+	loadCheckboxSettingToUI(COLLAPSE_SIDEBAR_CHECKBOX, userConfig.COLLAPSE_SIDEBAR, false);
 }
 
 function loadCheckboxSettingToUI(checkboxSelector, storeKey, defaultVal) {
@@ -85,6 +88,8 @@ function bindUI() {
 		store.set(userConfig.DOMAIN, domainSelectElem.value);
 		loadSettingsToUI();
 	});
+
+	bindCheckboxUI(COLLAPSE_SIDEBAR_CHECKBOX, userConfig.COLLAPSE_SIDEBAR);
 }
 
 function bindCheckboxUI(checkboxSelector, storeKey) {
