@@ -22,7 +22,7 @@
   "devDependencies": {
     "@sep/eslint-config-sep": "^1.0.14",
     "dotenv": "^8.2.0",
-    "electron": "^6.1.6",
+    "electron": "^9.4.0",
     "electron-builder": "^21.2.0",
     "electron-notarize": "^0.2.1"
   },
