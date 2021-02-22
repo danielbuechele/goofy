@@ -1,3 +1,8 @@
+# ⚠️ Goofy is not maintained anymore
+
+Messenger offers a first party desktop now and I encourage all Goofy users to [try it out](https://www.messenger.com/desktop/).
+
+
 # Goofy
 
 Goofy is a macOS client for Facebook Messenger. But unlike most other clients, it does not use any of Facebook's APIs, but is basically a single-site browser that injects a little CSS and JS into [`messenger.com`](https://www.messenger.com/) to make it a little more app-like.
