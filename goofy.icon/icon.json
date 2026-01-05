@@ -1,0 +1,63 @@
+{
+  "fill" : {
+    "automatic-gradient" : "display-p3:0.94568,0.95853,0.96484,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "glass" : true,
+          "hidden" : true,
+          "image-name" : "Image.png",
+          "name" : "Image",
+          "position" : {
+            "scale" : 1.2,
+            "translation-in-points" : [
+              3.000000106112566e-07,
+              0
+            ]
+          }
+        },
+        {
+          "glass" : true,
+          "hidden" : false,
+          "image-name" : "goofy.svg",
+          "name" : "goofy",
+          "position" : {
+            "scale" : 0.75,
+            "translation-in-points" : [
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "hidden" : true,
+          "image-name" : "Facebook_Messenger_logo_2025.svg",
+          "name" : "Facebook_Messenger_logo_2025",
+          "position" : {
+            "scale" : 0.7,
+            "translation-in-points" : [
+              9.999999974752427e-07,
+              -1.535548449282942e-05
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

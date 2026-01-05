@@ -19,15 +19,25 @@
         "type": "module"
     },
 
-    "content_scripts": [{
-        "js": [ "content.js" ],
-        "matches": [ "*://example.com/*" ]
-    }],
 
     "action": {
         "default_popup": "popup.html",
         "default_icon": "images/toolbar-icon.svg"
     },
 
-    "permissions": [ ]
+    "permissions": [ "notifications", "scripting", "tabs" ],
+    "host_permissions": [ 
+        "https://buechele.cc/*",
+        "*://messenger.com/*",
+        "*://*.messenger.com/*"
+    ],
+    
+    "content_scripts": [{
+        "matches": [ "*://messenger.com/*", "*://*.messenger.com/*" ],
+        "js": []
+    }],
+    
+    "content_security_policy": {
+        "extension_pages": "script-src 'self' https://buechele.cc; object-src 'self'"
+    }
 }
