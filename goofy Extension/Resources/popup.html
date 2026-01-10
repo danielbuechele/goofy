@@ -1,21 +1,85 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="popup.css">
-    <script type="module" src="popup.js"></script>
-</head>
-<body>
-    <div class="container">
-        <h2>Goofy Extension</h2>
-        <button id="badgeBtn" class="btn">Set Badge</button>
-        
-        <div class="logs-section">
-            <h3>Logs</h3>
-            <div id="logsContainer" class="logs-container">
-                <p class="no-logs">No logs available</p>
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="popup.css" />
+        <script type="module" src="popup.js"></script>
+    </head>
+    <body>
+        <div class="header">
+            <div class="title-section">
+                <h1 class="title">Goofy</h1>
+                <span class="version" id="versions">
+                    v<span id="extension-version"></span>.<span
+                        id="content-version"
+                        >0</span
+                    >
+                </span>
+            </div>
+            <a
+                href="https://github.com/danielbuechele/goofy"
+                target="_blank"
+                class="learn-more"
+                >Learn more</a
+            >
+        </div>
+        <div class="health-checks">
+            <div class="check-item" id="pwa">
+                <div class="check-status" data-status="pending"></div>
+                <div class="check-info">
+                    <div class="check-name">Added to Dock</div>
+                    <div class="check-description">
+                        Running as standalone web app
+                    </div>
+                </div>
+            </div>
+
+            <div class="check-item" id="domain">
+                <div class="check-status" data-status="pending"></div>
+                <div class="check-info">
+                    <div class="check-name">Messenger loaded</div>
+                    <div class="check-description">
+                        Navigate to messenger.com
+                    </div>
+                </div>
+            </div>
+
+            <div class="check-item" id="script">
+                <div class="check-status" data-status="pending"></div>
+                <div class="check-info">
+                    <div class="check-name">Script Injection</div>
+                    <div class="check-description">Goofy script loaded</div>
+                </div>
+            </div>
+
+            <div class="check-item" id="notifications">
+                <div class="check-status" data-status="pending"></div>
+                <div class="check-info">
+                    <div class="check-name">Notifications</div>
+                    <div class="check-description">Permission status</div>
+                </div>
+                <a
+                    href="x-apple.systempreferences:com.apple.Notifications-Settings.extension"
+                    class="settings-link"
+                    >Open Settings</a
+                >
+            </div>
+
+            <div class="check-item" id="observer-inbox">
+                <div class="check-status" data-status="pending"></div>
+                <div class="check-info">
+                    <div class="check-name">Inbox Observer</div>
+                    <div class="check-description">Badge count tracking</div>
+                </div>
+            </div>
+
+            <div class="check-item" id="observer-threadlist">
+                <div class="check-status" data-status="pending"></div>
+                <div class="check-info">
+                    <div class="check-name">Thread List Observer</div>
+                    <div class="check-description">New message detection</div>
+                </div>
             </div>
         </div>
-    </div>
-</body>
+    </body>
 </html>

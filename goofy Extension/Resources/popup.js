@@ -1,181 +1,136 @@
-document.addEventListener("DOMContentLoaded", function () {
-  let badgeCount = 0;
-  let badgeActive = false;
+// Health check status types
+const CheckStatus = {
+  PENDING: "pending",
+  PASS: "pass",
+  WARNING: "warning",
+  FAIL: "fail",
+};
 
-  const badgeBtn = document.getElementById("badgeBtn");
-  const logsContainer = document.getElementById("logsContainer");
+class HealthCheckManager {
+  constructor() {
+    this.activeTab = null;
+  }
 
-  // Helper function to check if URL is a messenger.com page
-  const isMessengerUrl = (url) => {
-    if (!url) return false;
-    try {
-      const urlObj = new URL(url);
-      return urlObj.hostname === 'messenger.com' || urlObj.hostname.endsWith('.messenger.com');
-    } catch {
-      return false;
+  // Discover checks from HTML
+  discoverChecks() {
+    const checkElements = document.querySelectorAll(".check-item[id]");
+    const discovered = [];
+
+    for (const element of checkElements) {
+      discovered.push({
+        id: element.id,
+        element: element,
+      });
     }
-  };
 
-  // Function to load and display logs
-  const loadLogs = async () => {
+    return discovered;
+  }
+
+  // Get check results from background script
+  async updateCheckDisplay() {
+    const checks = this.discoverChecks();
+
     try {
-      const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      
-      if (!activeTab || !isMessengerUrl(activeTab.url)) {
-        logsContainer.innerHTML = '<p class="no-logs">Please navigate to messenger.com</p>';
+      // Get active tab first
+      const [tab] = await chrome.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
+      this.activeTab = tab;
+
+      // If no active tab, mark all as failed
+      if (!this.activeTab) {
+        for (const check of checks) {
+          this.updateCheckStatus(check.element, CheckStatus.FAIL);
+        }
         return;
       }
 
+      // Run fresh checks via background script
+      const response = await chrome.runtime.sendMessage({
+        action: "runHealthChecks",
+        tabId: this.activeTab.id,
+      });
+
+      const results = response.results || {};
+
+      // Update UI with results
+      for (const check of checks) {
+        const status = results[check.id];
+        if (status) {
+          this.updateCheckStatus(check.element, status);
+        } else {
+          this.updateCheckStatus(check.element, CheckStatus.PENDING);
+        }
+      }
+    } catch (error) {
+      console.error("Error updating check display:", error);
+      // Mark all as failed on error
+      for (const check of checks) {
+        this.updateCheckStatus(check.element, CheckStatus.FAIL);
+      }
+    }
+  }
+
+  // Helper: Update check status in UI
+  updateCheckStatus(checkElement, status) {
+    if (checkElement) {
+      const statusIndicator = checkElement.querySelector(".check-status");
+      if (statusIndicator) {
+        statusIndicator.setAttribute("data-status", status);
+      }
+    }
+  }
+}
+
+// Load version numbers
+async function loadVersions() {
+  // Get extension version from manifest
+  const manifest = chrome.runtime.getManifest();
+  const extensionVersion = manifest.version;
+  document.getElementById("extension-version").textContent = extensionVersion;
+
+  // Get content script version from __GOOFY
+  try {
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
+
+    if (tab) {
       const result = await chrome.scripting.executeScript({
-        target: { tabId: activeTab.id },
+        target: { tabId: tab.id },
         world: "MAIN",
         func: () => {
-          if (window.__GOOFY && window.__GOOFY.logs) {
-            return window.__GOOFY.logs;
+          if (typeof window.__GOOFY !== "undefined" && window.__GOOFY.version) {
+            return window.__GOOFY.version;
           }
           return null;
         },
       });
 
-      const logs = result[0].result;
-      
-      if (!logs || logs.length === 0) {
-        logsContainer.innerHTML = '<p class="no-logs">No logs available</p>';
-        return;
+      const contentVersion = result[0].result;
+      if (contentVersion) {
+        document.getElementById("content-version").textContent = contentVersion;
       }
-
-      // Show last 10 logs, newest first
-      const recentLogs = logs.slice(-10).reverse();
-      const logsHtml = recentLogs.map(log => 
-        `<div class="log-entry">${escapeHtml(log)}</div>`
-      ).join('');
-      
-      logsContainer.innerHTML = logsHtml;
-      
-    } catch (error) {
-      console.error("Error loading logs:", error);
-      logsContainer.innerHTML = '<p class="no-logs">Error loading logs</p>';
     }
-  };
+  } catch (error) {
+    console.error("Error loading content version:", error);
+  }
+}
 
-  // Helper function to escape HTML
-  const escapeHtml = (text) => {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  };
+// Initialize on DOM load
+document.addEventListener("DOMContentLoaded", async () => {
+  const manager = new HealthCheckManager();
 
-  // Function to check if running in standalone mode
-  const checkStandaloneMode = async () => {
-    try {
-      const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      
-      if (!activeTab || !isMessengerUrl(activeTab.url)) {
-        showNonStandaloneMessage("Please navigate to messenger.com first");
-        return;
-      }
+  // Load versions
+  loadVersions();
 
-      const result = await chrome.scripting.executeScript({
-        target: { tabId: activeTab.id },
-        world: "MAIN",
-        func: () => {
-          return navigator.standalone;
-        },
-      });
+  // Update check display immediately
+  await manager.updateCheckDisplay();
 
-      const isStandalone = result[0].result;
-      
-      if (!isStandalone) {
-        showNonStandaloneMessage();
-        return;
-      }
-
-      // If we're here, we're in standalone mode - show normal UI
-      showStandaloneUI();
-      loadLogs();
-      
-    } catch (error) {
-      console.error("Error checking standalone mode:", error);
-      showNonStandaloneMessage("Error checking app mode");
-    }
-  };
-
-  const showNonStandaloneMessage = (customMessage) => {
-    const message = customMessage || "This extension is designed to work with the Messenger web app installed as a Dock app.";
-    document.querySelector('.container').innerHTML = `
-      <h2>Goofy Extension</h2>
-      <div class="standalone-message">
-        <p>${message}</p>
-        ${!customMessage ? `
-          <div class="instructions">
-            <p><strong>To install the Messenger app:</strong></p>
-            <ol>
-              <li>Open messenger.com in Safari</li>
-              <li>Go to <strong>File → Add to Dock...</strong></li>
-              <li>Click "Add" to create the Dock app</li>
-              <li>Open Messenger from your Dock</li>
-            </ol>
-          </div>
-        ` : ''}
-      </div>
-    `;
-  };
-
-  const showStandaloneUI = () => {
-    // UI is already set up in HTML, just make sure it's visible
-    badgeBtn.style.display = 'block';
-    document.querySelector('.logs-section').style.display = 'block';
-  };
-
-  // Check standalone mode when popup opens
-  checkStandaloneMode();
-
-  // Badge functionality via remote script's window.__GOOFY.updateBadgeCount
-  badgeBtn.addEventListener("click", async function () {
-    try {
-      // Get the active tab (should be the PWA)
-      const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      
-      if (!activeTab || !isMessengerUrl(activeTab.url)) {
-        alert("Please navigate to messenger.com");
-        return;
-      }
-
-      if (badgeActive) {
-        // Clear badge
-        await chrome.scripting.executeScript({
-          target: { tabId: activeTab.id },
-          world: "MAIN",
-          func: () => {
-            if (window.__GOOFY && window.__GOOFY.updateBadgeCount) {
-              window.__GOOFY.updateBadgeCount(null);
-            }
-          },
-        });
-        badgeActive = false;
-        badgeBtn.textContent = "Set Badge";
-      } else {
-        // Set badge
-        badgeCount++;
-        await chrome.scripting.executeScript({
-          target: { tabId: activeTab.id },
-          world: "MAIN",
-          func: (count) => {
-            if (window.__GOOFY && window.__GOOFY.updateBadgeCount) {
-              window.__GOOFY.updateBadgeCount(count);
-            }
-          },
-          args: [badgeCount],
-        });
-        badgeActive = true;
-        badgeBtn.textContent = `Clear Badge (${badgeCount})`;
-      }
-    } catch (error) {
-      console.error("Error calling remote script:", error);
-      alert("Error: Make sure you are on messenger.com");
-    }
-  });
-
-  // Initialize button state
-  badgeBtn.textContent = "Set Badge";
+  // Re-update display every 3 seconds
+  setInterval(() => {
+    manager.updateCheckDisplay();
+  }, 3000);
 });

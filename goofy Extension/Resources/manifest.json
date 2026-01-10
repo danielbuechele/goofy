@@ -4,7 +4,7 @@
 
   "name": "__MSG_extension_name__",
   "description": "__MSG_extension_description__",
-  "version": "1.0",
+  "version": "0.0",
 
   "icons": {
     "48": "images/icon-48.png",
@@ -24,17 +24,11 @@
     "default_icon": "images/toolbar-icon.svg"
   },
 
-  "permissions": ["notifications", "scripting", "tabs"],
+  "permissions": ["notifications", "scripting", "tabs", "alarms"],
   "host_permissions": [
-    "https://buechele.cc/*",
+    "https://raw.githubusercontent.com/danielbuechele/goofy/*",
+    "http://localhost:8080/*",
     "*://messenger.com/*",
     "*://*.messenger.com/*"
-  ],
-
-  "content_scripts": [
-    {
-      "matches": ["*://messenger.com/*", "*://*.messenger.com/*"],
-      "js": []
-    }
   ]
 }

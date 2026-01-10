@@ -1,4 +1,5 @@
 window.__GOOFY = {
+  version: 1,
   observers: new Map(),
   logs: [],
   threadSnapshots: null,
@@ -269,7 +270,7 @@ window.__GOOFY = {
   log: function (message) {
     const timestamp = new Date().toISOString();
     const logEntry = `[${timestamp}] ${message}`;
-    this.state.logs.push(logEntry);
+    this.logs.push(logEntry);
     console.log(`[Goofy] ${logEntry}`);
   },
 
