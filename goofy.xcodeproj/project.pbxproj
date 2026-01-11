@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6744A4F52F13238200407322 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6744A4F32F13238200407322 /* InfoPlist.strings */; };
 		E8B7873F2F0824D400DA162B /* goofy Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E8B7873E2F0824D400DA162B /* goofy Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -35,6 +36,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6744A4F42F13238200407322 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E8B787242F0824D300DA162B /* goofy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = goofy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8B7873E2F0824D400DA162B /* goofy Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "goofy Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -93,6 +95,7 @@
 				E8B787262F0824D300DA162B /* goofy */,
 				E8B787422F0824D400DA162B /* goofy Extension */,
 				E8B787252F0824D300DA162B /* Products */,
+				6744A4F32F13238200407322 /* InfoPlist.strings */,
 			);
 			sourceTree = "<group>";
 		};
@@ -198,6 +201,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6744A4F52F13238200407322 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -227,7 +231,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/bash\n\n# Only update version for Release builds\nif [ \"${CONFIGURATION}\" != \"Release\" ]; then\n    echo \"Skipping version update for ${CONFIGURATION} build\"\n    exit 0\nfi\n\nset -e\n\nVERSION=\"${MARKETING_VERSION}\"\n\nif [ -z \"$VERSION\" ]; then\n    echo \"Error: MARKETING_VERSION not found\"\n    exit 1\nfi\n\nMANIFEST_PATH=\"${SRCROOT}/goofy Extension/Resources/manifest.json\"\n\nif [ ! -f \"$MANIFEST_PATH\" ]; then\n    echo \"Error: manifest.json not found at ${MANIFEST_PATH}\"\n    exit 1\nfi\n\nperl -i -pe \"s/\\\"version\\\": \\\".*?\\\"/\\\"version\\\": \\\"${VERSION}\\\"/\" \"$MANIFEST_PATH\"\n\necho \"Updated manifest.json version to ${VERSION}\"\n";
+			shellScript = "#!/bin/bash\n\nset -e\n\n# Use 0.0 for non-Release builds, actual version for Release\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\n    VERSION=\"${MARKETING_VERSION}\"\n    if [ -z \"$VERSION\" ]; then\n        echo \"Error: MARKETING_VERSION not found\"\n        exit 1\n    fi\nelse\n    VERSION=\"0.0\"\nfi\n\nMANIFEST_PATH=\"${SRCROOT}/goofy Extension/Resources/manifest.json\"\n\nif [ ! -f \"$MANIFEST_PATH\" ]; then\n    echo \"Error: manifest.json not found at ${MANIFEST_PATH}\"\n    exit 1\nfi\n\nperl -i -pe \"s/\\\"version\\\": \\\".*?\\\"/\\\"version\\\": \\\"${VERSION}\\\"/\" \"$MANIFEST_PATH\"\n\necho \"Updated manifest.json version to ${VERSION}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -256,12 +260,24 @@
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		6744A4F32F13238200407322 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6744A4F42F13238200407322 /* Base */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		E8B787592F0824D400DA162B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = K5C6E7A2D6;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -276,12 +292,12 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 4.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = cc.buechele.goofy.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = cc.buechele.Goofy.Extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -297,6 +313,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = K5C6E7A2D6;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -311,12 +328,12 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 4.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = cc.buechele.goofy.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = cc.buechele.Goofy.Extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -380,7 +397,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -437,7 +454,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -454,6 +471,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = K5C6E7A2D6;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
@@ -468,14 +486,14 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 4.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = cc.buechele.goofy;
+				PRODUCT_BUNDLE_IDENTIFIER = cc.buechele.Goofy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -496,6 +514,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = K5C6E7A2D6;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
@@ -510,14 +529,14 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 4.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = cc.buechele.goofy;
+				PRODUCT_BUNDLE_IDENTIFIER = cc.buechele.Goofy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

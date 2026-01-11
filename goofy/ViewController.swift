@@ -6,50 +6,36 @@
 //
 
 import Cocoa
-import SafariServices
-import WebKit
+import SwiftUI
 
-let extensionBundleIdentifier = "cc.buechele.goofy.Extension"
-
-class ViewController: NSViewController, WKNavigationDelegate, WKScriptMessageHandler {
-
-    @IBOutlet var webView: WKWebView!
+class ViewController: NSViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.webView.navigationDelegate = self
+        let hostingView = NSHostingView(rootView: ContentView())
+        hostingView.translatesAutoresizingMaskIntoConstraints = false
 
-        self.webView.configuration.userContentController.add(self, name: "controller")
+        view.addSubview(hostingView)
 
-        self.webView.loadFileURL(Bundle.main.url(forResource: "Main", withExtension: "html")!, allowingReadAccessTo: Bundle.main.resourceURL!)
+        NSLayoutConstraint.activate([
+            hostingView.topAnchor.constraint(equalTo: view.topAnchor),
+            hostingView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            hostingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            hostingView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
     }
 
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        SFSafariExtensionManager.getStateOfSafariExtension(withIdentifier: extensionBundleIdentifier) { (state, error) in
-            guard let state = state, error == nil else {
-                // Insert code to inform the user that something went wrong.
-                return
-            }
+    override func viewDidAppear() {
+        super.viewDidAppear()
 
-            DispatchQueue.main.async {
-                if #available(macOS 13, *) {
-                    webView.evaluateJavaScript("show(\(state.isEnabled), true)")
-                } else {
-                    webView.evaluateJavaScript("show(\(state.isEnabled), false)")
-                }
-            }
-        }
-    }
-
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        if (message.body as! String != "open-preferences") {
-            return;
-        }
-
-        SFSafariApplication.showPreferencesForExtension(withIdentifier: extensionBundleIdentifier) { error in
-            DispatchQueue.main.async {
-                NSApplication.shared.terminate(nil)
+        // Size window to fit content
+        if let window = view.window {
+            let hostingView = view.subviews.first as? NSHostingView<ContentView>
+if let fittingSize = hostingView?.fittingSize {
+                let newSize = NSSize(width: 425, height: fittingSize.height)
+                window.setContentSize(newSize)
+                window.center()
             }
         }
     }
