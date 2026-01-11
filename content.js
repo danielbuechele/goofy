@@ -299,7 +299,7 @@ window.__GOOFY = {
 
       this.observe(
         "threadList",
-        '[role="navigation"]',
+        '[role="navigation"] [role="grid"]',
         this.checkForNewMessages,
         false,
       );
