@@ -4,9 +4,9 @@ A Safari extension that brings native macOS notifications and badge counts to Fa
 
 ## What is Goofy?
 
-Goofy transforms Facebook Messenger into a native-feeling macOS app. By adding Messenger to your Dock as a web app, you get real macOS notifications and an unread badge count—just like any other app on your Mac.
+Goofy allows you to create a Safari web app for Facebook Messenger with real macOS notifications and an unread badge count.
 
-**Important:** Goofy only works when Messenger is running as a standalone Dock app (web app), not in a regular Safari browser tab.
+**Important:** Goofy only works when you are running Messenger as a standalone Dock web app, not in a regular Safari browser tab. The app needs to be running for notifications and badge counts to work.
 
 ## Features
 
