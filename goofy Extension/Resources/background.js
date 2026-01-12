@@ -2,6 +2,45 @@
 let pwaTabId = null;
 let checkResults = {};
 
+// Send status to the native Goofy Setup app via native messaging
+// This writes to shared UserDefaults via SafariWebExtensionHandler
+async function sendStatusToApp(isPWA) {
+  try {
+    await browser.runtime.sendNativeMessage("cc.buechele.Goofy", {
+      type: "status",
+      isPWA: isPWA,
+    });
+  } catch {
+    // Native messaging not available
+  }
+}
+
+// Periodically send status to the app (every 2 seconds when messenger is open)
+async function sendPeriodicStatus() {
+  let isPWA = false;
+
+  try {
+    const tabs = await chrome.tabs.query({});
+    for (const tab of tabs) {
+      if (isMessengerUrl(tab.url)) {
+        const tabIsPWA = await isPWAMode(tab.id);
+        if (tabIsPWA) {
+          isPWA = true;
+          break;
+        }
+      }
+    }
+  } catch {
+    // Error checking tabs
+  }
+
+  // Always send status if we have a messenger tab open
+  sendStatusToApp(isPWA);
+}
+
+// Start periodic status updates
+setInterval(sendPeriodicStatus, 2000);
+
 // Helper function to check if URL is a messenger.com page
 const isMessengerUrl = (url) => {
   if (!url) return false;
@@ -16,7 +55,7 @@ const isMessengerUrl = (url) => {
   }
 };
 
-// Check if running in PWA mode
+// Check if running in PWA/Web App mode
 async function isPWAMode(tabId) {
   try {
     const result = await chrome.scripting.executeScript({
@@ -218,8 +257,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete" && isMessengerUrl(tab.url)) {
     try {
-      // Check if running in PWA mode first
-      if (!(await isPWAMode(tabId))) {
+      // Check if running in PWA mode
+      const isPWA = await isPWAMode(tabId);
+
+      // Send status to native app (works for both PWA and regular Safari)
+      sendStatusToApp(isPWA);
+
+      if (!isPWA) {
         console.log("Not in PWA mode, skipping injection");
         return;
       }

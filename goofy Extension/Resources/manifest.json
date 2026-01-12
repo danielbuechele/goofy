@@ -24,7 +24,13 @@
     "default_icon": "images/toolbar-icon.svg"
   },
 
-  "permissions": ["notifications", "scripting", "tabs", "alarms"],
+  "permissions": [
+    "notifications",
+    "scripting",
+    "tabs",
+    "alarms",
+    "nativeMessaging"
+  ],
   "host_permissions": [
     "https://raw.githubusercontent.com/danielbuechele/goofy/*",
     "http://localhost:8080/*",
