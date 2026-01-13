@@ -4,7 +4,7 @@
 
   "name": "__MSG_extension_name__",
   "description": "__MSG_extension_description__",
-  "version": "0.0",
+  "version": "4.0.86",
 
   "icons": {
     "48": "images/icon-48.png",
@@ -19,8 +19,16 @@
     "type": "module"
   },
 
+  "content_scripts": [
+    {
+      "matches": ["*://messenger.com/*", "*://*.messenger.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "world": "MAIN"
+    }
+  ],
+
   "action": {
-    "default_popup": "popup.html",
     "default_icon": "images/toolbar-icon.svg"
   },
 
@@ -31,10 +39,5 @@
     "alarms",
     "nativeMessaging"
   ],
-  "host_permissions": [
-    "https://raw.githubusercontent.com/danielbuechele/goofy/*",
-    "http://localhost:8080/*",
-    "*://messenger.com/*",
-    "*://*.messenger.com/*"
-  ]
+  "host_permissions": ["*://messenger.com/*", "*://*.messenger.com/*"]
 }

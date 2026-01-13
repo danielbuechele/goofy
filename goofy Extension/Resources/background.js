@@ -4,11 +4,18 @@ let checkResults = {};
 
 // Send status to the native Goofy Setup app via native messaging
 // This writes to shared UserDefaults via SafariWebExtensionHandler
-async function sendStatusToApp(isPWA) {
+async function sendStatusToApp() {
+  if (!pwaTabId) return;
   try {
+    const results = await runChecksForTab(pwaTabId);
     await browser.runtime.sendNativeMessage("cc.buechele.Goofy", {
       type: "status",
-      isPWA: isPWA,
+      checks: {
+        domain: results.domain,
+        script: results.script,
+        observerInbox: results["observer-inbox"],
+        observerThreadlist: results["observer-threadlist"],
+      },
     });
   } catch {
     // Native messaging not available
@@ -17,25 +24,16 @@ async function sendStatusToApp(isPWA) {
 
 // Periodically send status to the app (every 2 seconds when messenger is open)
 async function sendPeriodicStatus() {
-  let isPWA = false;
-
-  try {
-    const tabs = await chrome.tabs.query({});
-    for (const tab of tabs) {
-      if (isMessengerUrl(tab.url)) {
-        const tabIsPWA = await isPWAMode(tab.id);
-        if (tabIsPWA) {
-          isPWA = true;
-          break;
-        }
-      }
+  // Only send status if we have a tracked PWA tab
+  if (pwaTabId) {
+    try {
+      await chrome.tabs.get(pwaTabId);
+      sendStatusToApp();
+    } catch {
+      // Tab no longer exists, stop sending status
+      pwaTabId = null;
     }
-  } catch {
-    // Error checking tabs
   }
-
-  // Always send status if we have a messenger tab open
-  sendStatusToApp(isPWA);
 }
 
 // Start periodic status updates
@@ -164,6 +162,13 @@ async function runChecksForTab(tabId) {
   const results = {};
   try {
     const tab = await chrome.tabs.get(tabId);
+    // Only run checks on messenger.com tabs
+    if (!isMessengerUrl(tab.url)) {
+      for (const checkId of Object.keys(CHECKS)) {
+        results[checkId] = "fail";
+      }
+      return results;
+    }
     for (const [checkId, check] of Object.entries(CHECKS)) {
       results[checkId] = await check(tabId, tab);
     }
@@ -249,85 +254,55 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse({ results });
     });
     return true; // async response
+  } else if (request.action === "openInBrowser") {
+    // Open URL in default browser via native messaging
+    browser.runtime.sendNativeMessage("cc.buechele.Goofy", {
+      type: "openURL",
+      url: request.url,
+    });
   }
   return true;
 });
 
-// Auto-inject remote script when messenger.com loads in PWA mode
+// Handle messenger.com page loads
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete" && isMessengerUrl(tab.url)) {
-    try {
-      // Check if running in PWA mode
-      const isPWA = await isPWAMode(tabId);
+    // Check if running in PWA mode
+    const isPWA = await isPWAMode(tabId);
 
-      // Send status to native app (works for both PWA and regular Safari)
-      sendStatusToApp(isPWA);
+    // Only send status and track for PWA mode
+    // We don't want regular Safari tabs to trigger the "wrong browser" warning
+    if (!isPWA) {
+      return;
+    }
 
-      if (!isPWA) {
-        console.log("Not in PWA mode, skipping injection");
-        return;
-      }
+    // Send status to native app
+    sendStatusToApp();
 
-      // Check if script is already injected to avoid duplicates
-      const isInjected = await chrome.scripting.executeScript({
-        target: { tabId },
-        world: "MAIN",
-        func: () => !!window.__GOOFY,
-      });
-
-      if (!isInjected[0].result) {
-        // Inject the remote script
-        const isDev = chrome.runtime.getManifest().version === "0.0";
-        const remoteScriptUrl = isDev
-          ? "http://localhost:8080/content.js"
-          : "https://raw.githubusercontent.com/danielbuechele/goofy/refs/heads/main/content.js";
-        const cacheBustUrl = `${remoteScriptUrl}?t=${Date.now()}`;
-
-        const response = await fetch(cacheBustUrl, {
-          cache: "no-cache",
-          headers: {
-            "Cache-Control": "no-cache",
-            Pragma: "no-cache",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const scriptText = await response.text();
-
-        await chrome.scripting.executeScript({
-          target: { tabId },
-          world: "MAIN",
-          func: (code) => {
-            try {
-              const blob = new Blob([code], { type: "application/javascript" });
-              const url = URL.createObjectURL(blob);
-              const script = document.createElement("script");
-              script.src = url;
-              script.onload = () => URL.revokeObjectURL(url);
-              script.onerror = (e) => {
-                URL.revokeObjectURL(url);
-                console.error("Remote script execution error:", e);
-              };
-              document.head.appendChild(script);
-            } catch (e) {
-              console.error("Blob script injection error:", e);
-            }
-          },
-          args: [scriptText],
-        });
-      }
-
-      // Wait for script to initialize, then start periodic checks
-      setTimeout(async () => {
-        if (!pwaTabId) {
-          await startPeriodicChecks(tabId);
-        }
-      }, 1000);
-    } catch (error) {
-      console.error("Failed to fetch or inject remote script:", error);
+    // Start periodic health checks for PWA mode
+    // Content script is automatically injected via manifest
+    if (!pwaTabId) {
+      await startPeriodicChecks(tabId);
     }
   }
 });
+
+// Check for PWA tabs on extension startup (handles case where extension is enabled after page load)
+async function checkExistingTabs() {
+  const tabs = await chrome.tabs.query({});
+  for (const tab of tabs) {
+    if (isMessengerUrl(tab.url)) {
+      const isPWA = await isPWAMode(tab.id);
+      if (isPWA) {
+        sendStatusToApp();
+        if (!pwaTabId) {
+          await startPeriodicChecks(tab.id);
+        }
+        break;
+      }
+    }
+  }
+}
+
+// Run on extension startup
+checkExistingTabs();

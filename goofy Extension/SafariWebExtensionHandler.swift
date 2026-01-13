@@ -5,6 +5,7 @@
 //  Created by Daniel Buchele on 11/01/2026.
 //
 
+import AppKit
 import SafariServices
 
 @available(macOS 11.0, *)
@@ -16,17 +17,27 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
         let item = context.inputItems.first as? NSExtensionItem
         let message = item?.userInfo?[SFExtensionMessageKey] as? [String: Any]
 
-        let isPWA = message?["isPWA"] as? Bool ?? false
+        let messageType = message?["type"] as? String
 
-        if let sharedDefaults = UserDefaults(suiteName: Self.appGroupIdentifier) {
-            let now = Date().timeIntervalSince1970
+        // Handle openURL request - open in default browser
+        if messageType == "openURL", let urlString = message?["url"] as? String,
+            let url = URL(string: urlString)
+        {
+            NSWorkspace.shared.open(url)
+        }
 
-            if isPWA {
-                sharedDefaults.set(true, forKey: "isPWA")
-                sharedDefaults.set(now, forKey: "lastPWAUpdate")
+        // Handle status updates (only for "status" message type)
+        if messageType == "status" {
+            if let sharedDefaults = UserDefaults(suiteName: Self.appGroupIdentifier) {
+                sharedDefaults.set(Date().timeIntervalSince1970, forKey: "lastUpdate")
+
+                // Store individual check results
+                if let checks = message?["checks"] as? [String: String] {
+                    for (key, value) in checks {
+                        sharedDefaults.set(value, forKey: "check_\(key)")
+                    }
+                }
             }
-
-            sharedDefaults.set(now, forKey: "lastUpdate")
         }
 
         let response = NSExtensionItem()

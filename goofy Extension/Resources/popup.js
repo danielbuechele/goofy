@@ -83,48 +83,35 @@ class HealthCheckManager {
   }
 }
 
-// Load version numbers
-async function loadVersions() {
-  // Get extension version from manifest
+// Load version number
+function loadVersion() {
   const manifest = chrome.runtime.getManifest();
-  const extensionVersion = manifest.version;
-  document.getElementById("extension-version").textContent = extensionVersion;
+  document.getElementById("extension-version").textContent = manifest.version;
+}
 
-  // Get content script version from __GOOFY
-  try {
-    const [tab] = await chrome.tabs.query({
-      active: true,
-      currentWindow: true,
-    });
+// Open external URLs via buttons with data-url attribute
+function setupExternalLinks() {
+  document.addEventListener("click", (e) => {
+    const button = e.target.closest("[data-url]");
+    if (!button) return;
 
-    if (tab) {
-      const result = await chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        world: "MAIN",
-        func: () => {
-          if (typeof window.__GOOFY !== "undefined" && window.__GOOFY.version) {
-            return window.__GOOFY.version;
-          }
-          return null;
-        },
-      });
-
-      const contentVersion = result[0].result;
-      if (contentVersion) {
-        document.getElementById("content-version").textContent = contentVersion;
-      }
+    const url = button.getAttribute("data-url");
+    if (url) {
+      // Send to background script to open in default browser via native messaging
+      chrome.runtime.sendMessage({ action: "openInBrowser", url });
     }
-  } catch (error) {
-    console.error("Error loading content version:", error);
-  }
+  });
 }
 
 // Initialize on DOM load
 document.addEventListener("DOMContentLoaded", async () => {
   const manager = new HealthCheckManager();
 
-  // Load versions
-  loadVersions();
+  // Load version
+  loadVersion();
+
+  // Setup external link handling
+  setupExternalLinks();
 
   // Update check display immediately
   await manager.updateCheckDisplay();

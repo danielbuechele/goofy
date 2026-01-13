@@ -231,7 +231,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/bash\n\nset -e\n\n# Use 0.0 for non-Release builds, actual version for Release\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\n    VERSION=\"${MARKETING_VERSION}\"\n    if [ -z \"$VERSION\" ]; then\n        echo \"Error: MARKETING_VERSION not found\"\n        exit 1\n    fi\nelse\n    VERSION=\"0.0\"\nfi\n\nMANIFEST_PATH=\"${SRCROOT}/goofy Extension/Resources/manifest.json\"\n\nif [ ! -f \"$MANIFEST_PATH\" ]; then\n    echo \"Error: manifest.json not found at ${MANIFEST_PATH}\"\n    exit 1\nfi\n\nperl -i -pe \"s/\\\"version\\\": \\\".*?\\\"/\\\"version\\\": \\\"${VERSION}\\\"/\" \"$MANIFEST_PATH\"\n\necho \"Updated manifest.json version to ${VERSION}\"\n";
+			shellScript = "#!/bin/bash\n\nset -e\n\n# Use the build number from Xcode build settings\nBUILD_NUMBER=\"${CURRENT_PROJECT_VERSION}\"\n\nVERSION=\"${MARKETING_VERSION}.${BUILD_NUMBER}\"\n\nMANIFEST_PATH=\"${SRCROOT}/goofy Extension/Resources/manifest.json\"\n\nif [ ! -f \"$MANIFEST_PATH\" ]; then\n    echo \"Error: manifest.json not found at ${MANIFEST_PATH}\"\n    exit 1\nfi\n\nperl -i -pe \"s/\\\"version\\\": \\\".*?\\\"/\\\"version\\\": \\\"${VERSION}\\\"/\" \"$MANIFEST_PATH\"\n\necho \"Updated manifest.json version to ${VERSION}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -277,7 +277,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "goofy Extension/goofy Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 87;
 				DEVELOPMENT_TEAM = K5C6E7A2D6;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -315,7 +315,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "goofy Extension/goofy Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 87;
 				DEVELOPMENT_TEAM = K5C6E7A2D6;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -475,7 +475,7 @@
 				CODE_SIGN_ENTITLEMENTS = goofy/goofy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 87;
 				DEVELOPMENT_TEAM = K5C6E7A2D6;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -520,7 +520,7 @@
 				CODE_SIGN_ENTITLEMENTS = goofy/goofy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 87;
 				DEVELOPMENT_TEAM = K5C6E7A2D6;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;

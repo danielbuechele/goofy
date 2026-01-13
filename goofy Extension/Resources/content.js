@@ -1,8 +1,11 @@
 window.__GOOFY = {
-  version: 1,
   observers: new Map(),
   logs: [],
   threadSnapshots: null,
+  initTime: null,
+  lastActivityTime: null,
+  RELOAD_INTERVAL: 12 * 60 * 60 * 1000, // 12 hours in ms
+  IDLE_THRESHOLD: 5 * 60 * 1000, // 5 minutes in ms
 
   observe: function (
     name,
@@ -286,8 +289,56 @@ window.__GOOFY = {
     }));
   },
 
+  setupActivityTracking: function () {
+    const resetActivity = () => {
+      this.lastActivityTime = Date.now();
+    };
+
+    ["mousemove", "keydown", "click", "scroll", "touchstart"].forEach(
+      (event) => {
+        document.addEventListener(event, resetActivity, { passive: true });
+      },
+    );
+
+    resetActivity();
+  },
+
+  isUserTyping: function () {
+    const active = document.activeElement;
+    if (!active) return false;
+    const tag = active.tagName.toLowerCase();
+    return tag === "input" || tag === "textarea" || active.isContentEditable;
+  },
+
+  checkForReload: function () {
+    const now = Date.now();
+    const timeSinceInit = now - this.initTime;
+    const timeSinceActivity = now - this.lastActivityTime;
+
+    const shouldReload =
+      timeSinceInit >= this.RELOAD_INTERVAL &&
+      timeSinceActivity >= this.IDLE_THRESHOLD &&
+      !this.isUserTyping();
+
+    if (shouldReload) {
+      this.log("Performing scheduled reload after 12 hours");
+      location.reload();
+    }
+  },
+
   init: function () {
+    // Only initialize in PWA mode
+    if (navigator.standalone !== true) {
+      return;
+    }
+
     this.log("Initializing Goofy");
+
+    this.initTime = Date.now();
+    this.setupActivityTracking();
+
+    // Check every minute if reload is needed
+    setInterval(() => this.checkForReload(), 60 * 1000);
 
     const setup = () => {
       this.observe(

@@ -45,12 +45,16 @@ body {
     font-weight: 400;
 }
 
-/* Links */
+/* Link buttons */
 .learn-more,
 .settings-link {
     font-size: 12px;
     color: #8e8e93;
-    text-decoration: none;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
     transition: color 0.15s ease;
 }
 
