@@ -56,6 +56,7 @@ window.__GOOFY = {
           attributes: true,
           childList: true,
           subtree: true,
+          characterData: true,
         });
 
         const removalObserver = new MutationObserver((mutations) => {
@@ -333,12 +334,6 @@ window.__GOOFY = {
     }
 
     this.log("Initializing Goofy");
-
-    this.initTime = Date.now();
-    this.setupActivityTracking();
-
-    // Check every minute if reload is needed
-    setInterval(() => this.checkForReload(), 60 * 1000);
 
     const setup = () => {
       this.observe(

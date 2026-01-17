@@ -26,6 +26,24 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
             NSWorkspace.shared.open(url)
         }
 
+        // Handle openApp request - open the main Goofy app
+        if messageType == "openApp" {
+            if let appURL = NSWorkspace.shared.urlForApplication(
+                withBundleIdentifier: "cc.buechele.Goofy")
+            {
+                NSWorkspace.shared.openApplication(
+                    at: appURL, configuration: NSWorkspace.OpenConfiguration()
+                ) { _, _ in
+                    // Complete request in the callback to ensure the extension
+                    // stays alive until the app launch is initiated
+                    let response = NSExtensionItem()
+                    response.userInfo = [SFExtensionMessageKey: ["received": true]]
+                    context.completeRequest(returningItems: [response])
+                }
+                return
+            }
+        }
+
         // Handle status updates (only for "status" message type)
         if messageType == "status" {
             if let sharedDefaults = UserDefaults(suiteName: Self.appGroupIdentifier) {

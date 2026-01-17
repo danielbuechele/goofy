@@ -1,6 +1,5 @@
 // State
 let pwaTabId = null;
-let checkResults = {};
 
 // Send status to the native Goofy Setup app via native messaging
 // This writes to shared UserDefaults via SafariWebExtensionHandler
@@ -192,7 +191,7 @@ async function runChecksAndUpdateBadge() {
     return;
   }
 
-  checkResults = await runChecksForTab(pwaTabId);
+  const checkResults = await runChecksForTab(pwaTabId);
 
   const failCount = Object.values(checkResults).filter(
     (r) => r === "fail",
@@ -225,7 +224,6 @@ async function stopPeriodicChecks() {
   await chrome.alarms.clear("healthCheck");
   await chrome.action.setBadgeText({ text: "" });
   pwaTabId = null;
-  checkResults = {};
   console.log("PWA mode: periodic health checks stopped");
 }
 
@@ -241,27 +239,6 @@ chrome.tabs.onRemoved.addListener((tabId) => {
   if (tabId === pwaTabId) {
     stopPeriodicChecks();
   }
-});
-
-// Message handler for popup
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "getCheckResults") {
-    // Return cached results (for PWA mode) or empty
-    sendResponse({ results: checkResults });
-  } else if (request.action === "runHealthChecks") {
-    // Run fresh checks for the requested tab
-    runChecksForTab(request.tabId).then((results) => {
-      sendResponse({ results });
-    });
-    return true; // async response
-  } else if (request.action === "openInBrowser") {
-    // Open URL in default browser via native messaging
-    browser.runtime.sendNativeMessage("cc.buechele.Goofy", {
-      type: "openURL",
-      url: request.url,
-    });
-  }
-  return true;
 });
 
 // Handle messenger.com page loads
@@ -303,6 +280,14 @@ async function checkExistingTabs() {
     }
   }
 }
+
+// Handle toolbar icon click - open the main Goofy app
+chrome.action.onClicked.addListener(() => {
+  console.log("Toolbar icon clicked");
+  browser.runtime.sendNativeMessage("cc.buechele.Goofy", {
+    type: "openApp",
+  });
+});
 
 // Run on extension startup
 checkExistingTabs();
