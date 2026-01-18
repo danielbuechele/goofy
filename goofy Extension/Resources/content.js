@@ -184,41 +184,64 @@ window.__GOOFY = {
 
   checkForNewMessages: function () {
     const threads = this.getThreads();
+    const maxPosition = threads.length - 1;
 
+    // Build new snapshot from current DOM state
+    const newSnapshots = new Map();
+    threads.forEach((thread) => {
+      if (thread.threadKey) {
+        newSnapshots.set(thread.threadKey, {
+          snippet: thread.snippet,
+          position: thread.position,
+          isUnread: thread.isUnread,
+        });
+      }
+    });
+
+    // Initialize on first run - no notifications
     if (this.threadSnapshots === null) {
-      this.log("Initializing thread snapshots without notifications");
-      this.threadSnapshots = new Map();
-      threads.forEach((thread) => {
-        if (thread.threadKey && thread.isUnread && !thread.isMuted) {
-          this.threadSnapshots.set(thread.threadKey, thread.snippet);
-        }
-      });
+      this.log("Initializing thread snapshots");
+      this.threadSnapshots = newSnapshots;
       return;
     }
 
+    // Compare and notify
     threads.forEach((thread) => {
-      if (!thread.threadKey || thread.isMuted) {
-        return;
-      }
+      if (!thread.threadKey || thread.isMuted || !thread.isUnread) return;
 
-      if (thread.isUnread) {
-        const lastSnippet = this.threadSnapshots.get(thread.threadKey);
+      const prev = this.threadSnapshots.get(thread.threadKey);
+      let shouldNotify = false;
 
-        if (thread.snippet !== lastSnippet) {
-          this.log(
-            `New message in thread ${thread.threadName}: ${thread.snippet}`,
-          );
-          this.threadSnapshots.set(thread.threadKey, thread.snippet);
-          this.showNotification(
-            thread.threadName,
-            thread.snippet,
-            thread.threadKey,
-          );
+      if (prev) {
+        // (a) Was read, now unread
+        if (!prev.isUnread) {
+          shouldNotify = true;
+          this.log(`Thread ${thread.threadName} changed from read to unread`);
+        }
+        // (c) Snippet changed on unread thread
+        else if (thread.snippet !== prev.snippet) {
+          shouldNotify = true;
+          this.log(`Snippet changed for unread thread ${thread.threadName}`);
         }
       } else {
-        this.threadSnapshots.delete(thread.threadKey);
+        // (b) New unread thread inserted at top
+        if (thread.position === 0) {
+          shouldNotify = true;
+          this.log(`New unread thread inserted at top: ${thread.threadName}`);
+        }
+      }
+
+      if (shouldNotify) {
+        this.showNotification(
+          thread.threadName,
+          thread.snippet,
+          thread.threadKey,
+        );
       }
     });
+
+    // Swap to new snapshot
+    this.threadSnapshots = newSnapshots;
   },
 
   showNotification: function (title, body, threadKey) {
@@ -281,13 +304,67 @@ window.__GOOFY = {
   getThreads: function () {
     return Array.from(
       document.querySelectorAll('[role="navigation"] [role="row"] a'),
-    ).map((a) => ({
+    ).map((a, index) => ({
       threadKey: a.getAttribute("href"),
       threadName: a.querySelectorAll("span.xyejjpt")[0]?.textContent,
       snippet: a.querySelectorAll("span.xyejjpt")[1]?.textContent,
       isUnread: !!a.querySelector("span.x1spa7qu.x1iwo8zk"),
       isMuted: !!a.querySelector("svg.x14rh7hd"),
+      position: index,
     }));
+  },
+
+  isInboxPath: function (pathname) {
+    return pathname.startsWith("/t/") || pathname.startsWith("/e2ee/t/");
+  },
+
+  setupThreadListObserver: function () {
+    this.observe(
+      "threadList",
+      '[role="navigation"] [role="grid"]',
+      this.checkForNewMessages,
+      false,
+    );
+  },
+
+  cleanupThreadListObserver: function () {
+    this.cleanupObserver("threadList", false);
+    this.threadSnapshots = null;
+  },
+
+  handleNavigation: function () {
+    const inInbox = this.isInboxPath(window.location.pathname);
+    const observerData = this.observers.get("threadList");
+    const observerActive = observerData?.observer !== null;
+
+    if (inInbox && !observerActive) {
+      this.log("Navigated to inbox, setting up threadList observer");
+      this.setupThreadListObserver();
+    } else if (!inInbox && observerActive) {
+      this.log("Navigated away from inbox, cleaning up threadList observer");
+      this.cleanupThreadListObserver();
+    }
+  },
+
+  setupNavigationTracking: function () {
+    // Handle back/forward navigation
+    window.addEventListener("popstate", () => {
+      this.handleNavigation();
+    });
+
+    // Patch pushState and replaceState to detect JS navigation
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+
+    history.pushState = (...args) => {
+      originalPushState.apply(history, args);
+      this.handleNavigation();
+    };
+
+    history.replaceState = (...args) => {
+      originalReplaceState.apply(history, args);
+      this.handleNavigation();
+    };
   },
 
   setupActivityTracking: function () {
@@ -336,6 +413,8 @@ window.__GOOFY = {
     this.log("Initializing Goofy");
 
     const setup = () => {
+      this.setupNavigationTracking();
+
       this.observe(
         "inbox",
         "#left-sidebar-button-chats",
@@ -343,12 +422,10 @@ window.__GOOFY = {
         true,
       );
 
-      this.observe(
-        "threadList",
-        '[role="navigation"] [role="grid"]',
-        this.checkForNewMessages,
-        false,
-      );
+      // Only set up threadList observer if we're in the inbox
+      if (this.isInboxPath(window.location.pathname)) {
+        this.setupThreadListObserver();
+      }
     };
 
     if (document.readyState === "loading") {
