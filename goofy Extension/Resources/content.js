@@ -4,7 +4,7 @@ window.__GOOFY = {
   threadSnapshots: null,
   initTime: null,
   lastActivityTime: null,
-  RELOAD_INTERVAL: 12 * 60 * 60 * 1000, // 12 hours in ms
+  RELOAD_INTERVAL: 4 * 60 * 60 * 1000, // 4 hours in ms
   IDLE_THRESHOLD: 5 * 60 * 1000, // 5 minutes in ms
 
   observe: function (
@@ -146,13 +146,6 @@ window.__GOOFY = {
     }
   },
 
-  cleanupAllObservers: function () {
-    this.log("Cleaning up all observers");
-    for (const name of this.observers.keys()) {
-      this.cleanupObserver(name, false);
-    }
-  },
-
   getObserverStatus: function () {
     const status = {};
     for (const [name, data] of this.observers.entries()) {
@@ -180,36 +173,37 @@ window.__GOOFY = {
 
     navigator.setAppBadge(count);
     this.log(`Badge count updated to ${count}`);
+
+    // Also check if inbox active state changed (aria-current attribute)
+    this.handleInboxChange();
   },
 
   checkForNewMessages: function () {
-    const threads = this.getThreads();
-    const maxPosition = threads.length - 1;
+    threads = Array.from(
+      document.querySelectorAll('[role="navigation"] [role="row"] a'),
+    )
+      .map((a, index) => ({
+        threadKey: a.getAttribute("href"),
+        threadName: a.querySelectorAll("span.xyejjpt")[0]?.textContent,
+        snippet: a.querySelectorAll("span.xyejjpt")[1]?.textContent,
+        isUnread: !!a.querySelector("span.x1spa7qu.x1iwo8zk"),
+        isMuted: !!a.querySelector("svg.x14rh7hd"),
+        position: index,
+      }))
+      .filter((t) => Boolean(t.threadKey));
 
-    // Build new snapshot from current DOM state
-    const newSnapshots = new Map();
-    threads.forEach((thread) => {
-      if (thread.threadKey) {
-        newSnapshots.set(thread.threadKey, {
-          snippet: thread.snippet,
-          position: thread.position,
-          isUnread: thread.isUnread,
-        });
-      }
-    });
-
-    // Initialize on first run - no notifications
-    if (this.threadSnapshots === null) {
-      this.log("Initializing thread snapshots");
-      this.threadSnapshots = newSnapshots;
-      return;
+    if (threads.length > 0 && this.threadSnapshots == null) {
+      this.threadSnapshots = new Map();
     }
 
-    // Compare and notify
     threads.forEach((thread) => {
-      if (!thread.threadKey || thread.isMuted || !thread.isUnread) return;
-
       const prev = this.threadSnapshots.get(thread.threadKey);
+      this.threadSnapshots.set(thread.threadKey, thread);
+
+      if (thread.isMuted || !thread.isUnread) {
+        return;
+      }
+
       let shouldNotify = false;
 
       if (prev) {
@@ -218,13 +212,13 @@ window.__GOOFY = {
           shouldNotify = true;
           this.log(`Thread ${thread.threadName} changed from read to unread`);
         }
-        // (c) Snippet changed on unread thread
+        // (b) Snippet changed on unread thread
         else if (thread.snippet !== prev.snippet) {
           shouldNotify = true;
           this.log(`Snippet changed for unread thread ${thread.threadName}`);
         }
       } else {
-        // (b) New unread thread inserted at top
+        // (c) New unread thread inserted at top
         if (thread.position === 0) {
           shouldNotify = true;
           this.log(`New unread thread inserted at top: ${thread.threadName}`);
@@ -239,9 +233,6 @@ window.__GOOFY = {
         );
       }
     });
-
-    // Swap to new snapshot
-    this.threadSnapshots = newSnapshots;
   },
 
   showNotification: function (title, body, threadKey) {
@@ -301,23 +292,6 @@ window.__GOOFY = {
     console.log(`[Goofy] ${logEntry}`);
   },
 
-  getThreads: function () {
-    return Array.from(
-      document.querySelectorAll('[role="navigation"] [role="row"] a'),
-    ).map((a, index) => ({
-      threadKey: a.getAttribute("href"),
-      threadName: a.querySelectorAll("span.xyejjpt")[0]?.textContent,
-      snippet: a.querySelectorAll("span.xyejjpt")[1]?.textContent,
-      isUnread: !!a.querySelector("span.x1spa7qu.x1iwo8zk"),
-      isMuted: !!a.querySelector("svg.x14rh7hd"),
-      position: index,
-    }));
-  },
-
-  isInboxPath: function (pathname) {
-    return pathname.startsWith("/t/") || pathname.startsWith("/e2ee/t/");
-  },
-
   setupThreadListObserver: function () {
     this.observe(
       "threadList",
@@ -332,39 +306,27 @@ window.__GOOFY = {
     this.threadSnapshots = null;
   },
 
-  handleNavigation: function () {
-    const inInbox = this.isInboxPath(window.location.pathname);
-    const observerData = this.observers.get("threadList");
-    const observerActive = observerData?.observer !== null;
-
-    if (inInbox && !observerActive) {
-      this.log("Navigated to inbox, setting up threadList observer");
-      this.setupThreadListObserver();
-    } else if (!inInbox && observerActive) {
-      this.log("Navigated away from inbox, cleaning up threadList observer");
-      this.cleanupThreadListObserver();
-    }
+  isInboxActive: function () {
+    const inboxCell = document.querySelector("#left-sidebar-button-chats");
+    return inboxCell?.getAttribute("aria-current") === "page";
   },
 
-  setupNavigationTracking: function () {
-    // Handle back/forward navigation
-    window.addEventListener("popstate", () => {
-      this.handleNavigation();
-    });
+  handleInboxChange: function () {
+    const inInbox = this.isInboxActive();
+    const observerData = this.observers.get("threadList");
+    const observerActive = observerData?.observer != null;
 
-    // Patch pushState and replaceState to detect JS navigation
-    const originalPushState = history.pushState;
-    const originalReplaceState = history.replaceState;
+    this.log(
+      `handleInboxChange: inInbox=${inInbox}, observerActive=${observerActive}`,
+    );
 
-    history.pushState = (...args) => {
-      originalPushState.apply(history, args);
-      this.handleNavigation();
-    };
-
-    history.replaceState = (...args) => {
-      originalReplaceState.apply(history, args);
-      this.handleNavigation();
-    };
+    if (inInbox && !observerActive) {
+      this.log("Inbox became active, setting up threadList observer");
+      this.setupThreadListObserver();
+    } else if (!inInbox && observerActive) {
+      this.log("Inbox became inactive, cleaning up threadList observer");
+      this.cleanupThreadListObserver();
+    }
   },
 
   setupActivityTracking: function () {
@@ -413,19 +375,12 @@ window.__GOOFY = {
     this.log("Initializing Goofy");
 
     const setup = () => {
-      this.setupNavigationTracking();
-
       this.observe(
         "inbox",
         "#left-sidebar-button-chats",
         this.updateBadgeCount,
         true,
       );
-
-      // Only set up threadList observer if we're in the inbox
-      if (this.isInboxPath(window.location.pathname)) {
-        this.setupThreadListObserver();
-      }
     };
 
     if (document.readyState === "loading") {
