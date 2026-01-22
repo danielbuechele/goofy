@@ -6,6 +6,7 @@
 //
 
 import AppUpdater
+import Combine
 import SwiftUI
 
 enum MessengerAppState {
@@ -58,37 +59,79 @@ private let debugShowMockUpdate = false
 
 struct UpdateBanner: View {
     @EnvironmentObject var appUpdater: AppUpdater
+    @State private var showError: Bool = false
+    @State private var errorMessage: String = ""
 
     var body: some View {
-        if debugShowMockUpdate {
-            // Mock update banner for testing UI
-            HStack(spacing: 12) {
-                Image(systemName: "arrow.down.circle.fill")
-                    .foregroundColor(.blue)
+        Group {
+            if showError {
+                // Error banner
+                HStack(spacing: 12) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundColor(.orange)
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Update Available")
-                        .font(.system(size: 12, weight: .medium))
-                    Text("Version 4.1.0 is ready to install")
-                        .font(.system(size: 11))
-                        .foregroundColor(.secondary)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Update Failed")
+                            .font(.system(size: 12, weight: .medium))
+                        Text(errorMessage)
+                            .font(.system(size: 11))
+                            .foregroundColor(.secondary)
+                            .lineLimit(2)
+                    }
+
+                    Spacer()
+
+                    Button("Retry") {
+                        showError = false
+                        errorMessage = ""
+                        appUpdater.check()
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.blue)
+                    .controlSize(.small)
                 }
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(Color.orange.opacity(0.1))
+                .cornerRadius(8)
+            } else if debugShowMockUpdate {
+                // Mock update banner for testing UI
+                HStack(spacing: 12) {
+                    Image(systemName: "arrow.down.circle.fill")
+                        .foregroundColor(.blue)
 
-                Spacer()
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Update Available")
+                            .font(.system(size: 12, weight: .medium))
+                        Text("Version 4.1.0 is ready to install")
+                            .font(.system(size: 11))
+                            .foregroundColor(.secondary)
+                    }
 
-                Button("Install & Restart") {
-                    // No-op for mock
+                    Spacer()
+
+                    Button("Install & Restart") {
+                        // No-op for mock
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.blue)
+                    .controlSize(.small)
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.blue)
-                .controlSize(.small)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(Color.blue.opacity(0.1))
+                .cornerRadius(8)
+            } else {
+                realUpdateBanner
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
-            .background(Color.blue.opacity(0.1))
-            .cornerRadius(8)
-        } else {
-            realUpdateBanner
+        }
+        .onReceive(appUpdater.$lastError) { error in
+            if let error = error {
+                errorMessage = error.localizedDescription
+                showError = true
+            }
         }
     }
 
@@ -102,11 +145,13 @@ struct UpdateBanner: View {
             HStack(spacing: 12) {
                 ProgressView(value: fraction)
                     .progressViewStyle(.linear)
+                    .tint(.blue)
                     .frame(width: 100)
                 Text("Downloading v\(release.tagName)...")
                     .font(.system(size: 12))
                     .foregroundColor(.secondary)
             }
+            .frame(maxWidth: .infinity)
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
             .background(Color.blue.opacity(0.1))
@@ -120,6 +165,7 @@ struct UpdateBanner: View {
                     .font(.system(size: 12))
                     .foregroundColor(.secondary)
             }
+            .frame(maxWidth: .infinity)
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
             .background(Color.blue.opacity(0.1))
@@ -147,6 +193,7 @@ struct UpdateBanner: View {
                 .tint(.blue)
                 .controlSize(.small)
             }
+            .frame(maxWidth: .infinity)
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
             .background(Color.blue.opacity(0.1))
