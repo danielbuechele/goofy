@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		6744A4F52F13238200407322 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6744A4F32F13238200407322 /* InfoPlist.strings */; };
+		6744B6702F22E29600407322 /* AppUpdater in Frameworks */ = {isa = PBXBuildFile; productRef = E8B787712F0824D500DA162B /* AppUpdater */; };
 		E8B7873F2F0824D400DA162B /* goofy Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E8B7873E2F0824D400DA162B /* goofy Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -76,6 +77,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6744B6702F22E29600407322 /* AppUpdater in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -185,6 +187,9 @@
 			);
 			mainGroup = E8B7871B2F0824D300DA162B;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				E8B787702F0824D500DA162B /* XCRemoteSwiftPackageReference "AppUpdater" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E8B787252F0824D300DA162B /* Products */;
 			projectDirPath = "";
@@ -277,7 +282,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "goofy Extension/goofy Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 112;
+				CURRENT_PROJECT_VERSION = 126;
 				DEVELOPMENT_TEAM = K5C6E7A2D6;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -293,7 +298,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 4.0;
+				MARKETING_VERSION = 3.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -315,7 +320,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "goofy Extension/goofy Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 112;
+				CURRENT_PROJECT_VERSION = 126;
 				DEVELOPMENT_TEAM = K5C6E7A2D6;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -331,7 +336,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 4.0;
+				MARKETING_VERSION = 3.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -475,7 +480,7 @@
 				CODE_SIGN_ENTITLEMENTS = goofy/goofy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 112;
+				CURRENT_PROJECT_VERSION = 126;
 				DEVELOPMENT_TEAM = K5C6E7A2D6;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -492,7 +497,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
-				MARKETING_VERSION = 4.0;
+				MARKETING_VERSION = 3.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -520,7 +525,7 @@
 				CODE_SIGN_ENTITLEMENTS = goofy/goofy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 112;
+				CURRENT_PROJECT_VERSION = 126;
 				DEVELOPMENT_TEAM = K5C6E7A2D6;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -537,7 +542,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
-				MARKETING_VERSION = 4.0;
+				MARKETING_VERSION = 3.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -587,6 +592,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E8B787702F0824D500DA162B /* XCRemoteSwiftPackageReference "AppUpdater" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/s1ntoneli/AppUpdater.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.5;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E8B787712F0824D500DA162B /* AppUpdater */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E8B787702F0824D500DA162B /* XCRemoteSwiftPackageReference "AppUpdater" */;
+			productName = AppUpdater;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E8B7871C2F0824D300DA162B /* Project object */;
 }

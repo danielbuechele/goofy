@@ -5,20 +5,25 @@
 //  Created by Daniel Büchele on 02/01/2026.
 //
 
+import AppUpdater
 import Cocoa
 import Combine
 import SwiftUI
 
 class ViewController: NSViewController {
 
-    private var hostingView: NSHostingView<ContentView>!
+    private var hostingView: NSHostingView<AnyView>!
     private var displayLink: CVDisplayLink?
     private var lastHeight: CGFloat = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        hostingView = NSHostingView(rootView: ContentView())
+        let contentView = AnyView(
+            ContentView()
+                .environmentObject(AppDelegate.appUpdater)
+        )
+        hostingView = NSHostingView(rootView: contentView)
         hostingView.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(hostingView)

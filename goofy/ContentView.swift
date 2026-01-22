@@ -5,6 +5,7 @@
 //  Created by Daniel Büchele on 02/01/2026.
 //
 
+import AppUpdater
 import SwiftUI
 
 enum MessengerAppState {
@@ -52,10 +53,113 @@ extension Image {
     }
 }
 
+// Set to true to show a mock update banner for UI testing
+private let debugShowMockUpdate = false
+
+struct UpdateBanner: View {
+    @EnvironmentObject var appUpdater: AppUpdater
+
+    var body: some View {
+        if debugShowMockUpdate {
+            // Mock update banner for testing UI
+            HStack(spacing: 12) {
+                Image(systemName: "arrow.down.circle.fill")
+                    .foregroundColor(.blue)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Update Available")
+                        .font(.system(size: 12, weight: .medium))
+                    Text("Version 4.1.0 is ready to install")
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
+                Button("Install & Restart") {
+                    // No-op for mock
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.blue)
+                .controlSize(.small)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(Color.blue.opacity(0.1))
+            .cornerRadius(8)
+        } else {
+            realUpdateBanner
+        }
+    }
+
+    @ViewBuilder
+    private var realUpdateBanner: some View {
+        switch appUpdater.state {
+        case .none:
+            EmptyView()
+
+        case .downloading(let release, _, let fraction):
+            HStack(spacing: 12) {
+                ProgressView(value: fraction)
+                    .progressViewStyle(.linear)
+                    .frame(width: 100)
+                Text("Downloading v\(release.tagName)...")
+                    .font(.system(size: 12))
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(Color.blue.opacity(0.1))
+            .cornerRadius(8)
+
+        case .newVersionDetected(let release, _):
+            HStack(spacing: 12) {
+                ProgressView()
+                    .scaleEffect(0.7)
+                Text("Preparing v\(release.tagName)...")
+                    .font(.system(size: 12))
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(Color.blue.opacity(0.1))
+            .cornerRadius(8)
+
+        case .downloaded(let release, _, _):
+            HStack(spacing: 12) {
+                Image(systemName: "arrow.down.circle.fill")
+                    .foregroundColor(.blue)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Update Available")
+                        .font(.system(size: 12, weight: .medium))
+                    Text("Version \(release.tagName) is ready to install")
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
+                Button("Install & Restart") {
+                    appUpdater.install()
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.blue)
+                .controlSize(.small)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(Color.blue.opacity(0.1))
+            .cornerRadius(8)
+        }
+    }
+}
+
 struct ContentView: View {
     // App Group identifier - must match the one configured in Xcode
     static let appGroupIdentifier = "group.cc.buechele.Goofy"
 
+    @EnvironmentObject var appUpdater: AppUpdater
     @State private var extensionConnected: Bool = false
     @State private var statusCheckTimer: Timer?
     @State private var messengerAppState: MessengerAppState = .notFound
@@ -73,6 +177,9 @@ struct ContentView: View {
 
     var body: some View {
         VStack(spacing: 20) {
+            // Update banner - shows when update is available
+            UpdateBanner()
+
             // Header with icon and title (centered)
             HStack(spacing: 8) {
                 Image(nsImage: NSApp.applicationIconImage)
@@ -447,5 +554,8 @@ struct StepRow<Accessory: View>: View {
 
 #Preview {
     ContentView()
+        .environmentObject(
+            AppUpdater(owner: "danielbuechele", repo: "goofy", releasePrefix: "Goofy")
+        )
         .frame(width: 425, height: 327)
 }
