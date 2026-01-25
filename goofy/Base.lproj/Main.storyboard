@@ -21,6 +21,12 @@
                                                 <action selector="orderFrontStandardAboutPanel:" target="Ady-hI-5gd" id="Exp-CZ-Vem"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Check for Updates…" id="cFU-Hy-4gU">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="checkForUpdates:" target="Voe-Tx-rLC" id="aUp-7k-Nz3"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="VOq-y0-SEH"/>
                                         <menuItem title="Hide Goofy" keyEquivalent="h" id="Olw-nP-bQN">
                                             <connections>
@@ -43,6 +49,70 @@
                                         <menuItem title="Quit Goofy" keyEquivalent="q" id="4sb-4s-VLi">
                                             <connections>
                                                 <action selector="terminate:" target="Ady-hI-5gd" id="Te7-pn-YzF"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
+                            <menuItem title="Edit" id="edit-menu-item">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Edit" id="edit-submenu">
+                                    <items>
+                                        <menuItem title="Undo" keyEquivalent="z" id="edit-undo">
+                                            <connections>
+                                                <action selector="undo:" target="Ady-hI-5gd" id="edit-undo-action"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Redo" keyEquivalent="Z" id="edit-redo">
+                                            <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="redo:" target="Ady-hI-5gd" id="edit-redo-action"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="edit-sep1"/>
+                                        <menuItem title="Cut" keyEquivalent="x" id="edit-cut">
+                                            <connections>
+                                                <action selector="cut:" target="Ady-hI-5gd" id="edit-cut-action"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Copy" keyEquivalent="c" id="edit-copy">
+                                            <connections>
+                                                <action selector="copy:" target="Ady-hI-5gd" id="edit-copy-action"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Paste" keyEquivalent="v" id="edit-paste">
+                                            <connections>
+                                                <action selector="paste:" target="Ady-hI-5gd" id="edit-paste-action"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Delete" id="edit-delete">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="delete:" target="Ady-hI-5gd" id="edit-delete-action"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Select All" keyEquivalent="a" id="edit-selectall">
+                                            <connections>
+                                                <action selector="selectAll:" target="Ady-hI-5gd" id="edit-selectall-action"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
+                            <menuItem title="View" id="H8h-7b-M4v">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="View" id="HyV-fh-RgO">
+                                    <items>
+                                        <menuItem title="Reload Page" keyEquivalent="r" id="RqV-3g-65K">
+                                            <connections>
+                                                <action selector="reloadPage:" target="Ady-hI-5gd" id="S4d-8q-xBf"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="Kx9-n4-Rph"/>
+                                        <menuItem title="Log Out" id="Lgo-8t-Pzv">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="logOut:" target="Ady-hI-5gd" id="M7h-2q-Ywx"/>
                                             </connections>
                                         </menuItem>
                                     </items>
@@ -79,6 +149,7 @@
                     <window key="window" title="Goofy" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" animationBehavior="default" titlebarAppearsTransparent="YES" titleVisibility="hidden" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
                         <windowCollectionBehavior key="collectionBehavior" fullScreenNone="YES"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="240" width="425" height="550"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
                         <connections>
@@ -97,7 +168,7 @@
         <scene sceneID="hIz-AP-VOD">
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="goofy" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="m2S-Jp-Qdl">
+                    <view key="view" wantsLayer="YES" id="m2S-Jp-Qdl">
                         <rect key="frame" x="0.0" y="0.0" width="425" height="550"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </view>

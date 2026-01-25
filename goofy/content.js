@@ -2,10 +2,19 @@ window.__GOOFY = {
   observers: new Map(),
   logs: [],
   threadSnapshots: null,
-  initTime: null,
-  lastActivityTime: null,
-  RELOAD_INTERVAL: 4 * 60 * 60 * 1000, // 4 hours in ms
-  IDLE_THRESHOLD: 5 * 60 * 1000, // 5 minutes in ms
+
+  // Native bridge helper for WKWebView communication
+  postToNative: function (message) {
+    if (
+      window.webkit &&
+      window.webkit.messageHandlers &&
+      window.webkit.messageHandlers.goofy
+    ) {
+      window.webkit.messageHandlers.goofy.postMessage(message);
+      return true;
+    }
+    return false;
+  },
 
   observe: function (
     name,
@@ -59,28 +68,32 @@ window.__GOOFY = {
           characterData: true,
         });
 
-        const removalObserver = new MutationObserver((mutations) => {
-          if (!document.contains(element)) {
-            this.log(
-              `Observer ${name}: Element was removed from DOM, will re-setup`,
-            );
+        // Only set up removal observer for elements inside body
+        let removalObserver = null;
+        if (document.body && document.body.contains(element)) {
+          removalObserver = new MutationObserver((mutations) => {
+            if (!document.contains(element)) {
+              this.log(
+                `Observer ${name}: Element was removed from DOM, will re-setup`,
+              );
 
-            this.cleanupObserver(name, true);
+              this.cleanupObserver(name, true);
 
-            this.observe(
-              config.name,
-              config.selector,
-              config.callback,
-              config.runInitially,
-              config.retryInterval,
-            );
-          }
-        });
+              this.observe(
+                config.name,
+                config.selector,
+                config.callback,
+                config.runInitially,
+                config.retryInterval,
+              );
+            }
+          });
 
-        removalObserver.observe(document.body, {
-          childList: true,
-          subtree: true,
-        });
+          removalObserver.observe(document.body, {
+            childList: true,
+            subtree: true,
+          });
+        }
 
         this.observers.set(name, {
           observer,
@@ -91,6 +104,12 @@ window.__GOOFY = {
         });
 
         this.log(`Observer ${name}: Successfully set up`);
+
+        // Notify native app when inbox observer is set up
+        if (name === "inbox") {
+          this.postToNative({ type: "inboxObserverState", active: true });
+        }
+
         return true;
       } else {
         this.log(
@@ -120,6 +139,11 @@ window.__GOOFY = {
       if (observerData.observer) {
         observerData.observer.disconnect();
         this.log(`Observer ${name}: Cleaned up`);
+
+        // Notify native app when inbox observer is stopped
+        if (name === "inbox") {
+          this.postToNative({ type: "inboxObserverState", active: false });
+        }
       }
 
       if (observerData.removalObserver) {
@@ -171,7 +195,13 @@ window.__GOOFY = {
       this.log("Inbox cell not found while updating badge");
     }
 
-    navigator.setAppBadge(count);
+    // Use native bridge for badge updates
+    if (!this.postToNative({ type: "badge", count: count })) {
+      // Fallback to Web API if native bridge not available
+      if (navigator.setAppBadge) {
+        navigator.setAppBadge(count);
+      }
+    }
     this.log(`Badge count updated to ${count}`);
 
     // Also check if inbox active state changed (aria-current attribute)
@@ -238,51 +268,12 @@ window.__GOOFY = {
   showNotification: function (title, body, threadKey) {
     this.log(`showNotification: ${title} - ${body}`);
 
-    if (!("Notification" in window)) {
-      this.log("Notifications not supported");
-      return;
-    }
-
-    this.log(`Notification permission: ${Notification.permission}`);
-
-    if (Notification.permission === "granted") {
-      try {
-        const notification = new Notification(title, {
-          body: body,
-          icon: "/favicon.ico",
-        });
-
-        notification.onclick = () => {
-          window.focus();
-
-          const threadLink = document.querySelector(`a[href="${threadKey}"]`);
-          if (threadLink) {
-            threadLink.click();
-          } else {
-            this.log(
-              `Thread link not found for ${threadKey}, using hard navigation`,
-            );
-            window.location.href = threadKey;
-          }
-
-          notification.close();
-        };
-
-        this.log(`Notification created successfully`);
-      } catch (error) {
-        this.log(`Notification error: ${error.message}`);
-      }
-    } else if (Notification.permission !== "denied") {
-      this.log(`Requesting notification permission`);
-      Notification.requestPermission().then((permission) => {
-        this.log(`Permission request result: ${permission}`);
-        if (permission === "granted") {
-          this.showNotification(title, body, threadKey);
-        }
-      });
-    } else {
-      this.log(`Notifications denied by user`);
-    }
+    this.postToNative({
+      type: "notification",
+      title: title,
+      body: body,
+      threadKey: threadKey,
+    });
   },
 
   log: function (message) {
@@ -290,6 +281,9 @@ window.__GOOFY = {
     const logEntry = `[${timestamp}] ${message}`;
     this.logs.push(logEntry);
     console.log(`[Goofy] ${logEntry}`);
+
+    // Also send to native for debugging
+    this.postToNative({ type: "log", message: logEntry });
   },
 
   setupThreadListObserver: function () {
@@ -329,50 +323,28 @@ window.__GOOFY = {
     }
   },
 
-  setupActivityTracking: function () {
-    const resetActivity = () => {
-      this.lastActivityTime = Date.now();
-    };
-
-    ["mousemove", "keydown", "click", "scroll", "touchstart"].forEach(
-      (event) => {
-        document.addEventListener(event, resetActivity, { passive: true });
-      },
-    );
-
-    resetActivity();
-  },
-
-  isUserTyping: function () {
-    const active = document.activeElement;
-    if (!active) return false;
-    const tag = active.tagName.toLowerCase();
-    return tag === "input" || tag === "textarea" || active.isContentEditable;
-  },
-
-  checkForReload: function () {
-    const now = Date.now();
-    const timeSinceInit = now - this.initTime;
-    const timeSinceActivity = now - this.lastActivityTime;
-
-    const shouldReload =
-      timeSinceInit >= this.RELOAD_INTERVAL &&
-      timeSinceActivity >= this.IDLE_THRESHOLD &&
-      !this.isUserTyping();
-
-    if (shouldReload) {
-      this.log("Performing scheduled reload after 12 hours");
-      location.reload();
+  navigateToThread: function (threadKey) {
+    this.log(`Navigating to thread: ${threadKey}`);
+    const link = document.querySelector(`a[href="${threadKey}"]`);
+    if (link) {
+      link.click();
+    } else {
+      this.log(`Thread link not found for ${threadKey}, using hard navigation`);
+      window.location.href = threadKey;
     }
+  },
+
+  injectCSS: function () {
+    const style = document.createElement("style");
+    style.textContent = "#left-sidebar-button-chats { margin-top: 20px; }";
+    document.head.appendChild(style);
   },
 
   init: function () {
-    // Only initialize in PWA mode
-    if (navigator.standalone !== true) {
-      return;
-    }
-
+    // In WKWebView mode, always initialize (no PWA check needed)
     this.log("Initializing Goofy");
+
+    this.injectCSS();
 
     const setup = () => {
       this.observe(
