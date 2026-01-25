@@ -6,8 +6,8 @@
 //
 
 import Cocoa
-import WebKit
 import UserNotifications
+import WebKit
 
 class ViewController: NSViewController {
 
@@ -18,7 +18,7 @@ class ViewController: NSViewController {
 
     // Periodic reload properties
     private var lastReloadTime = Date()
-    private let reloadInterval: TimeInterval = 4 * 60 * 60 // 4 hours
+    private let reloadInterval: TimeInterval = 4 * 60 * 60  // 4 hours
     private var reloadPending = false
 
     // MARK: - Lifecycle
@@ -38,7 +38,8 @@ class ViewController: NSViewController {
 
     deinit {
         NotificationCenter.default.removeObserver(self)
-        webView.configuration.userContentController.removeScriptMessageHandler(forName: messageHandlerName)
+        webView.configuration.userContentController.removeScriptMessageHandler(
+            forName: messageHandlerName)
     }
 
     // MARK: - WebView Setup
@@ -65,7 +66,8 @@ class ViewController: NSViewController {
 
         // Inject content.js at document end
         if let scriptURL = Bundle.main.url(forResource: "content", withExtension: "js"),
-           let scriptContent = try? String(contentsOf: scriptURL, encoding: .utf8) {
+            let scriptContent = try? String(contentsOf: scriptURL, encoding: .utf8)
+        {
             let userScript = WKUserScript(
                 source: scriptContent,
                 injectionTime: .atDocumentEnd,
@@ -91,8 +93,10 @@ class ViewController: NSViewController {
 
         // Set custom user agent to appear as Safari
         let osVersion = ProcessInfo.processInfo.operatingSystemVersion
-        let osVersionString = "\(osVersion.majorVersion)_\(osVersion.minorVersion)_\(osVersion.patchVersion)"
-        webView.customUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X \(osVersionString)) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15"
+        let osVersionString =
+            "\(osVersion.majorVersion)_\(osVersion.minorVersion)_\(osVersion.patchVersion)"
+        webView.customUserAgent =
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X \(osVersionString)) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15"
 
         view.addSubview(webView)
         view.clipsToBounds = false
@@ -102,7 +106,7 @@ class ViewController: NSViewController {
             webViewTopConstraint,
             webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            webView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            webView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
 
@@ -124,7 +128,8 @@ class ViewController: NSViewController {
         webViewTopConstraint.constant = -titlebarHeight
 
         // Set background color for window and titlebar
-        window.backgroundColor = NSColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
+        window.backgroundColor = NSColor(
+            red: 245 / 255, green: 245 / 255, blue: 245 / 255, alpha: 1.0)
     }
 
     private func loadMessenger() {
@@ -193,7 +198,7 @@ class ViewController: NSViewController {
     // MARK: - Reload Action (CMD+R)
 
     @IBAction func reloadPage(_ sender: Any?) {
-        webView.reload()
+        loadMessenger()
     }
 
     // MARK: - Log Out Action
@@ -204,7 +209,8 @@ class ViewController: NSViewController {
 
         dataStore.fetchDataRecords(ofTypes: dataTypes) { records in
             let messengerRecords = records.filter { record in
-                record.displayName.contains("messenger.com") || record.displayName.contains("facebook.com")
+                record.displayName.contains("messenger.com")
+                    || record.displayName.contains("facebook.com")
             }
             dataStore.removeData(ofTypes: dataTypes, for: messengerRecords) {
                 DispatchQueue.main.async {
@@ -288,10 +294,13 @@ class ViewController: NSViewController {
 // MARK: - WKScriptMessageHandler
 
 extension ViewController: WKScriptMessageHandler {
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    func userContentController(
+        _ userContentController: WKUserContentController, didReceive message: WKScriptMessage
+    ) {
         guard message.name == messageHandlerName,
-              let body = message.body as? [String: Any],
-              let type = body["type"] as? String else {
+            let body = message.body as? [String: Any],
+            let type = body["type"] as? String
+        else {
             return
         }
 
@@ -303,8 +312,9 @@ extension ViewController: WKScriptMessageHandler {
 
         case "notification":
             if let title = body["title"] as? String,
-               let notificationBody = body["body"] as? String,
-               let threadKey = body["threadKey"] as? String {
+                let notificationBody = body["body"] as? String,
+                let threadKey = body["threadKey"] as? String
+            {
                 showNotification(title: title, body: notificationBody, threadKey: threadKey)
             }
 
@@ -344,7 +354,10 @@ extension ViewController: NSMenuItemValidation {
 // MARK: - WKNavigationDelegate
 
 extension ViewController: WKNavigationDelegate {
-    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    func webView(
+        _ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
+        decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+    ) {
         guard let url = navigationAction.request.url else {
             decisionHandler(.allow)
             return
@@ -375,7 +388,10 @@ extension ViewController: WKNavigationDelegate {
         print("Navigation failed: \(error.localizedDescription)")
     }
 
-    func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+    func webView(
+        _ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!,
+        withError error: Error
+    ) {
         print("Provisional navigation failed: \(error.localizedDescription)")
     }
 }
@@ -384,7 +400,10 @@ extension ViewController: WKNavigationDelegate {
 
 extension ViewController: WKUIDelegate {
     // Handle JavaScript alerts
-    func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
+    func webView(
+        _ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String,
+        initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void
+    ) {
         let alert = NSAlert()
         alert.messageText = message
         alert.addButton(withTitle: "OK")
@@ -393,7 +412,10 @@ extension ViewController: WKUIDelegate {
     }
 
     // Handle JavaScript confirms
-    func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
+    func webView(
+        _ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String,
+        initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void
+    ) {
         let alert = NSAlert()
         alert.messageText = message
         alert.addButton(withTitle: "OK")
@@ -402,7 +424,10 @@ extension ViewController: WKUIDelegate {
     }
 
     // Handle new window requests (target="_blank" links)
-    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+    func webView(
+        _ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration,
+        for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures
+    ) -> WKWebView? {
         // Open in default browser instead of creating new window
         if let url = navigationAction.request.url {
             NSWorkspace.shared.open(url)
@@ -415,13 +440,20 @@ extension ViewController: WKUIDelegate {
 
 extension ViewController: UNUserNotificationCenterDelegate {
     // Handle notification when app is in foreground
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter, willPresent notification: UNNotification,
+        withCompletionHandler completionHandler:
+            @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
         // Show notification even when app is in foreground
         completionHandler([.banner, .sound])
     }
 
     // Handle notification click
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
         let userInfo = response.notification.request.content.userInfo
         if let threadKey = userInfo["threadKey"] as? String {
             navigateToThread(threadKey: threadKey)

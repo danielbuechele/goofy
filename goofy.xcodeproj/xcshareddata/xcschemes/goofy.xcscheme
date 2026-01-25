@@ -16,8 +16,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E8B787232F0824D300DA162B"
-               BuildableName = "goofy.app"
-               BlueprintName = "goofy"
+               BuildableName = "Goofy.app"
+               BlueprintName = "Goofy"
                ReferencedContainer = "container:goofy.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -40,22 +40,13 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <PreActions>
-         <ExecutionAction
-            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
-            <ActionContent
-               title = "Run Script"
-               scriptText = "cd /Users/danielbuechele/goofy&#10;xcrun agvtool next-version -all&#10;">
-            </ActionContent>
-         </ExecutionAction>
-      </PreActions>
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E8B787232F0824D300DA162B"
-            BuildableName = "goofy.app"
-            BlueprintName = "goofy"
+            BuildableName = "Goofy.app"
+            BlueprintName = "Goofy"
             ReferencedContainer = "container:goofy.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -71,8 +62,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E8B787232F0824D300DA162B"
-            BuildableName = "goofy.app"
-            BlueprintName = "goofy"
+            BuildableName = "Goofy.app"
+            BlueprintName = "Goofy"
             ReferencedContainer = "container:goofy.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -83,5 +74,24 @@
    <ArchiveAction
       buildConfiguration = "Release"
       revealArchiveInOrganizer = "YES">
+      <PreActions>
+         <ExecutionAction
+            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
+            <ActionContent
+               title = "Increment Build Number"
+               scriptText = "${PROJECT_DIR}/scripts/increment_build.sh"
+               shellToInvoke = "/bin/bash">
+               <EnvironmentBuildable>
+                  <BuildableReference
+                     BuildableIdentifier = "primary"
+                     BlueprintIdentifier = "E8B787232F0824D300DA162B"
+                     BuildableName = "Goofy.app"
+                     BlueprintName = "Goofy"
+                     ReferencedContainer = "container:goofy.xcodeproj">
+                  </BuildableReference>
+               </EnvironmentBuildable>
+            </ActionContent>
+         </ExecutionAction>
+      </PreActions>
    </ArchiveAction>
 </Scheme>

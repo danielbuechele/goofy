@@ -13,7 +13,7 @@
 
 /* Begin PBXFileReference section */
 		6744A4F42F13238200407322 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		E8B787242F0824D300DA162B /* goofy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = goofy.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E8B787242F0824D300DA162B /* Goofy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Goofy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -48,7 +48,7 @@
 		E8B787252F0824D300DA162B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E8B787242F0824D300DA162B /* goofy.app */,
+				E8B787242F0824D300DA162B /* Goofy.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -56,9 +56,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		E8B787232F0824D300DA162B /* goofy */ = {
+		E8B787232F0824D300DA162B /* Goofy */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E8B7875E2F0824D400DA162B /* Build configuration list for PBXNativeTarget "goofy" */;
+			buildConfigurationList = E8B7875E2F0824D400DA162B /* Build configuration list for PBXNativeTarget "Goofy" */;
 			buildPhases = (
 				E8B787202F0824D300DA162B /* Sources */,
 				E8B787212F0824D300DA162B /* Frameworks */,
@@ -71,11 +71,11 @@
 			fileSystemSynchronizedGroups = (
 				E8B787262F0824D300DA162B /* goofy */,
 			);
-			name = goofy;
+			name = Goofy;
 			packageProductDependencies = (
 			);
 			productName = goofy;
-			productReference = E8B787242F0824D300DA162B /* goofy.app */;
+			productReference = E8B787242F0824D300DA162B /* Goofy.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -110,7 +110,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E8B787232F0824D300DA162B /* goofy */,
+				E8B787232F0824D300DA162B /* Goofy */,
 			);
 		};
 /* End PBXProject section */
@@ -275,7 +275,7 @@
 				CODE_SIGN_ENTITLEMENTS = goofy/goofy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 136;
+				CURRENT_PROJECT_VERSION = 145;
 				DEVELOPMENT_TEAM = K5C6E7A2D6;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -290,7 +290,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
-				MARKETING_VERSION = 4.0;
+				MARKETING_VERSION = 4.0.145;
 				OTHER_LDFLAGS = (
 					"-framework",
 					WebKit,
@@ -315,7 +315,7 @@
 				CODE_SIGN_ENTITLEMENTS = goofy/goofy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 136;
+				CURRENT_PROJECT_VERSION = 145;
 				DEVELOPMENT_TEAM = K5C6E7A2D6;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -330,7 +330,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
-				MARKETING_VERSION = 4.0;
+				MARKETING_VERSION = 4.0.145;
 				OTHER_LDFLAGS = (
 					"-framework",
 					WebKit,
@@ -358,7 +358,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E8B7875E2F0824D400DA162B /* Build configuration list for PBXNativeTarget "goofy" */ = {
+		E8B7875E2F0824D400DA162B /* Build configuration list for PBXNativeTarget "Goofy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E8B7875F2F0824D400DA162B /* Debug */,

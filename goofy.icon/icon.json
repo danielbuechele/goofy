@@ -1,13 +1,26 @@
 {
   "fill" : {
-    "automatic-gradient" : "display-p3:0.94568,0.95853,0.96484,1.00000"
+    "linear-gradient" : [
+      "display-p3:0.50132,0.80600,1.00000,1.00000",
+      "display-p3:0.17496,0.39424,0.96490,1.00000"
+    ],
+    "orientation" : {
+      "start" : {
+        "x" : 0.5,
+        "y" : 0
+      },
+      "stop" : {
+        "x" : 0.5,
+        "y" : 0.7
+      }
+    }
   },
   "groups" : [
     {
       "layers" : [
         {
           "glass" : true,
-          "hidden" : true,
+          "hidden" : false,
           "image-name" : "Image.png",
           "name" : "Image",
           "position" : {
@@ -20,7 +33,7 @@
         },
         {
           "glass" : true,
-          "hidden" : false,
+          "hidden" : true,
           "image-name" : "goofy.svg",
           "name" : "goofy",
           "position" : {
@@ -55,9 +68,8 @@
     }
   ],
   "supported-platforms" : {
-    "circles" : [
-      "watchOS"
-    ],
-    "squares" : "shared"
+    "squares" : [
+      "macOS"
+    ]
   }
 }
