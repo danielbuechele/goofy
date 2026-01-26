@@ -7,7 +7,9 @@
 
 import AppUpdater
 import Cocoa
+import Combine
 import UserNotifications
+internal import Version
 
 @main
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -15,7 +17,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     static let appUpdater = AppUpdater(
         owner: "danielbuechele", repo: "goofy", releasePrefix: "Goofy")
 
+    private var cancellables = Set<AnyCancellable>()
+
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // Observe update state changes to show install prompt
+        Self.appUpdater.$state
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                print("[AutoUpdater] State changed: \(state)")
+                if case .downloaded(let release, _, let bundle) = state {
+                    self?.showUpdateAlert(version: release.tagName.description, bundle: bundle)
+                }
+            }
+            .store(in: &cancellables)
+
         Self.appUpdater.check()
 
         // Request notification permissions early
@@ -42,6 +57,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
         return true
+    }
+
+    private func showUpdateAlert(version: String, bundle: Bundle) {
+        let alert = NSAlert()
+        alert.messageText = "Update Available"
+        alert.informativeText =
+            "A new version (\(version)) of Goofy is ready to install. The app will restart after updating."
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: "Install & Restart")
+        alert.addButton(withTitle: "Later")
+
+        let response = alert.runModal()
+        if response == .alertFirstButtonReturn {
+            Self.appUpdater.install(bundle)
+        }
     }
 
     @IBAction func checkForUpdates(_ sender: Any?) {

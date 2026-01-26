@@ -16,6 +16,31 @@ window.__GOOFY = {
     return false;
   },
 
+  // Extract text content from an element, replacing img elements with their alt text
+  getTextWithImageAlts: function (element) {
+    if (!element) return "";
+
+    let result = "";
+    for (const node of element.childNodes) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        result += node.textContent;
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        if (node.tagName === "IMG") {
+          let alt = node.alt || "";
+          if (alt === "(Y)") {
+            alt = "👍";
+          } else if (alt === "❤") {
+            alt = "❤️";
+          }
+          result += alt;
+        } else {
+          result += this.getTextWithImageAlts(node);
+        }
+      }
+    }
+    return result;
+  },
+
   observe: function (
     name,
     selector,
@@ -215,7 +240,9 @@ window.__GOOFY = {
       .map((a, index) => ({
         threadKey: a.getAttribute("href"),
         threadName: a.querySelectorAll("span.xyejjpt")[0]?.textContent,
-        snippet: a.querySelectorAll("span.xyejjpt")[1]?.textContent,
+        snippet: this.getTextWithImageAlts(
+          a.querySelectorAll("span.xyejjpt")[1],
+        ),
         isUnread: !!a.querySelector("span.x1spa7qu.x1iwo8zk"),
         isMuted: !!a.querySelector("svg.x14rh7hd"),
         position: index,
