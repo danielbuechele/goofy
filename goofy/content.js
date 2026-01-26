@@ -334,6 +334,17 @@ window.__GOOFY = {
     }
   },
 
+  newMessage: function () {
+    this.log("Triggering new message");
+    const link = document.querySelector('a[href="/new/"]');
+    if (link) {
+      link.click();
+    } else {
+      this.log("New message link not found, using hard navigation");
+      window.location.href = "/new/";
+    }
+  },
+
   injectCSS: function () {
     const style = document.createElement("style");
     style.textContent = "#left-sidebar-button-chats { margin-top: 20px; }";

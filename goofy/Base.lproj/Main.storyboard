@@ -54,6 +54,24 @@
                                     </items>
                                 </menu>
                             </menuItem>
+                            <menuItem title="File" id="file-menu-item">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="File" id="file-submenu">
+                                    <items>
+                                        <menuItem title="New Message" keyEquivalent="n" id="file-new-message">
+                                            <connections>
+                                                <action selector="newMessage:" target="Ady-hI-5gd" id="file-new-message-action"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="file-sep1"/>
+                                        <menuItem title="Close Window" keyEquivalent="w" id="file-close-window">
+                                            <connections>
+                                                <action selector="performClose:" target="Ady-hI-5gd" id="file-close-window-action"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
                             <menuItem title="Edit" id="edit-menu-item">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Edit" id="edit-submenu">
@@ -117,6 +135,10 @@
                                         </menuItem>
                                     </items>
                                 </menu>
+                            </menuItem>
+                            <menuItem title="Window" id="aUF-d1-5bR">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Window" systemMenu="window" autoenablesItems="YES" id="Td7-aD-5lo"/>
                             </menuItem>
                             <menuItem title="Help" id="wpr-3q-Mcd">
                                 <modifierMask key="keyEquivalentModifierMask"/>

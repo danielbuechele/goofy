@@ -17,6 +17,7 @@
   },
   "groups" : [
     {
+      "hidden" : false,
       "layers" : [
         {
           "glass" : true,
@@ -30,37 +31,13 @@
               0
             ]
           }
-        },
-        {
-          "glass" : true,
-          "hidden" : true,
-          "image-name" : "goofy.svg",
-          "name" : "goofy",
-          "position" : {
-            "scale" : 0.75,
-            "translation-in-points" : [
-              0,
-              0
-            ]
-          }
-        },
-        {
-          "hidden" : true,
-          "image-name" : "Facebook_Messenger_logo_2025.svg",
-          "name" : "Facebook_Messenger_logo_2025",
-          "position" : {
-            "scale" : 0.7,
-            "translation-in-points" : [
-              9.999999974752427e-07,
-              -1.535548449282942e-05
-            ]
-          }
         }
       ],
       "shadow" : {
         "kind" : "neutral",
         "opacity" : 0.5
       },
+      "specular" : true,
       "translucency" : {
         "enabled" : true,
         "value" : 0.5

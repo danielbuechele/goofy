@@ -59,6 +59,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 }
             },
             fail: { error in
+                // AUError.cancelled means the app is already up-to-date (not an actual error)
+                if case AUError.cancelled = error {
+                    DispatchQueue.main.async {
+                        let alert = NSAlert()
+                        alert.messageText = "No Update Available"
+                        alert.informativeText = "You're running the latest version of Goofy."
+                        alert.alertStyle = .informational
+                        alert.addButton(withTitle: "OK")
+                        alert.runModal()
+                    }
+                    return
+                }
                 DispatchQueue.main.async {
                     let alert = NSAlert()
                     alert.messageText = "Update Check Failed"

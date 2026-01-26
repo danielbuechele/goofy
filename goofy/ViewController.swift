@@ -201,6 +201,17 @@ class ViewController: NSViewController {
         loadMessenger()
     }
 
+    // MARK: - New Message Action (CMD+N)
+
+    @IBAction func newMessage(_ sender: Any?) {
+        let script = "window.__GOOFY.newMessage();"
+        webView.evaluateJavaScript(script) { _, error in
+            if let error = error {
+                print("Failed to trigger new message: \(error)")
+            }
+        }
+    }
+
     // MARK: - Log Out Action
 
     @IBAction func logOut(_ sender: Any?) {
