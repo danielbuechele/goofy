@@ -6,6 +6,7 @@
 //
 
 import Cocoa
+import Network
 import UserNotifications
 import WebKit
 
@@ -17,9 +18,11 @@ class ViewController: NSViewController {
     private var webViewTopConstraint: NSLayoutConstraint!
 
     // Periodic reload properties
-    private var lastReloadTime = Date()
     private let reloadInterval: TimeInterval = 4 * 60 * 60  // 4 hours
     private var reloadPending = false
+    private var reloadTimer: Timer?
+    private var networkMonitor: NWPathMonitor?
+    private var wasNetworkConnected = true
 
     // MARK: - Lifecycle
 
@@ -37,6 +40,8 @@ class ViewController: NSViewController {
     }
 
     deinit {
+        reloadTimer?.invalidate()
+        networkMonitor?.cancel()
         NotificationCenter.default.removeObserver(self)
         webView.configuration.userContentController.removeScriptMessageHandler(
             forName: messageHandlerName)
@@ -136,62 +141,86 @@ class ViewController: NSViewController {
         guard let url = URL(string: "https://www.messenger.com/") else { return }
         let request = URLRequest(url: url)
         webView.load(request)
-        lastReloadTime = Date()
     }
 
     // MARK: - Periodic Reload
 
     private func setupPeriodicReload() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(windowDidResignKey),
-            name: NSWindow.didResignKeyNotification,
-            object: view.window
-        )
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(windowDidBecomeKey),
-            name: NSWindow.didBecomeKeyNotification,
-            object: view.window
-        )
-
+        // Observer for when app goes to background - handles pending reloads
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(applicationDidResignActive),
             name: NSApplication.didResignActiveNotification,
             object: nil
         )
-    }
 
-    private func isReloadDue() -> Bool {
-        return Date().timeIntervalSince(lastReloadTime) >= reloadInterval
-    }
+        // Observer for system wake from sleep
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(systemDidWake),
+            name: NSWorkspace.didWakeNotification,
+            object: NSWorkspace.shared
+        )
 
-    private func performReloadIfNeeded() {
-        if reloadPending || isReloadDue() {
-            reloadPending = false
-            lastReloadTime = Date()
-            webView.reload()
-            print("Periodic reload performed")
+        // Timer that fires every 4 hours
+        reloadTimer = Timer.scheduledTimer(
+            withTimeInterval: reloadInterval,
+            repeats: true
+        ) { [weak self] _ in
+            self?.timerFired()
         }
+
+        // Network connectivity monitor
+        setupNetworkMonitor()
     }
 
-    @objc private func windowDidResignKey(_ notification: Notification) {
-        if isReloadDue() {
-            performReloadIfNeeded()
+    private func setupNetworkMonitor() {
+        networkMonitor = NWPathMonitor()
+        networkMonitor?.pathUpdateHandler = { [weak self] path in
+            DispatchQueue.main.async {
+                self?.handleNetworkChange(path)
+            }
         }
+        networkMonitor?.start(queue: DispatchQueue(label: "NetworkMonitor"))
     }
 
-    @objc private func windowDidBecomeKey(_ notification: Notification) {
-        if isReloadDue() {
+    private func timerFired() {
+        if NSApplication.shared.isActive {
+            // App is in foreground - defer reload
             reloadPending = true
+            print("Reload deferred - app is in foreground")
+        } else {
+            // App is in background - reload now
+            performReload()
         }
+    }
+
+    @objc private func systemDidWake(_ notification: Notification) {
+        print("System woke from sleep - reloading")
+        performReload()
+    }
+
+    private func handleNetworkChange(_ path: NWPath) {
+        let isConnected = path.status == .satisfied
+
+        // Reload when connection is restored after being disconnected
+        if !wasNetworkConnected && isConnected {
+            print("Network connection restored - reloading")
+            performReload()
+        }
+
+        wasNetworkConnected = isConnected
+    }
+
+    private func performReload() {
+        reloadPending = false
+        webView.reload()
+        print("Reload performed")
     }
 
     @objc private func applicationDidResignActive(_ notification: Notification) {
-        if isReloadDue() || reloadPending {
-            performReloadIfNeeded()
+        if reloadPending {
+            performReload()
         }
     }
 
