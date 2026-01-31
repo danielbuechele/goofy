@@ -18,7 +18,7 @@ class ViewController: NSViewController {
     private var webViewTopConstraint: NSLayoutConstraint!
 
     // Periodic reload properties
-    private let reloadInterval: TimeInterval = 4 * 60 * 60  // 4 hours
+    private let reloadInterval: TimeInterval = 3 * 60 * 60  // 3 hours
     private var reloadPending = false
     private var reloadTimer: Timer?
     private var networkMonitor: NWPathMonitor?

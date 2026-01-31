@@ -1,4 +1,11 @@
 window.__GOOFY = {
+  ALT_TEXT_TO_EMOJI: {
+    "(Y)": "👍",
+    "❤": "❤️",
+  },
+
+  IGNORED_SNIPPET_PREFIXES: ["You sent an attachment.", "You: "],
+
   observers: new Map(),
   logs: [],
   threadSnapshots: null,
@@ -26,13 +33,8 @@ window.__GOOFY = {
         result += node.textContent;
       } else if (node.nodeType === Node.ELEMENT_NODE) {
         if (node.tagName === "IMG") {
-          let alt = node.alt || "";
-          if (alt === "(Y)") {
-            alt = "👍";
-          } else if (alt === "❤") {
-            alt = "❤️";
-          }
-          result += alt;
+          const alt = node.alt || "";
+          result += this.ALT_TEXT_TO_EMOJI[alt] || alt;
         } else {
           result += this.getTextWithImageAlts(node);
         }
@@ -249,8 +251,10 @@ window.__GOOFY = {
       }))
       .filter((t) => Boolean(t.threadKey));
 
+    let firstRun = false;
     if (threads.length > 0 && this.threadSnapshots == null) {
       this.threadSnapshots = new Map();
+      firstRun = true;
     }
 
     threads.forEach((thread) => {
@@ -276,13 +280,22 @@ window.__GOOFY = {
         }
       } else {
         // (c) New unread thread inserted at top
-        if (thread.position === 0) {
+        if (thread.position === 0 && !firstRun) {
           shouldNotify = true;
           this.log(`New unread thread inserted at top: ${thread.threadName}`);
         }
       }
 
       if (shouldNotify) {
+        const hasIgnoredPrefix = this.IGNORED_SNIPPET_PREFIXES.some((prefix) =>
+          thread.snippet.startsWith(prefix),
+        );
+        if (hasIgnoredPrefix) {
+          this.log(
+            `Skipping notification for ${thread.threadName} due to ignored prefix`,
+          );
+          return;
+        }
         this.showNotification(
           thread.threadName,
           thread.snippet,

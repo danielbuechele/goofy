@@ -138,7 +138,7 @@
                             </menuItem>
                             <menuItem title="Window" id="aUF-d1-5bR">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Window" systemMenu="window" autoenablesItems="YES" id="Td7-aD-5lo"/>
+                                <menu key="submenu" title="Window" systemMenu="window" id="Td7-aD-5lo"/>
                             </menuItem>
                             <menuItem title="Help" id="wpr-3q-Mcd">
                                 <modifierMask key="keyEquivalentModifierMask"/>
