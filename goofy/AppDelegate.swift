@@ -12,7 +12,7 @@ import UserNotifications
 internal import Version
 
 @main
-class AppDelegate: NSObject, NSApplicationDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     static let appUpdater = AppUpdater(
         owner: "danielbuechele", repo: "goofy", releasePrefix: "Goofy")
@@ -20,6 +20,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var cancellables = Set<AnyCancellable>()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // Set window delegate to intercept close events
+        if let window = NSApplication.shared.windows.first {
+            window.delegate = self
+        }
+
         // Observe update state changes to show install prompt
         Self.appUpdater.$state
             .receive(on: DispatchQueue.main)
@@ -47,6 +52,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return false
     }
 
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
+        // Hide window instead of closing when close button or CMD+W is pressed
+        sender.orderOut(nil)
+        return false
+    }
+
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool)
         -> Bool
     {
@@ -71,6 +82,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let response = alert.runModal()
         if response == .alertFirstButtonReturn {
             Self.appUpdater.install(bundle)
+        }
+    }
+
+    @IBAction func openGitHub(_ sender: Any?) {
+        if let url = URL(string: "https://github.com/danielbuechele/goofy") {
+            NSWorkspace.shared.open(url)
         }
     }
 
