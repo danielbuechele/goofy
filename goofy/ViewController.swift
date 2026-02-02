@@ -5,6 +5,7 @@
 //  Created by Daniel Büchele on 02/01/2026.
 //
 
+import AVFoundation
 import Cocoa
 import Network
 import UserNotifications
@@ -473,6 +474,128 @@ extension ViewController: WKUIDelegate {
             NSWorkspace.shared.open(url)
         }
         return nil
+    }
+
+    // Handle camera/microphone permission requests
+    func webView(
+        _ webView: WKWebView,
+        requestMediaCapturePermissionFor origin: WKSecurityOrigin,
+        initiatedByFrame frame: WKFrameInfo,
+        type: WKMediaCaptureType,
+        decisionHandler: @escaping (WKPermissionDecision) -> Void
+    ) {
+        // Only allow for messenger.com
+        guard origin.host.contains("messenger.com") else {
+            decisionHandler(.deny)
+            return
+        }
+
+        // Determine which media types are being requested
+        let mediaTypes: [AVMediaType] = {
+            switch type {
+            case .camera:
+                return [.video]
+            case .microphone:
+                return [.audio]
+            case .cameraAndMicrophone:
+                return [.video, .audio]
+            @unknown default:
+                return []
+            }
+        }()
+
+        // Check and request permissions for all required media types
+        checkAndRequestPermissions(for: mediaTypes) { allGranted in
+            DispatchQueue.main.async {
+                if allGranted {
+                    decisionHandler(.grant)
+                } else {
+                    decisionHandler(.deny)
+                    self.showPermissionDeniedAlert(for: type)
+                }
+            }
+        }
+    }
+
+    private func checkAndRequestPermissions(
+        for mediaTypes: [AVMediaType],
+        completion: @escaping (Bool) -> Void
+    ) {
+        let group = DispatchGroup()
+        var allGranted = true
+
+        for mediaType in mediaTypes {
+            group.enter()
+
+            let status = AVCaptureDevice.authorizationStatus(for: mediaType)
+
+            switch status {
+            case .authorized:
+                group.leave()
+
+            case .notDetermined:
+                AVCaptureDevice.requestAccess(for: mediaType) { granted in
+                    if !granted {
+                        allGranted = false
+                    }
+                    group.leave()
+                }
+
+            case .denied, .restricted:
+                allGranted = false
+                group.leave()
+
+            @unknown default:
+                allGranted = false
+                group.leave()
+            }
+        }
+
+        group.notify(queue: .main) {
+            completion(allGranted)
+        }
+    }
+
+    private func showPermissionDeniedAlert(for type: WKMediaCaptureType) {
+        let alert = NSAlert()
+
+        let deviceName: String
+        switch type {
+        case .camera:
+            deviceName = "camera"
+        case .microphone:
+            deviceName = "microphone"
+        case .cameraAndMicrophone:
+            deviceName = "camera and microphone"
+        @unknown default:
+            deviceName = "media device"
+        }
+
+        alert.messageText = "\(deviceName.capitalized) Access Required"
+        alert.informativeText =
+            "Goofy needs \(deviceName) access for calls. Please enable it in System Settings > Privacy & Security > \(type == .microphone ? "Microphone" : "Camera")."
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "Open System Settings")
+        alert.addButton(withTitle: "Cancel")
+
+        if alert.runModal() == .alertFirstButtonReturn {
+            let urlString: String
+            switch type {
+            case .camera:
+                urlString = "x-apple.systempreferences:com.apple.preference.security?Privacy_Camera"
+            case .microphone:
+                urlString =
+                    "x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone"
+            case .cameraAndMicrophone:
+                urlString = "x-apple.systempreferences:com.apple.preference.security?Privacy_Camera"
+            @unknown default:
+                urlString = "x-apple.systempreferences:com.apple.preference.security"
+            }
+
+            if let url = URL(string: urlString) {
+                NSWorkspace.shared.open(url)
+            }
+        }
     }
 }
 
