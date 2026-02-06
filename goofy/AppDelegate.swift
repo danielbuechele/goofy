@@ -23,6 +23,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         // Set window delegate to intercept close events
         if let window = NSApplication.shared.windows.first {
             window.delegate = self
+            window.setFrameAutosaveName("MainWindow")
         }
 
         // Observe update state changes to show install prompt
@@ -64,6 +65,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         // Reopen window when dock icon clicked
         if !flag {
             for window in sender.windows {
+                if window.isMiniaturized {
+                    window.deminiaturize(self)
+                }
                 window.makeKeyAndOrderFront(self)
             }
         }

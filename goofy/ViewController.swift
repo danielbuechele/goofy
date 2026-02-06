@@ -24,6 +24,7 @@ class ViewController: NSViewController {
     private var reloadTimer: Timer?
     private var networkMonitor: NWPathMonitor?
     private var wasNetworkConnected = true
+    private var windowConfigured = false
 
     // MARK: - Lifecycle
 
@@ -36,8 +37,11 @@ class ViewController: NSViewController {
 
     override func viewDidAppear() {
         super.viewDidAppear()
-        configureWindow()
-        setupPeriodicReload()
+        if !windowConfigured {
+            configureWindow()
+            setupPeriodicReload()
+            windowConfigured = true
+        }
     }
 
     deinit {
@@ -121,9 +125,6 @@ class ViewController: NSViewController {
 
         // Set minimum window size
         window.minSize = NSSize(width: 400, height: 600)
-
-        // Persist and restore window frame automatically
-        window.setFrameAutosaveName("MainWindow")
 
         // On first launch, no saved frame exists — set default size
         if UserDefaults.standard.string(forKey: "NSWindow Frame MainWindow") == nil {
