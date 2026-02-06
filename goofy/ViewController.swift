@@ -136,12 +136,43 @@ class ViewController: NSViewController {
         window.styleMask.insert(.resizable)
 
         // Pull webview up behind titlebar
-        let titlebarHeight = window.frame.height - window.contentLayoutRect.height
-        webViewTopConstraint.constant = -titlebarHeight
+        updateTitlebarConstraint()
+
+        // Listen for fullscreen transitions to adjust titlebar constraint
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(windowDidEnterFullScreen),
+            name: NSWindow.didEnterFullScreenNotification,
+            object: window
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(windowDidExitFullScreen),
+            name: NSWindow.didExitFullScreenNotification,
+            object: window
+        )
 
         // Set background color for window and titlebar
         window.backgroundColor = NSColor(
             red: 245 / 255, green: 245 / 255, blue: 245 / 255, alpha: 1.0)
+    }
+
+    private func updateTitlebarConstraint() {
+        guard let window = view.window else { return }
+        if window.styleMask.contains(.fullScreen) {
+            webViewTopConstraint.constant = 0
+        } else {
+            let titlebarHeight = window.frame.height - window.contentLayoutRect.height
+            webViewTopConstraint.constant = -titlebarHeight
+        }
+    }
+
+    @objc private func windowDidEnterFullScreen(_ notification: Notification) {
+        updateTitlebarConstraint()
+    }
+
+    @objc private func windowDidExitFullScreen(_ notification: Notification) {
+        updateTitlebarConstraint()
     }
 
     private func loadMessenger() {
