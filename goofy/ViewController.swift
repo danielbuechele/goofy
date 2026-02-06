@@ -122,9 +122,14 @@ class ViewController: NSViewController {
         // Set minimum window size
         window.minSize = NSSize(width: 400, height: 600)
 
-        // Set initial size
-        window.setContentSize(NSSize(width: 1200, height: 800))
-        window.center()
+        // Persist and restore window frame automatically
+        window.setFrameAutosaveName("MainWindow")
+
+        // On first launch, no saved frame exists — set default size
+        if UserDefaults.standard.string(forKey: "NSWindow Frame MainWindow") == nil {
+            window.setContentSize(NSSize(width: 1200, height: 800))
+            window.center()
+        }
 
         // Make window resizable
         window.styleMask.insert(.resizable)
