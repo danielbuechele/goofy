@@ -241,11 +241,9 @@ window.__GOOFY = {
     )
       .map((a, index) => ({
         threadKey: a.getAttribute("href"),
-        threadName: a.querySelectorAll("span.xyejjpt")[0]?.textContent,
-        snippet: this.getTextWithImageAlts(
-          a.querySelectorAll("span.xyejjpt")[1],
-        ),
-        isUnread: !!a.querySelector("span.x1spa7qu.x1iwo8zk"),
+        threadName: a.querySelector("span.xlyipyv")?.textContent,
+        snippet: this.getTextWithImageAlts(a.querySelector("div.xi81zsa span")),
+        isUnread: !!a.querySelector('[role="button"] .x1spa7qu'),
         isMuted: !!a.querySelector("svg.x14rh7hd"),
         position: index,
       }))
@@ -341,8 +339,8 @@ window.__GOOFY = {
   },
 
   isInboxActive: function () {
-    const inboxCell = document.querySelector("#left-sidebar-button-chats");
-    return inboxCell?.getAttribute("aria-current") === "page";
+    const allTab = document.querySelector('[role="tablist"] [role="tab"]');
+    return allTab?.getAttribute("aria-selected") === "true";
   },
 
   handleInboxChange: function () {
@@ -385,22 +383,14 @@ window.__GOOFY = {
     }
   },
 
-  injectCSS: function () {
-    const style = document.createElement("style");
-    style.textContent = "#left-sidebar-button-chats { margin-top: 20px; }";
-    document.head.appendChild(style);
-  },
-
   init: function () {
     // In WKWebView mode, always initialize (no PWA check needed)
     this.log("Initializing Goofy");
 
-    this.injectCSS();
-
     const setup = () => {
       this.observe(
         "inbox",
-        "#left-sidebar-button-chats",
+        "#mw-inbox-settings-menu",
         this.updateBadgeCount,
         true,
       );

@@ -1,0 +1,17 @@
+.__fb-light-mode,
+.__fb-dark-mode {
+    --header-height: 0px !important;
+}
+
+[role="banner"] {
+    display: none !important;
+}
+
+/* Hide glimmer if html-h1 */
+.x1cvmir6 [data-visualcompletion="loading-state"] {
+    display: none !important;
+}
+
+h1.html-h1 {
+    display: none !important;
+}

@@ -13,10 +13,9 @@ import WebKit
 
 class ViewController: NSViewController {
 
-    private var webView: WKWebView!
+    private var webView: GoofyWebView!
     private let messageHandlerName = "goofy"
     private var isInboxObserverActive = false
-    private var webViewTopConstraint: NSLayoutConstraint!
 
     // Periodic reload properties
     private let reloadInterval: TimeInterval = 3 * 60 * 60  // 3 hours
@@ -74,6 +73,29 @@ class ViewController: NSViewController {
         // Add message handler for JS -> Swift communication
         userContentController.add(self, name: messageHandlerName)
 
+        // Inject style.css at document start (before page renders)
+        if let cssURL = Bundle.main.url(forResource: "style", withExtension: "css"),
+            let cssContent = try? String(contentsOf: cssURL, encoding: .utf8)
+        {
+            let escapedCSS = cssContent
+                .replacingOccurrences(of: "\\", with: "\\\\")
+                .replacingOccurrences(of: "`", with: "\\`")
+                .replacingOccurrences(of: "$", with: "\\$")
+            let cssScript = WKUserScript(
+                source: """
+                    (function() {
+                        const style = document.createElement('style');
+                        style.textContent = `\(escapedCSS)`;
+                        (document.head || document.documentElement).appendChild(style);
+                    })();
+                    """,
+                injectionTime: .atDocumentStart,
+                forMainFrameOnly: true,
+                in: .page
+            )
+            userContentController.addUserScript(cssScript)
+        }
+
         // Inject content.js at document end
         if let scriptURL = Bundle.main.url(forResource: "content", withExtension: "js"),
             let scriptContent = try? String(contentsOf: scriptURL, encoding: .utf8)
@@ -82,7 +104,7 @@ class ViewController: NSViewController {
                 source: scriptContent,
                 injectionTime: .atDocumentEnd,
                 forMainFrameOnly: true,
-                in: .page  // Inject into page world (MAIN), not content world
+                in: .page
             )
             userContentController.addUserScript(userScript)
         }
@@ -90,7 +112,7 @@ class ViewController: NSViewController {
         configuration.userContentController = userContentController
 
         // Create WebView
-        webView = WKWebView(frame: view.bounds, configuration: configuration)
+        webView = GoofyWebView(frame: view.bounds, configuration: configuration)
         webView.translatesAutoresizingMaskIntoConstraints = false
         webView.navigationDelegate = self
         webView.uiDelegate = self
@@ -109,11 +131,9 @@ class ViewController: NSViewController {
             "Mozilla/5.0 (Macintosh; Intel Mac OS X \(osVersionString)) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15"
 
         view.addSubview(webView)
-        view.clipsToBounds = false
 
-        webViewTopConstraint = webView.topAnchor.constraint(equalTo: view.topAnchor)
         NSLayoutConstraint.activate([
-            webViewTopConstraint,
+            webView.topAnchor.constraint(equalTo: view.topAnchor),
             webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             webView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -135,48 +155,24 @@ class ViewController: NSViewController {
         // Make window resizable
         window.styleMask.insert(.resizable)
 
-        // Pull webview up behind titlebar
-        updateTitlebarConstraint()
+        // Full-size content view with transparent titlebar for inset traffic lights
+        window.styleMask.insert(.fullSizeContentView)
+        window.titlebarAppearsTransparent = true
+        window.titleVisibility = .hidden
 
-        // Listen for fullscreen transitions to adjust titlebar constraint
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(windowDidEnterFullScreen),
-            name: NSWindow.didEnterFullScreenNotification,
-            object: window
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(windowDidExitFullScreen),
-            name: NSWindow.didExitFullScreenNotification,
-            object: window
-        )
+        // Add toolbar for inset traffic light style and window corner radius
+        let toolbar = NSToolbar(identifier: "MainToolbar")
+        toolbar.showsBaselineSeparator = false
+        window.toolbar = toolbar
+        window.toolbarStyle = .unified
 
         // Set background color for window and titlebar
         window.backgroundColor = NSColor(
             red: 245 / 255, green: 245 / 255, blue: 245 / 255, alpha: 1.0)
     }
 
-    private func updateTitlebarConstraint() {
-        guard let window = view.window else { return }
-        if window.styleMask.contains(.fullScreen) {
-            webViewTopConstraint.constant = 0
-        } else {
-            let titlebarHeight = window.frame.height - window.contentLayoutRect.height
-            webViewTopConstraint.constant = -titlebarHeight
-        }
-    }
-
-    @objc private func windowDidEnterFullScreen(_ notification: Notification) {
-        updateTitlebarConstraint()
-    }
-
-    @objc private func windowDidExitFullScreen(_ notification: Notification) {
-        updateTitlebarConstraint()
-    }
-
     private func loadMessenger() {
-        guard let url = URL(string: "https://www.messenger.com/") else { return }
+        guard let url = URL(string: "https://www.facebook.com/messages/") else { return }
         let request = URLRequest(url: url)
         webView.load(request)
     }
@@ -432,6 +428,26 @@ extension ViewController: NSMenuItemValidation {
 // MARK: - WKNavigationDelegate
 
 extension ViewController: WKNavigationDelegate {
+
+    /// Check if a URL should be kept in-app (facebook.com/messages paths and auth-related pages)
+    private func isAllowedURL(_ url: URL) -> Bool {
+        guard let host = url.host else { return false }
+
+        // Allow messenger.com (redirects may still use it)
+        if host.contains("messenger.com") {
+            return true
+        }
+
+        // For facebook.com, only allow /messages paths and login/auth flows
+        if host.contains("facebook.com") {
+            let path = url.path.lowercased()
+            let allowedPrefixes = ["/messages", "/login", "/checkpoint", "/two_step_verification", "/recover", "/cookie/consent"]
+            return allowedPrefixes.contains(where: { path.hasPrefix($0) }) || path == "/" || path.isEmpty
+        }
+
+        return false
+    }
+
     func webView(
         _ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
@@ -441,20 +457,23 @@ extension ViewController: WKNavigationDelegate {
             return
         }
 
-        // Allow messenger.com and facebook.com URLs (for login)
-        if let host = url.host, host.contains("messenger.com") || host.contains("facebook.com") {
+        // Allow in-app URLs (facebook.com/messages, auth pages, messenger.com)
+        if isAllowedURL(url) {
             decisionHandler(.allow)
             return
         }
 
-        // For external URLs opened via link click, open in default browser
-        if navigationAction.navigationType == .linkActivated {
+        // Everything else: open externally if it's a user click or a facebook.com
+        // page outside /messages. Allow programmatic redirects from unknown domains.
+        let shouldOpenExternally =
+            navigationAction.navigationType == .linkActivated
+            || (url.host?.contains("facebook.com") == true)
+        if shouldOpenExternally {
             NSWorkspace.shared.open(url)
             decisionHandler(.cancel)
             return
         }
 
-        // Allow other navigations (redirects, etc.)
         decisionHandler(.allow)
     }
 
@@ -521,8 +540,8 @@ extension ViewController: WKUIDelegate {
         type: WKMediaCaptureType,
         decisionHandler: @escaping (WKPermissionDecision) -> Void
     ) {
-        // Only allow for messenger.com
-        guard origin.host.contains("messenger.com") else {
+        // Only allow for messenger.com and facebook.com
+        guard origin.host.contains("messenger.com") || origin.host.contains("facebook.com") else {
             decisionHandler(.deny)
             return
         }
@@ -659,5 +678,26 @@ extension ViewController: UNUserNotificationCenterDelegate {
             navigateToThread(threadKey: threadKey)
         }
         completionHandler()
+    }
+}
+
+// MARK: - Custom WebView
+
+/// WKWebView subclass that passes through mouse events in the titlebar drag area
+/// so the window can be dragged. The drag area is taller on the left side (55px for
+/// the first 200px) when the window is wide enough (664px+), to cover the inset
+/// traffic light buttons. Otherwise it's a uniform 18px strip.
+class GoofyWebView: WKWebView {
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        let dragHeight: CGFloat
+        if bounds.width >= 664 && point.x <= 200 {
+            dragHeight = 55
+        } else {
+            dragHeight = 18
+        }
+        if point.y > bounds.height - dragHeight {
+            return nil
+        }
+        return super.hitTest(point)
     }
 }
