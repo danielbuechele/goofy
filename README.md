@@ -1,6 +1,6 @@
-# Goofy, a desktop app for Facebook Messenger
+# GoofyMess, a fully lightweight desktop app for Facebook Messenger
 
-At its core, Goofy is a simple app that shows a web view of messenger.com, but adding additional functionality you would expect from a native desktop app.
+At its core, GoofyMess is a simple app that shows a web view of messenger.com (facebook.com/messages), but adding additional functionality you would expect from a native desktop app.
 
 ## Features
 
@@ -12,22 +12,21 @@ See your unread message count displayed on the Messenger app icon in your Dock, 
 
 ## Installation
 
-Just download the latest version from the [releases page](https://github.com/danielbuechele/goofy/releases/latest), unzip it and move it to your Applications folder.
+Just download the latest version from the [releases page](https://github.com/retronprod/goofy-messenger/releases/latest), unzip it and move it to your Applications folder.
 
 ## Questions
 
 ### How do I report bugs?
-Please use the [Issues section](https://github.com/danielbuechele/goofy/issues) on the GitHub repository to report any bugs or request features.
+Please use the [Issues section](https://github.com/retronprod/goofy-messenger/issues) on the GitHub repository to report any bugs or request features.
 
 ### Is Goofy an Electron app?
 No, Goofy is built using macOS's native WebView component via Swift and SwiftUI. This results in a much smaller app size and lower memory usage compared to Electron-based apps.
 
-### Can Goofy access my Facebook data?
+### Can GoofyMess access my Facebook data?
 Goofy works by injecting a small JavaScript snippet into messenger.com to enable notifications and badge counting. The source code is open and available for review on GitHub, so you can verify that no data is being collected or transmitted elsewhere.
 
-### I don't like the icon. Can I change it?
-Yes! [macosicons.com](https://macosicons.com/#/messenger) has a great selection of alternative Messenger icons. You can replace the app icon by right-clicking on the Goofy app in Finder, selecting "Get Info", and dragging your preferred icon image onto the existing icon in the top-left.
+## Acknowledgements
 
-## Follow for Updates
+This project is based on / forked from [@danielbuechele]
 
-Follow [Daniel Büchele on Threads](https://www.threads.com/@danielbuechele) for updates and announcements about Goofy.
+(https://github.com/danielbuechele/goofy/) - big thanks for the original work!
