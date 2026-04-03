@@ -26,6 +26,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             window.setFrameAutosaveName("MainWindow")
         }
 
+
         // Observe update state changes to show install prompt
         Self.appUpdater.$state
             .receive(on: DispatchQueue.main)
@@ -67,7 +68,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     func windowDidExitFullScreen(_ notification: Notification) {
         guard let window = notification.object as? NSWindow else { return }
         let toolbar = NSToolbar(identifier: "MainToolbar")
-        toolbar.showsBaselineSeparator = false
         window.toolbar = toolbar
         window.toolbarStyle = .unified
     }

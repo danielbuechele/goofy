@@ -15,7 +15,6 @@ class ViewController: NSViewController {
 
     private var webView: GoofyWebView!
     private let messageHandlerName = "goofy"
-    private var isInboxObserverActive = false
 
     // Periodic reload properties
     private let reloadInterval: TimeInterval = 3 * 60 * 60  // 3 hours
@@ -24,6 +23,8 @@ class ViewController: NSViewController {
     private var networkMonitor: NWPathMonitor?
     private var wasNetworkConnected = true
     private var windowConfigured = false
+    private var isAuthenticated = false
+    private var safariLoginController: SafariLoginController?
 
     // MARK: - Lifecycle
 
@@ -48,30 +49,19 @@ class ViewController: NSViewController {
         networkMonitor?.cancel()
         NotificationCenter.default.removeObserver(self)
         webView.configuration.userContentController.removeScriptMessageHandler(
-            forName: messageHandlerName)
+            forName: messageHandlerName, contentWorld: .defaultClient)
     }
 
     // MARK: - WebView Setup
 
     private func setupWebView() {
         let configuration = WKWebViewConfiguration()
-
-        // Configure preferences
-        let preferences = WKWebpagePreferences()
-        preferences.allowsContentJavaScript = true
-        configuration.defaultWebpagePreferences = preferences
-
-        // Enable developer extras for debugging
         configuration.preferences.setValue(true, forKey: "developerExtrasEnabled")
 
-        // Configure data store for persistent cookies
-        configuration.websiteDataStore = WKWebsiteDataStore.default()
-
-        // Set up user content controller for script injection
         let userContentController = WKUserContentController()
 
-        // Add message handler for JS -> Swift communication
-        userContentController.add(self, name: messageHandlerName)
+        // Use .defaultClient world to isolate our code from the page's JS
+        userContentController.add(self, contentWorld: .defaultClient, name: messageHandlerName)
 
         // Inject style.css at document start (before page renders)
         if let cssURL = Bundle.main.url(forResource: "style", withExtension: "css"),
@@ -104,7 +94,7 @@ class ViewController: NSViewController {
                 source: scriptContent,
                 injectionTime: .atDocumentEnd,
                 forMainFrameOnly: true,
-                in: .page
+                in: .defaultClient
             )
             userContentController.addUserScript(userScript)
         }
@@ -117,11 +107,7 @@ class ViewController: NSViewController {
         webView.navigationDelegate = self
         webView.uiDelegate = self
 
-        // Allow back/forward navigation gestures
         webView.allowsBackForwardNavigationGestures = true
-
-        // Make webview transparent while loading
-        webView.setValue(false, forKey: "drawsBackground")
 
         // Set custom user agent to appear as Safari
         let osVersion = ProcessInfo.processInfo.operatingSystemVersion
@@ -162,7 +148,6 @@ class ViewController: NSViewController {
 
         // Add toolbar for inset traffic light style and window corner radius
         let toolbar = NSToolbar(identifier: "MainToolbar")
-        toolbar.showsBaselineSeparator = false
         window.toolbar = toolbar
         window.toolbarStyle = .unified
 
@@ -258,6 +243,16 @@ class ViewController: NSViewController {
         }
     }
 
+    // MARK: - Window Actions (forwarded to window)
+
+    @IBAction func performMiniaturize(_ sender: Any?) {
+        view.window?.performMiniaturize(sender)
+    }
+
+    @IBAction func performZoom(_ sender: Any?) {
+        view.window?.performZoom(sender)
+    }
+
     // MARK: - Reload Action (CMD+R)
 
     @IBAction func reloadPage(_ sender: Any?) {
@@ -268,16 +263,41 @@ class ViewController: NSViewController {
 
     @IBAction func newMessage(_ sender: Any?) {
         let script = "window.__GOOFY.newMessage();"
-        webView.evaluateJavaScript(script) { _, error in
-            if let error = error {
+        webView.evaluateJavaScript(script, in: nil, in: .defaultClient) { result in
+            if case .failure(let error) = result {
                 print("Failed to trigger new message: \(error)")
             }
+        }
+    }
+
+    // MARK: - Search Action (CMD+F)
+
+    @IBAction func focusSearch(_ sender: Any?) {
+        let script = "window.__GOOFY.focusSearch();"
+        webView.evaluateJavaScript(script, in: nil, in: .defaultClient) { result in
+            if case .failure(let error) = result {
+                print("Failed to focus search: \(error)")
+            }
+        }
+    }
+
+    // MARK: - Login with Safari Action
+
+    @IBAction func loginWithSafari(_ sender: Any?) {
+        view.window?.orderOut(nil)
+        let controller = SafariLoginController()
+        safariLoginController = controller
+        controller.startLogin { [weak self] in
+            self?.safariLoginController = nil
+            self?.loadMessenger()
+            self?.view.window?.makeKeyAndOrderFront(nil)
         }
     }
 
     // MARK: - Log Out Action
 
     @IBAction func logOut(_ sender: Any?) {
+        isAuthenticated = false
         let dataStore = WKWebsiteDataStore.default()
         let dataTypes = WKWebsiteDataStore.allWebsiteDataTypes()
 
@@ -341,20 +361,13 @@ class ViewController: NSViewController {
         }
     }
 
-    // MARK: - Open External URL
-
-    private func openExternalURL(_ urlString: String) {
-        guard let url = URL(string: urlString) else { return }
-        NSWorkspace.shared.open(url)
-    }
-
     // MARK: - Navigate to Thread
 
     func navigateToThread(threadKey: String) {
         let escapedKey = threadKey.replacingOccurrences(of: "\"", with: "\\\"")
         let script = "window.__GOOFY.navigateToThread(\"\(escapedKey)\");"
-        webView.evaluateJavaScript(script) { _, error in
-            if let error = error {
+        webView.evaluateJavaScript(script, in: nil, in: .defaultClient) { result in
+            if case .failure(let error) = result {
                 print("Failed to navigate to thread: \(error)")
             }
         }
@@ -392,61 +405,20 @@ extension ViewController: WKScriptMessageHandler {
                 showNotification(title: title, body: notificationBody, threadKey: threadKey)
             }
 
-        case "openURL":
-            if let url = body["url"] as? String {
-                openExternalURL(url)
-            }
-
         case "log":
             if let logMessage = body["message"] as? String {
                 print("[Goofy JS] \(logMessage)")
             }
 
-        case "inboxObserverState":
-            if let active = body["active"] as? Bool {
-                isInboxObserverActive = active
-                print("Inbox observer state: \(active)")
-            }
-
         default:
-            print("Unknown message type: \(type)")
+            break
         }
-    }
-}
-
-// MARK: - Menu Validation
-
-extension ViewController: NSMenuItemValidation {
-    func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
-        if menuItem.action == #selector(logOut(_:)) {
-            return isInboxObserverActive
-        }
-        return true
     }
 }
 
 // MARK: - WKNavigationDelegate
 
 extension ViewController: WKNavigationDelegate {
-
-    /// Check if a URL should be kept in-app (facebook.com/messages paths and auth-related pages)
-    private func isAllowedURL(_ url: URL) -> Bool {
-        guard let host = url.host else { return false }
-
-        // Allow messenger.com (redirects may still use it)
-        if host.contains("messenger.com") {
-            return true
-        }
-
-        // For facebook.com, only allow /messages paths and login/auth flows
-        if host.contains("facebook.com") {
-            let path = url.path.lowercased()
-            let allowedPrefixes = ["/messages", "/login", "/checkpoint", "/two_step_verification", "/recover", "/cookie/consent"]
-            return allowedPrefixes.contains(where: { path.hasPrefix($0) }) || path == "/" || path.isEmpty
-        }
-
-        return false
-    }
 
     func webView(
         _ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
@@ -457,28 +429,52 @@ extension ViewController: WKNavigationDelegate {
             return
         }
 
-        // Allow in-app URLs (facebook.com/messages, auth pages, messenger.com)
-        if isAllowedURL(url) {
+        // Handle blob URLs as downloads
+        if url.scheme == "blob" {
+            decisionHandler(.download)
+            return
+        }
+
+        // Allow facebook.com/messages and Facebook internal domains in the main webview
+        let host = url.host ?? ""
+        if host.contains("facebook.com") && url.path.hasPrefix("/messages") ||
+           host.contains("fbsbx.com") || host.contains("fbcdn.net") {
             decisionHandler(.allow)
             return
         }
 
-        // Everything else: open externally if it's a user click or a facebook.com
-        // page outside /messages. Allow programmatic redirects from unknown domains.
-        let shouldOpenExternally =
-            navigationAction.navigationType == .linkActivated
-            || (url.host?.contains("facebook.com") == true)
-        if shouldOpenExternally {
-            NSWorkspace.shared.open(url)
+        // Before login, silently cancel all other navigations (login redirects)
+        if !isAuthenticated {
             decisionHandler(.cancel)
             return
         }
 
-        decisionHandler(.allow)
+        // After login, open non-messages URLs externally
+        if let scheme = url.scheme, ["http", "https"].contains(scheme) {
+            NSWorkspace.shared.open(url)
+        }
+        decisionHandler(.cancel)
     }
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        print("Page finished loading: \(webView.url?.absoluteString ?? "unknown")")
+        guard let url = webView.url else { return }
+        print("Page finished loading: \(url.absoluteString)")
+
+        guard url.host?.contains("facebook.com") == true,
+              safariLoginController == nil else { return }
+
+        // Check if the user is authenticated; if not, open Safari login
+        WKWebsiteDataStore.default().httpCookieStore.getAllCookies { [weak self] cookies in
+            let authenticated = cookies.contains { $0.domain.contains("facebook.com") && $0.name == "c_user" }
+            DispatchQueue.main.async {
+                if authenticated {
+                    self?.isAuthenticated = true
+                } else {
+                    print("[Goofy] Not authenticated, opening Safari login window")
+                    self?.loginWithSafari(nil)
+                }
+            }
+        }
     }
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
@@ -525,11 +521,23 @@ extension ViewController: WKUIDelegate {
         _ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration,
         for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures
     ) -> WKWebView? {
-        // Open in default browser instead of creating new window
         if let url = navigationAction.request.url {
-            NSWorkspace.shared.open(url)
+            if url.scheme == "blob" {
+                // Load in current webview so decidePolicyFor can handle it as .download
+                webView.load(navigationAction.request)
+            } else {
+                NSWorkspace.shared.open(url)
+            }
         }
         return nil
+    }
+
+    func webView(_ webView: WKWebView, navigationAction: WKNavigationAction, didBecome download: WKDownload) {
+        download.delegate = self
+    }
+
+    func webView(_ webView: WKWebView, navigationResponse: WKNavigationResponse, didBecome download: WKDownload) {
+        download.delegate = self
     }
 
     // Handle camera/microphone permission requests
@@ -651,6 +659,22 @@ extension ViewController: WKUIDelegate {
             if let url = URL(string: urlString) {
                 NSWorkspace.shared.open(url)
             }
+        }
+    }
+}
+
+// MARK: - WKDownloadDelegate
+
+extension ViewController: WKDownloadDelegate {
+    func download(_ download: WKDownload, decideDestinationUsing response: URLResponse,
+                  suggestedFilename: String, completionHandler: @escaping (URL?) -> Void) {
+        let panel = NSSavePanel()
+        panel.nameFieldStringValue = suggestedFilename
+        panel.canCreateDirectories = true
+        if panel.runModal() == .OK {
+            completionHandler(panel.url)
+        } else {
+            completionHandler(nil)
         }
     }
 }

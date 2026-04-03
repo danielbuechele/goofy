@@ -6,11 +6,8 @@ window.__GOOFY = {
 
   IGNORED_SNIPPET_PREFIXES: ["You sent an attachment.", "You: "],
 
-  observers: new Map(),
-  logs: [],
   threadSnapshots: null,
 
-  // Native bridge helper for WKWebView communication
   postToNative: function (message) {
     if (
       window.webkit &&
@@ -18,12 +15,9 @@ window.__GOOFY = {
       window.webkit.messageHandlers.goofy
     ) {
       window.webkit.messageHandlers.goofy.postMessage(message);
-      return true;
     }
-    return false;
   },
 
-  // Extract text content from an element, replacing img elements with their alt text
   getTextWithImageAlts: function (element) {
     if (!element) return "";
 
@@ -32,6 +26,8 @@ window.__GOOFY = {
       if (node.nodeType === Node.TEXT_NODE) {
         result += node.textContent;
       } else if (node.nodeType === Node.ELEMENT_NODE) {
+        // Skip screen-reader-only elements (e.g. "Ungelesene Nachricht:")
+        if (node.classList.contains("x1i1rx1s")) continue;
         if (node.tagName === "IMG") {
           const alt = node.alt || "";
           result += this.ALT_TEXT_TO_EMOJI[alt] || alt;
@@ -43,208 +39,88 @@ window.__GOOFY = {
     return result;
   },
 
-  observe: function (
-    name,
-    selector,
-    callback,
-    runInitially = true,
-    retryInterval = 3000,
-  ) {
-    this.log(`Setting up observer: ${name}`);
+  log: function (message) {
+    const timestamp = new Date().toISOString();
+    const logEntry = `[${timestamp}] ${message}`;
+    console.log(`[Goofy] ${logEntry}`);
+    this.postToNative({ type: "log", message: logEntry });
+  },
 
-    const config = {
-      name,
-      selector,
-      callback,
-      runInitially,
-      retryInterval,
+  // --- Reusable observer that re-attaches when the element is removed ---
+
+  observe: function (selector, callback, options = {}) {
+    const {
+      subtree = true,
+      childList = true,
+      characterData = false,
+      retryInterval = 3000,
+      onSetup = null,
+      onRemove = null,
+    } = options;
+
+    let contentObserver = null;
+    let removalObserver = null;
+
+    const setup = () => {
+      const element = document.querySelector(selector);
+      if (!element) {
+        this.log(`observe(${selector}): not found, retrying`);
+        setTimeout(setup, retryInterval);
+        return;
+      }
+
+      this.log(`observe(${selector}): attached`);
+      if (onSetup) onSetup(element);
+
+      contentObserver?.disconnect();
+      contentObserver = new MutationObserver(() => callback(element));
+      contentObserver.observe(element, { subtree, childList, characterData });
+
+      removalObserver?.disconnect();
+      removalObserver = new MutationObserver(() => {
+        if (!document.contains(element)) {
+          this.log(`observe(${selector}): removed, re-attaching`);
+          contentObserver?.disconnect();
+          removalObserver?.disconnect();
+          if (onRemove) onRemove();
+          setup();
+        }
+      });
+      removalObserver.observe(document.body, {
+        childList: true,
+        subtree: true,
+      });
     };
 
-    const trySetup = () => {
-      this.log(`Attempting to setup observer: ${name}`);
-
-      this.cleanupObserver(name, true);
-
-      let element = null;
-      if (typeof selector === "function") {
-        element = selector();
-      } else if (typeof selector === "string") {
-        element = document.querySelector(selector);
-      } else if (selector instanceof Element) {
-        element = selector;
-      }
-
-      if (element) {
-        this.log(`Observer ${name}: Element found, setting up`);
-
-        if (runInitially && callback) {
-          callback.call(this);
-        }
-
-        const observer = new MutationObserver(() => {
-          this.log(`Observer ${name}: Mutation detected`);
-          if (callback) {
-            callback.call(this);
-          }
-        });
-
-        observer.observe(element, {
-          attributes: true,
-          childList: true,
-          subtree: true,
-          characterData: true,
-        });
-
-        // Only set up removal observer for elements inside body
-        let removalObserver = null;
-        if (document.body && document.body.contains(element)) {
-          removalObserver = new MutationObserver((mutations) => {
-            if (!document.contains(element)) {
-              this.log(
-                `Observer ${name}: Element was removed from DOM, will re-setup`,
-              );
-
-              this.cleanupObserver(name, true);
-
-              this.observe(
-                config.name,
-                config.selector,
-                config.callback,
-                config.runInitially,
-                config.retryInterval,
-              );
-            }
-          });
-
-          removalObserver.observe(document.body, {
-            childList: true,
-            subtree: true,
-          });
-        }
-
-        this.observers.set(name, {
-          observer,
-          removalObserver,
-          element,
-          config,
-          retryTimer: null,
-        });
-
-        this.log(`Observer ${name}: Successfully set up`);
-
-        // Notify native app when inbox observer is set up
-        if (name === "inbox") {
-          this.postToNative({ type: "inboxObserverState", active: true });
-        }
-
-        return true;
-      } else {
-        this.log(
-          `Observer ${name}: Element not found, will retry in ${retryInterval}ms`,
-        );
-
-        const retryTimer = setTimeout(() => trySetup(), retryInterval);
-
-        this.observers.set(name, {
-          observer: null,
-          removalObserver: null,
-          element: null,
-          config,
-          retryTimer,
-        });
-
-        return false;
-      }
-    };
-
-    trySetup();
+    setup();
   },
 
-  cleanupObserver: function (name, keepConfig = false) {
-    const observerData = this.observers.get(name);
-    if (observerData) {
-      if (observerData.observer) {
-        observerData.observer.disconnect();
-        this.log(`Observer ${name}: Cleaned up`);
-
-        // Notify native app when inbox observer is stopped
-        if (name === "inbox") {
-          this.postToNative({ type: "inboxObserverState", active: false });
-        }
-      }
-
-      if (observerData.removalObserver) {
-        observerData.removalObserver.disconnect();
-        this.log(`Observer ${name}: Removal watcher cleaned up`);
-      }
-
-      if (observerData.retryTimer) {
-        clearTimeout(observerData.retryTimer);
-        this.log(`Observer ${name}: Retry timer cleared`);
-      }
-
-      if (!keepConfig) {
-        this.observers.delete(name);
-      } else {
-        this.observers.set(name, {
-          observer: null,
-          removalObserver: null,
-          element: null,
-          config: observerData.config,
-          retryTimer: null,
-        });
-      }
-    }
-  },
-
-  getObserverStatus: function () {
-    const status = {};
-    for (const [name, data] of this.observers.entries()) {
-      status[name] = {
-        active: data.observer !== null,
-        retrying: data.retryTimer !== null,
-        hasRemovalWatcher: data.removalObserver !== null,
-      };
-    }
-    return status;
-  },
+  // --- Badge count ---
 
   updateBadgeCount: function () {
-    const inboxCell = document.querySelector("#left-sidebar-button-chats");
-    let count = 0;
-    if (inboxCell) {
-      const ariaLabel = inboxCell.getAttribute("aria-label");
-      if (ariaLabel) {
-        const numbersOnly = ariaLabel.replace(/\D/g, "");
-        count = numbersOnly ? parseInt(numbersOnly, 10) : 0;
-      }
-    } else {
-      this.log("Inbox cell not found while updating badge");
-    }
+    const firstTab = document.querySelector('[role="tablist"] [role="tab"]');
+    if (firstTab?.getAttribute("aria-selected") !== "true") return;
 
-    // Use native bridge for badge updates
-    if (!this.postToNative({ type: "badge", count: count })) {
-      // Fallback to Web API if native bridge not available
-      if (navigator.setAppBadge) {
-        navigator.setAppBadge(count);
-      }
-    }
-    this.log(`Badge count updated to ${count}`);
-
-    // Also check if inbox active state changed (aria-current attribute)
-    this.handleInboxChange();
+    const unreadDots = document.querySelectorAll(
+      '[role="navigation"] [role="row"] [role="button"] .x1spa7qu',
+    );
+    this.postToNative({ type: "badge", count: unreadDots.length });
+    this.log(`Badge count: ${unreadDots.length}`);
   },
 
+  // --- New message detection ---
+
   checkForNewMessages: function () {
-    threads = Array.from(
+    const threads = Array.from(
       document.querySelectorAll('[role="navigation"] [role="row"] a'),
     )
       .map((a, index) => ({
         threadKey: a.getAttribute("href"),
         threadName: a.querySelector("span.xlyipyv")?.textContent,
-        snippet: this.getTextWithImageAlts(a.querySelector("div.xi81zsa span")),
+        snippet: this.getTextWithImageAlts(
+          a.querySelector("div.xi81zsa span"),
+        ),
         isUnread: !!a.querySelector('[role="button"] .x1spa7qu'),
-        isMuted: !!a.querySelector("svg.x14rh7hd"),
         position: index,
       }))
       .filter((t) => Boolean(t.threadKey));
@@ -259,148 +135,80 @@ window.__GOOFY = {
       const prev = this.threadSnapshots.get(thread.threadKey);
       this.threadSnapshots.set(thread.threadKey, thread);
 
-      if (thread.isMuted || !thread.isUnread) {
-        return;
-      }
+      if (!thread.isUnread) return;
 
       let shouldNotify = false;
 
       if (prev) {
-        // (a) Was read, now unread
         if (!prev.isUnread) {
           shouldNotify = true;
-          this.log(`Thread ${thread.threadName} changed from read to unread`);
-        }
-        // (b) Snippet changed on unread thread
-        else if (thread.snippet !== prev.snippet) {
+        } else if (thread.snippet !== prev.snippet) {
           shouldNotify = true;
-          this.log(`Snippet changed for unread thread ${thread.threadName}`);
         }
       } else {
-        // (c) New unread thread inserted at top
         if (thread.position === 0 && !firstRun) {
           shouldNotify = true;
-          this.log(`New unread thread inserted at top: ${thread.threadName}`);
         }
       }
 
       if (shouldNotify) {
-        const hasIgnoredPrefix = this.IGNORED_SNIPPET_PREFIXES.some((prefix) =>
-          thread.snippet.startsWith(prefix),
+        const hasIgnoredPrefix = this.IGNORED_SNIPPET_PREFIXES.some(
+          (prefix) => thread.snippet.startsWith(prefix),
         );
-        if (hasIgnoredPrefix) {
-          this.log(
-            `Skipping notification for ${thread.threadName} due to ignored prefix`,
-          );
-          return;
-        }
-        this.showNotification(
-          thread.threadName,
-          thread.snippet,
-          thread.threadKey,
-        );
+        if (hasIgnoredPrefix) return;
+
+        this.postToNative({
+          type: "notification",
+          title: thread.threadName,
+          body: thread.snippet,
+          threadKey: thread.threadKey,
+        });
       }
     });
   },
 
-  showNotification: function (title, body, threadKey) {
-    this.log(`showNotification: ${title} - ${body}`);
-
-    this.postToNative({
-      type: "notification",
-      title: title,
-      body: body,
-      threadKey: threadKey,
-    });
-  },
-
-  log: function (message) {
-    const timestamp = new Date().toISOString();
-    const logEntry = `[${timestamp}] ${message}`;
-    this.logs.push(logEntry);
-    console.log(`[Goofy] ${logEntry}`);
-
-    // Also send to native for debugging
-    this.postToNative({ type: "log", message: logEntry });
-  },
-
-  setupThreadListObserver: function () {
-    this.observe(
-      "threadList",
-      '[role="navigation"] [role="grid"]',
-      this.checkForNewMessages,
-      false,
-    );
-  },
-
-  cleanupThreadListObserver: function () {
-    this.cleanupObserver("threadList", false);
-    this.threadSnapshots = null;
-  },
-
-  isInboxActive: function () {
-    const allTab = document.querySelector('[role="tablist"] [role="tab"]');
-    return allTab?.getAttribute("aria-selected") === "true";
-  },
-
-  handleInboxChange: function () {
-    const inInbox = this.isInboxActive();
-    const observerData = this.observers.get("threadList");
-    const observerActive = observerData?.observer != null;
-
-    this.log(
-      `handleInboxChange: inInbox=${inInbox}, observerActive=${observerActive}`,
-    );
-
-    if (inInbox && !observerActive) {
-      this.log("Inbox became active, setting up threadList observer");
-      this.setupThreadListObserver();
-    } else if (!inInbox && observerActive) {
-      this.log("Inbox became inactive, cleaning up threadList observer");
-      this.cleanupThreadListObserver();
-    }
-  },
+  // --- Actions called from Swift ---
 
   navigateToThread: function (threadKey) {
-    this.log(`Navigating to thread: ${threadKey}`);
     const link = document.querySelector(`a[href="${threadKey}"]`);
     if (link) {
       link.click();
     } else {
-      this.log(`Thread link not found for ${threadKey}, using hard navigation`);
       window.location.href = threadKey;
     }
   },
 
   newMessage: function () {
-    this.log("Triggering new message");
-    const link = document.querySelector('a[href="/new/"]');
+    const link = document.querySelector('a[href="/messages/new/"]');
     if (link) {
       link.click();
     } else {
-      this.log("New message link not found, using hard navigation");
-      window.location.href = "/new/";
+      window.location.href = "/messages/new/";
     }
   },
 
+  focusSearch: function () {
+    const input = document.querySelector(
+      '[role="navigation"] input[type="search"]',
+    );
+    if (input) {
+      input.click();
+      input.focus();
+    }
+  },
+
+  // --- Init ---
+
   init: function () {
-    // In WKWebView mode, always initialize (no PWA check needed)
     this.log("Initializing Goofy");
 
-    const setup = () => {
-      this.observe(
-        "inbox",
-        "#mw-inbox-settings-menu",
-        this.updateBadgeCount,
-        true,
-      );
-    };
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", setup);
-    } else {
-      setup();
-    }
+    this.observe('[role="navigation"] [role="grid"]', () => {
+      this.checkForNewMessages();
+      this.updateBadgeCount();
+    }, {
+      onSetup: () => this.updateBadgeCount(),
+      onRemove: () => { this.threadSnapshots = null; },
+    });
   },
 };
 
