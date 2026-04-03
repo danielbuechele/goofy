@@ -1,4 +1,7 @@
+:root,
+.__fb-light-mode:root,
 .__fb-light-mode,
+.__fb-dark-mode:root,
 .__fb-dark-mode {
     --header-height: 0px !important;
 }
@@ -14,4 +17,8 @@
 
 h1.html-h1 {
     display: none !important;
+}
+
+[role="navigation"] header {
+    justify-content: flex-end !important;
 }

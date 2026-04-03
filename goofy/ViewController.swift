@@ -516,6 +516,21 @@ extension ViewController: WKUIDelegate {
         completionHandler(alert.runModal() == .alertFirstButtonReturn)
     }
 
+    // Handle file upload picker
+    func webView(
+        _ webView: WKWebView, runOpenPanelWith parameters: WKOpenPanelParameters,
+        initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping ([URL]?) -> Void
+    ) {
+        let panel = NSOpenPanel()
+        panel.allowsMultipleSelection = parameters.allowsMultipleSelection
+        panel.canChooseDirectories = parameters.allowsDirectories
+        if panel.runModal() == .OK {
+            completionHandler(panel.urls)
+        } else {
+            completionHandler(nil)
+        }
+    }
+
     // Handle new window requests (target="_blank" links)
     func webView(
         _ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration,
