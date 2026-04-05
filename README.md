@@ -1,6 +1,6 @@
 # Goofy, a desktop app for Facebook Messenger
 
-At its core, Goofy is a simple app that shows a web view of messenger.com, but adding additional functionality you would expect from a native desktop app.
+At its core, Goofy is a simple app that shows a web view of faceookb.com/,essages, but adding additional functionality you would expect from a native desktop app.
 
 ## Features
 
