@@ -138,6 +138,22 @@
                                                 <action selector="reloadPage:" target="Ady-hI-5gd" id="S4d-8q-xBf"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="view-zoom-sep"/>
+                                        <menuItem title="Zoom In" keyEquivalent="+" id="view-zoom-in">
+                                            <connections>
+                                                <action selector="zoomIn:" target="Ady-hI-5gd" id="view-zoom-in-action"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Zoom Out" keyEquivalent="-" id="view-zoom-out">
+                                            <connections>
+                                                <action selector="zoomOut:" target="Ady-hI-5gd" id="view-zoom-out-action"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Actual Size" keyEquivalent="0" id="view-zoom-reset">
+                                            <connections>
+                                                <action selector="resetZoom:" target="Ady-hI-5gd" id="view-zoom-reset-action"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>

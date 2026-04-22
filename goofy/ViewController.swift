@@ -16,6 +16,20 @@ class ViewController: NSViewController {
     private var webView: GoofyWebView!
     private let messageHandlerName = "goofy"
 
+    // Zoom properties
+    private static let zoomKey = "WebViewZoomLevel"
+    private var zoomLevel: CGFloat {
+        get {
+            let stored = UserDefaults.standard.double(forKey: Self.zoomKey)
+            return stored == 0 ? 1.0 : CGFloat(stored)
+        }
+        set {
+            let clamped = min(max(newValue, 0.5), 3.0)
+            UserDefaults.standard.set(Double(clamped), forKey: Self.zoomKey)
+            webView.pageZoom = clamped
+        }
+    }
+
     // Periodic reload properties
     private let reloadInterval: TimeInterval = 3 * 60 * 60  // 3 hours
     private var reloadPending = false
@@ -115,6 +129,8 @@ class ViewController: NSViewController {
             "\(osVersion.majorVersion)_\(osVersion.minorVersion)_\(osVersion.patchVersion)"
         webView.customUserAgent =
             "Mozilla/5.0 (Macintosh; Intel Mac OS X \(osVersionString)) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15"
+
+        webView.pageZoom = zoomLevel
 
         view.addSubview(webView)
 
@@ -251,6 +267,20 @@ class ViewController: NSViewController {
 
     @IBAction func performZoom(_ sender: Any?) {
         view.window?.performZoom(sender)
+    }
+
+    // MARK: - Zoom Actions
+
+    @IBAction func zoomIn(_ sender: Any?) {
+        zoomLevel += 0.1
+    }
+
+    @IBAction func zoomOut(_ sender: Any?) {
+        zoomLevel -= 0.1
+    }
+
+    @IBAction func resetZoom(_ sender: Any?) {
+        zoomLevel = 1.0
     }
 
     // MARK: - Reload Action (CMD+R)
