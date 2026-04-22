@@ -77,7 +77,7 @@ Create a zip for notarization submission and submit it:
 
 ```bash
 cd /Users/danielbuechele/goofy
-ditto -c -k --keepParent build/export/Goofy.app build/Goofy-notarize.zip
+(cd build/export && zip -r -y ../Goofy-notarize.zip Goofy.app)
 xcrun notarytool submit build/Goofy-notarize.zip \
   --keychain-profile "notarytool-profile" \
   --wait
@@ -92,10 +92,12 @@ Staple the notarization ticket to the app, then create the release zip:
 ```bash
 cd /Users/danielbuechele/goofy
 xcrun stapler staple build/export/Goofy.app
-ditto -c -k --keepParent build/export/Goofy.app "build/Goofy-${NEW_VERSION}.zip"
+(cd build/export && zip -r -y "../Goofy-${NEW_VERSION}.zip" Goofy.app)
 ```
 
-Use `ditto` (not `zip`) to preserve macOS metadata and code signatures.
+Use `zip -r -y` (not `ditto`). Modern Xcode signing adds a sticky `com.apple.provenance` extended attribute to files in the bundle; `ditto` encodes those as `._*` AppleDouble entries, and AppUpdater's `/usr/bin/unzip` then writes them as literal `._*` files inside the installed bundle, which corrupts the code signature ("damaged" error). `zip` ignores xattrs entirely. The notarization ticket lives inside the bundle (`Contents/CodeResources`), so it survives.
+
+**Verify before releasing:** extract the zip with `/usr/bin/unzip` to a temp dir and run `codesign --verify --deep --strict` on it. Must pass. If it reports "a sealed resource is missing or invalid", stop — the release will be broken.
 
 ### Step 6: Commit and tag
 
