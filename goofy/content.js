@@ -121,6 +121,7 @@ window.__GOOFY = {
           a.querySelector("div.xi81zsa span"),
         ),
         isUnread: !!a.querySelector('[role="button"] .x1spa7qu'),
+        isMuted: !!a.querySelector('svg.x14rh7hd'),
         position: index,
       }))
       .filter((t) => Boolean(t.threadKey));
@@ -136,6 +137,7 @@ window.__GOOFY = {
       this.threadSnapshots.set(thread.threadKey, thread);
 
       if (!thread.isUnread) return;
+      if (thread.isMuted) return;
 
       let shouldNotify = false;
 
