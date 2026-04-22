@@ -118,8 +118,7 @@ cd /Users/danielbuechele/goofy
 gh release create "${NEW_VERSION}" \
   "build/Goofy-${NEW_VERSION}.zip" \
   --title "${NEW_VERSION}" \
-  --generate-notes \
-  --latest
+  --generate-notes
 ```
 
 ### Step 8: Cleanup
