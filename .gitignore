@@ -1,3 +1,5 @@
 .DS_Store
 xcschememanagement.plist
 UserInterfaceState.xcuserstate
+build/
+.claude/settings.local.json
