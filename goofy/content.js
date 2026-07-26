@@ -6,7 +6,14 @@ window.__GOOFY = {
 
   IGNORED_SNIPPET_PREFIXES: ["You sent an attachment.", "You: "],
 
+  // Set to true to emit diagnostics over the native bridge. Off by default: every
+  // log crosses into Swift and hits stdout, and the badge path logs on each scan.
+  DEBUG: false,
+
   threadSnapshots: null,
+
+  // Re-attach checks registered by observe(), run from keepAlive().
+  attachmentChecks: [],
 
   postToNative: function (message) {
     if (
@@ -40,6 +47,7 @@ window.__GOOFY = {
   },
 
   log: function (message) {
+    if (!this.DEBUG) return;
     const timestamp = new Date().toISOString();
     const logEntry = `[${timestamp}] ${message}`;
     console.log(`[Goofy] ${logEntry}`);
@@ -48,6 +56,12 @@ window.__GOOFY = {
 
   // --- Reusable observer that re-attaches when the element is removed ---
 
+  // Re-attachment used to be driven by a second MutationObserver watching
+  // document.body with {childList, subtree}. That made WebKit allocate a mutation
+  // record for every node change anywhere in Messenger — measured at ~7x the
+  // callback volume of the grid observer we actually care about — purely to notice
+  // that one element went away. The check is now a `document.contains` test run
+  // from keepAlive() instead, so worst case we re-attach one heartbeat late.
   observe: function (selector, callback, options = {}) {
     const {
       subtree = true,
@@ -59,7 +73,7 @@ window.__GOOFY = {
     } = options;
 
     let contentObserver = null;
-    let removalObserver = null;
+    let observed = null;
 
     const setup = () => {
       const element = document.querySelector(selector);
@@ -75,22 +89,17 @@ window.__GOOFY = {
       contentObserver?.disconnect();
       contentObserver = new MutationObserver(() => callback(element));
       contentObserver.observe(element, { subtree, childList, characterData });
-
-      removalObserver?.disconnect();
-      removalObserver = new MutationObserver(() => {
-        if (!document.contains(element)) {
-          this.log(`observe(${selector}): removed, re-attaching`);
-          contentObserver?.disconnect();
-          removalObserver?.disconnect();
-          if (onRemove) onRemove();
-          setup();
-        }
-      });
-      removalObserver.observe(document.body, {
-        childList: true,
-        subtree: true,
-      });
+      observed = element;
     };
+
+    this.attachmentChecks.push(() => {
+      if (!observed || document.contains(observed)) return;
+      this.log(`observe(${selector}): removed, re-attaching`);
+      contentObserver?.disconnect();
+      observed = null;
+      if (onRemove) onRemove();
+      setup();
+    });
 
     setup();
   },
@@ -189,6 +198,15 @@ window.__GOOFY = {
     }
   },
 
+  // Called from Swift on a native timer. The call itself is what keeps WebKit from
+  // suspending the page while the window is hidden; re-running the scan also recovers
+  // the badge and notifications if the observer was left detached.
+  keepAlive: function () {
+    this.attachmentChecks.forEach((check) => check());
+    this.checkForNewMessages();
+    this.updateBadgeCount();
+  },
+
   focusSearch: function () {
     const input = document.querySelector(
       '[role="navigation"] input[type="search"]',
@@ -204,10 +222,21 @@ window.__GOOFY = {
   init: function () {
     this.log("Initializing Goofy");
 
-    this.observe('[role="navigation"] [role="grid"]', () => {
-      this.checkForNewMessages();
-      this.updateBadgeCount();
-    }, {
+    // Messenger emits mutations in bursts (typing indicators, presence, timestamps),
+    // and each one previously triggered a full rescan of every thread row. Coalesce
+    // a burst into a single scan — 100ms is imperceptible for a notification.
+    let scanScheduled = false;
+    const scheduleScan = () => {
+      if (scanScheduled) return;
+      scanScheduled = true;
+      setTimeout(() => {
+        scanScheduled = false;
+        this.checkForNewMessages();
+        this.updateBadgeCount();
+      }, 100);
+    };
+
+    this.observe('[role="navigation"] [role="grid"]', scheduleScan, {
       onSetup: () => this.updateBadgeCount(),
       onRemove: () => { this.threadSnapshots = null; },
     });
