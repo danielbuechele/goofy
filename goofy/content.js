@@ -189,6 +189,14 @@ window.__GOOFY = {
     }
   },
 
+  // Called from Swift on a native timer. The call itself is what keeps WebKit from
+  // suspending the page while the window is hidden; re-running the scan also recovers
+  // the badge and notifications if the observer was left detached.
+  keepAlive: function () {
+    this.checkForNewMessages();
+    this.updateBadgeCount();
+  },
+
   focusSearch: function () {
     const input = document.querySelector(
       '[role="navigation"] input[type="search"]',
