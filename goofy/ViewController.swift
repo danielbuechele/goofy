@@ -40,6 +40,10 @@ class ViewController: NSViewController {
     private var isAuthenticated = false
     private var safariLoginController: SafariLoginController?
 
+    // Keep-alive properties
+    private let keepAliveInterval: TimeInterval = 15
+    private var keepAliveTimer: Timer?
+
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
@@ -54,12 +58,14 @@ class ViewController: NSViewController {
         if !windowConfigured {
             configureWindow()
             setupPeriodicReload()
+            setupKeepAlive()
             windowConfigured = true
         }
     }
 
     deinit {
         reloadTimer?.invalidate()
+        keepAliveTimer?.invalidate()
         networkMonitor?.cancel()
         NotificationCenter.default.removeObserver(self)
         webView.configuration.userContentController.removeScriptMessageHandler(
@@ -207,6 +213,29 @@ class ViewController: NSViewController {
 
         // Network connectivity monitor
         setupNetworkMonitor()
+    }
+
+    // MARK: - Keep Alive
+
+    /// WebKit suspends the page's JavaScript entirely once the window is hidden — measured
+    /// as 0 timer ticks over 60s with the window ordered out. That stops Messenger's realtime
+    /// connection from reconnecting, so notifications and the badge silently die until the app
+    /// is relaunched. Calling into the page from native wakes it back up, and native timers
+    /// aren't subject to WebKit throttling, so poll on one. Re-running the scan here also
+    /// recovers the badge if the MutationObserver is ever left detached.
+    private func setupKeepAlive() {
+        keepAliveTimer = Timer.scheduledTimer(
+            withTimeInterval: keepAliveInterval,
+            repeats: true
+        ) { [weak self] _ in
+            self?.webView.evaluateJavaScript(
+                "window.__GOOFY && window.__GOOFY.keepAlive();", in: nil, in: .defaultClient
+            ) { result in
+                if case .failure(let error) = result {
+                    print("Keep-alive failed: \(error)")
+                }
+            }
+        }
     }
 
     private func setupNetworkMonitor() {
