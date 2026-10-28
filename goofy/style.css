@@ -10,11 +10,6 @@
     display: none !important;
 }
 
-/* Hide glimmer if html-h1 */
-.x1cvmir6 [data-visualcompletion="loading-state"] {
-    display: none !important;
-}
-
 h1.html-h1 {
     display: none !important;
 }

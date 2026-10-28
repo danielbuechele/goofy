@@ -7,7 +7,6 @@
 
 import AVFoundation
 import Cocoa
-import Network
 import UserNotifications
 import WebKit
 
@@ -30,12 +29,10 @@ class ViewController: NSViewController {
         }
     }
 
-    // Periodic reload properties
-    private let reloadInterval: TimeInterval = 3 * 60 * 60  // 3 hours
-    private var reloadPending = false
-    private var reloadTimer: Timer?
-    private var networkMonitor: NWPathMonitor?
-    private var wasNetworkConnected = true
+    private var recovery: WebViewRecovery?
+    private var loadingView: MessengerLoadingView!
+    private var errorBanner: NSStackView!
+    private var errorLabel: NSTextField!
     private var windowConfigured = false
     private var isAuthenticated = false
     private var safariLoginController: SafariLoginController?
@@ -46,6 +43,12 @@ class ViewController: NSViewController {
         super.viewDidLoad()
         setupWebView()
         setupNotifications()
+        setupLoadingView()
+        setupErrorBanner()
+        updateBadge(count: 0)
+        recovery = WebViewRecovery(webView: webView)
+        recovery?.onFailure = { [weak self] message in self?.showLoadError(message) }
+        recovery?.onContentAvailable = { [weak self] in self?.loadingView.isHidden = true }
         loadMessenger()
     }
 
@@ -53,16 +56,12 @@ class ViewController: NSViewController {
         super.viewDidAppear()
         if !windowConfigured {
             configureWindow()
-            setupPeriodicReload()
             windowConfigured = true
         }
     }
 
     deinit {
-        reloadTimer?.invalidate()
-        networkMonitor?.cancel()
-        NotificationCenter.default.removeObserver(self)
-        webView.configuration.userContentController.removeScriptMessageHandler(
+        webView?.configuration.userContentController.removeScriptMessageHandler(
             forName: messageHandlerName, contentWorld: .defaultClient)
     }
 
@@ -75,7 +74,7 @@ class ViewController: NSViewController {
         let userContentController = WKUserContentController()
 
         // Use .defaultClient world to isolate our code from the page's JS
-        userContentController.add(self, contentWorld: .defaultClient, name: messageHandlerName)
+        userContentController.add(WeakScriptMessageHandler(self), contentWorld: .defaultClient, name: messageHandlerName)
 
         // Inject style.css at document start (before page renders)
         if let cssURL = Bundle.main.url(forResource: "style", withExtension: "css"),
@@ -121,6 +120,7 @@ class ViewController: NSViewController {
         webView.navigationDelegate = self
         webView.uiDelegate = self
 
+        webView.underPageBackgroundColor = .windowBackgroundColor
         webView.allowsBackForwardNavigationGestures = true
 
         // Set custom user agent to appear as Safari
@@ -168,8 +168,7 @@ class ViewController: NSViewController {
         window.toolbarStyle = .unified
 
         // Set background color for window and titlebar
-        window.backgroundColor = NSColor(
-            red: 245 / 255, green: 245 / 255, blue: 245 / 255, alpha: 1.0)
+        window.backgroundColor = .windowBackgroundColor
     }
 
     private func loadMessenger() {
@@ -178,85 +177,46 @@ class ViewController: NSViewController {
         webView.load(request)
     }
 
-    // MARK: - Periodic Reload
+    // MARK: - Loading feedback
 
-    private func setupPeriodicReload() {
-        // Observer for when app goes to background - handles pending reloads
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(applicationDidResignActive),
-            name: NSApplication.didResignActiveNotification,
-            object: nil
-        )
-
-        // Observer for system wake from sleep
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(systemDidWake),
-            name: NSWorkspace.didWakeNotification,
-            object: NSWorkspace.shared
-        )
-
-        // Timer that fires every 4 hours
-        reloadTimer = Timer.scheduledTimer(
-            withTimeInterval: reloadInterval,
-            repeats: true
-        ) { [weak self] _ in
-            self?.timerFired()
-        }
-
-        // Network connectivity monitor
-        setupNetworkMonitor()
+    private func setupLoadingView() {
+        loadingView = MessengerLoadingView(frame: .zero)
+        loadingView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(loadingView)
+        NSLayoutConstraint.activate([
+            loadingView.topAnchor.constraint(equalTo: view.topAnchor),
+            loadingView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            loadingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            loadingView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        ])
     }
 
-    private func setupNetworkMonitor() {
-        networkMonitor = NWPathMonitor()
-        networkMonitor?.pathUpdateHandler = { [weak self] path in
-            DispatchQueue.main.async {
-                self?.handleNetworkChange(path)
-            }
-        }
-        networkMonitor?.start(queue: DispatchQueue(label: "NetworkMonitor"))
+    private func setupErrorBanner() {
+        errorLabel = NSTextField(wrappingLabelWithString: "")
+        let retryButton = NSButton(title: "Retry", target: self, action: #selector(retryLoading))
+        errorBanner = NSStackView(views: [errorLabel, retryButton])
+        errorBanner.orientation = .horizontal
+        errorBanner.spacing = 12
+        errorBanner.edgeInsets = NSEdgeInsets(top: 12, left: 16, bottom: 12, right: 16)
+        errorBanner.wantsLayer = true
+        errorBanner.layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
+        errorBanner.translatesAutoresizingMaskIntoConstraints = false
+        errorBanner.isHidden = true
+        view.addSubview(errorBanner)
+        NSLayoutConstraint.activate([
+            errorBanner.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            errorBanner.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            errorBanner.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16),
+        ])
     }
 
-    private func timerFired() {
-        if NSApplication.shared.isActive {
-            // App is in foreground - defer reload
-            reloadPending = true
-            print("Reload deferred - app is in foreground")
-        } else {
-            // App is in background - reload now
-            performReload()
-        }
+    private func showLoadError(_ message: String?) {
+        errorLabel.stringValue = message ?? ""
+        errorBanner.isHidden = message == nil
     }
 
-    @objc private func systemDidWake(_ notification: Notification) {
-        print("System woke from sleep - reloading")
-        performReload()
-    }
-
-    private func handleNetworkChange(_ path: NWPath) {
-        let isConnected = path.status == .satisfied
-
-        // Reload when connection is restored after being disconnected
-        if !wasNetworkConnected && isConnected {
-            print("Network connection restored - reloading")
-            performReload()
-        }
-
-        wasNetworkConnected = isConnected
-    }
-
-    private func performReload() {
-        reloadPending = false
-        webView.reload()
-        print("Reload performed")
-    }
-
-    @objc private func applicationDidResignActive(_ notification: Notification) {
-        if reloadPending {
-            performReload()
-        }
+    @objc private func retryLoading() {
+        recovery?.retryManually()
     }
 
     // MARK: - Window Actions (forwarded to window)
@@ -286,7 +246,7 @@ class ViewController: NSViewController {
     // MARK: - Reload Action (CMD+R)
 
     @IBAction func reloadPage(_ sender: Any?) {
-        loadMessenger()
+        recovery?.retryManually()
     }
 
     // MARK: - New Message Action (CMD+N)
@@ -314,13 +274,22 @@ class ViewController: NSViewController {
     // MARK: - Login with Safari Action
 
     @IBAction func loginWithSafari(_ sender: Any?) {
+        guard safariLoginController == nil else { return }
+        recovery?.suspend()
         view.window?.orderOut(nil)
         let controller = SafariLoginController()
         safariLoginController = controller
-        controller.startLogin { [weak self] in
-            self?.safariLoginController = nil
-            self?.loadMessenger()
-            self?.view.window?.makeKeyAndOrderFront(nil)
+        controller.startLogin { [weak self] success in
+            guard let self else { return }
+            self.safariLoginController = nil
+            if success {
+                self.isAuthenticated = true
+                self.recovery?.resume()
+                self.loadMessenger()
+            } else {
+                self.showLoadError("Sign-in was cancelled. Use Retry to sign in again.")
+            }
+            self.view.window?.makeKeyAndOrderFront(nil)
         }
     }
 
@@ -328,6 +297,8 @@ class ViewController: NSViewController {
 
     @IBAction func logOut(_ sender: Any?) {
         isAuthenticated = false
+        updateBadge(count: 0)
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
         let dataStore = WKWebsiteDataStore.default()
         let dataTypes = WKWebsiteDataStore.allWebsiteDataTypes()
 
@@ -394,8 +365,9 @@ class ViewController: NSViewController {
     // MARK: - Navigate to Thread
 
     func navigateToThread(threadKey: String) {
-        let escapedKey = threadKey.replacingOccurrences(of: "\"", with: "\\\"")
-        let script = "window.__GOOFY.navigateToThread(\"\(escapedKey)\");"
+        guard let data = try? JSONEncoder().encode(threadKey),
+              let encodedKey = String(data: data, encoding: .utf8) else { return }
+        let script = "window.__GOOFY.navigateToThread(\(encodedKey));"
         webView.evaluateJavaScript(script, in: nil, in: .defaultClient) { result in
             if case .failure(let error) = result {
                 print("Failed to navigate to thread: \(error)")
@@ -404,6 +376,7 @@ class ViewController: NSViewController {
 
         // Bring window to front
         NSApp.activate(ignoringOtherApps: true)
+        if view.window?.isMiniaturized == true { view.window?.deminiaturize(nil) }
         view.window?.makeKeyAndOrderFront(nil)
     }
 }
@@ -414,7 +387,8 @@ extension ViewController: WKScriptMessageHandler {
     func userContentController(
         _ userContentController: WKUserContentController, didReceive message: WKScriptMessage
     ) {
-        guard message.name == messageHandlerName,
+        guard message.name == messageHandlerName, message.frameInfo.isMainFrame,
+            FacebookURL.isTrustedHost(message.frameInfo.securityOrigin.host, domain: "facebook.com"),
             let body = message.body as? [String: Any],
             let type = body["type"] as? String
         else {
@@ -422,9 +396,18 @@ extension ViewController: WKScriptMessageHandler {
         }
 
         switch type {
+        case "ready":
+            loadingView.isHidden = true
+
         case "badge":
             if let count = body["count"] as? Int {
                 updateBadge(count: count)
+            }
+
+        case "read":
+            if let keys = body["threadKeys"] as? [String] {
+                let identifiers = keys.map { $0.replacingOccurrences(of: "/", with: "_") }
+                UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: identifiers)
             }
 
         case "notification":
@@ -465,37 +448,51 @@ extension ViewController: WKNavigationDelegate {
             return
         }
 
-        // Allow facebook.com/messages and Facebook internal domains in the main webview
         let host = url.host ?? ""
-        if host.contains("facebook.com") && url.path.hasPrefix("/messages") ||
-           host.contains("fbsbx.com") || host.contains("fbcdn.net") {
+        let isFacebook = FacebookURL.isTrustedHost(host, domain: "facebook.com")
+        if isFacebook && (url.path.hasPrefix("/messages") || navigationAction.targetFrame?.isMainFrame == false) {
             decisionHandler(.allow)
             return
         }
-
-        // Before login, silently cancel all other navigations (login redirects)
-        if !isAuthenticated {
+        if isFacebook && (FacebookURL.isAuthentication(url) || !isAuthenticated) {
             decisionHandler(.cancel)
+            DispatchQueue.main.async { [weak self] in self?.loginWithSafari(nil) }
             return
         }
-
-        // After login, open non-messages URLs externally
-        if let scheme = url.scheme, ["http", "https"].contains(scheme) {
+        if ["fbsbx.com", "fbcdn.net"].contains(where: { FacebookURL.isTrustedHost(host, domain: $0) }) {
+            decisionHandler(.allow)
+            return
+        }
+        if navigationAction.navigationType == .linkActivated,
+           let scheme = url.scheme, ["http", "https"].contains(scheme) {
             NSWorkspace.shared.open(url)
         }
         decisionHandler(.cancel)
     }
 
+    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+        recovery?.navigationStarted()
+    }
+
+    func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+        loadingView.isHidden = webView.url.map { !FacebookURL.isMessenger($0) } ?? true
+    }
+
+    func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+        recovery?.recover(reason: "Messenger's web process stopped.")
+    }
+
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        recovery?.navigationFinished()
         guard let url = webView.url else { return }
         print("Page finished loading: \(url.absoluteString)")
 
-        guard url.host?.contains("facebook.com") == true,
+        guard FacebookURL.isTrustedHost(url.host ?? "", domain: "facebook.com"),
               safariLoginController == nil else { return }
 
         // Check if the user is authenticated; if not, open Safari login
         WKWebsiteDataStore.default().httpCookieStore.getAllCookies { [weak self] cookies in
-            let authenticated = cookies.contains { $0.domain.contains("facebook.com") && $0.name == "c_user" }
+            let authenticated = cookies.contains { FacebookURL.isTrustedHost($0.domain.trimmingCharacters(in: CharacterSet(charactersIn: ".")), domain: "facebook.com") && $0.name == "c_user" }
             DispatchQueue.main.async {
                 if authenticated {
                     self?.isAuthenticated = true
@@ -508,14 +505,14 @@ extension ViewController: WKNavigationDelegate {
     }
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-        print("Navigation failed: \(error.localizedDescription)")
+        recovery?.navigationFailed(error)
     }
 
     func webView(
         _ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!,
         withError error: Error
     ) {
-        print("Provisional navigation failed: \(error.localizedDescription)")
+        recovery?.navigationFailed(error)
     }
 }
 
@@ -594,7 +591,7 @@ extension ViewController: WKUIDelegate {
         decisionHandler: @escaping (WKPermissionDecision) -> Void
     ) {
         // Only allow for messenger.com and facebook.com
-        guard origin.host.contains("messenger.com") || origin.host.contains("facebook.com") else {
+        guard FacebookURL.isTrustedHost(origin.host, domain: "messenger.com") || FacebookURL.isTrustedHost(origin.host, domain: "facebook.com") else {
             decisionHandler(.deny)
             return
         }

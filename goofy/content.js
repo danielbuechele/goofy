@@ -7,6 +7,9 @@ window.__GOOFY = {
   IGNORED_SNIPPET_PREFIXES: ["You sent an attachment.", "You: "],
 
   threadSnapshots: null,
+  pageReady: false,
+  lastBadgeCount: null,
+  refreshPending: false,
 
   postToNative: function (message) {
     if (
@@ -49,63 +52,48 @@ window.__GOOFY = {
   // --- Reusable observer that re-attaches when the element is removed ---
 
   observe: function (selector, callback, options = {}) {
-    const {
-      subtree = true,
-      childList = true,
-      characterData = false,
-      retryInterval = 3000,
-      onSetup = null,
-      onRemove = null,
-    } = options;
-
+    const { onSetup = null, onRemove = null } = options;
+    let element = null;
     let contentObserver = null;
-    let removalObserver = null;
 
-    const setup = () => {
-      const element = document.querySelector(selector);
-      if (!element) {
-        this.log(`observe(${selector}): not found, retrying`);
-        setTimeout(setup, retryInterval);
-        return;
+    const attach = () => {
+      if (element && document.contains(element) && element.matches(selector)) return;
+      if (element) {
+        contentObserver.disconnect();
+        if (onRemove) onRemove();
       }
+      element = document.querySelector(selector);
+      if (!element) return;
 
-      this.log(`observe(${selector}): attached`);
-      if (onSetup) onSetup(element);
-
-      contentObserver?.disconnect();
       contentObserver = new MutationObserver(() => callback(element));
-      contentObserver.observe(element, { subtree, childList, characterData });
-
-      removalObserver?.disconnect();
-      removalObserver = new MutationObserver(() => {
-        if (!document.contains(element)) {
-          this.log(`observe(${selector}): removed, re-attaching`);
-          contentObserver?.disconnect();
-          removalObserver?.disconnect();
-          if (onRemove) onRemove();
-          setup();
-        }
+      contentObserver.observe(element, {
+        subtree: true, childList: true, characterData: true, attributes: true,
+        attributeFilter: ["class", "aria-selected", "aria-label"],
       });
-      removalObserver.observe(document.body, {
-        childList: true,
-        subtree: true,
-      });
+      if (onSetup) onSetup(element);
     };
 
-    setup();
+    // Detect the first render and sidebar replacements immediately. Once attached,
+    // mutations elsewhere only need a connectivity check, not another DOM scan.
+    const lifecycleObserver = new MutationObserver(attach);
+    lifecycleObserver.observe(document.body, { childList: true, subtree: true });
+    attach();
   },
 
   // --- Badge count ---
 
-  updateBadgeCount: function () {
-    const firstTab = document.querySelector('[role="tablist"] [role="tab"]');
-    if (firstTab?.getAttribute("aria-selected") !== "true") return;
-
-    const unreadDots = document.querySelectorAll(
-      '[role="navigation"] [role="row"] [role="button"] .x1spa7qu',
-    );
-    this.postToNative({ type: "badge", count: unreadDots.length });
-    this.log(`Badge count: ${unreadDots.length}`);
+  updateBadgeCount: function (count = null) {
+    if (count === null) {
+      const firstTab = document.querySelector('[role="tablist"] [role="tab"]');
+      if (firstTab && firstTab.getAttribute("aria-selected") !== "true") return;
+      count = document.querySelectorAll(
+        '[role="navigation"] [role="row"] [role="button"] .x1spa7qu',
+      ).length;
+    }
+    if (this.lastBadgeCount === count) return;
+    this.lastBadgeCount = count;
+    this.postToNative({ type: "badge", count });
+    this.log(`Badge count: ${count}`);
   },
 
   // --- New message detection ---
@@ -132,11 +120,17 @@ window.__GOOFY = {
       firstRun = true;
     }
 
+    const readThreadKeys = [];
+    let unreadCount = 0;
     threads.forEach((thread) => {
+      if (thread.isUnread) unreadCount += 1;
       const prev = this.threadSnapshots.get(thread.threadKey);
       this.threadSnapshots.set(thread.threadKey, thread);
 
-      if (!thread.isUnread) return;
+      if (!thread.isUnread) {
+        if (!prev || prev.isUnread) readThreadKeys.push(thread.threadKey);
+        return;
+      }
       if (thread.isMuted) return;
 
       let shouldNotify = false;
@@ -167,12 +161,19 @@ window.__GOOFY = {
         });
       }
     });
+    if (readThreadKeys.length) {
+      this.postToNative({ type: "read", threadKeys: readThreadKeys });
+    }
+    return unreadCount;
   },
 
   // --- Actions called from Swift ---
 
   navigateToThread: function (threadKey) {
-    const link = document.querySelector(`a[href="${threadKey}"]`);
+    const url = new URL(threadKey, window.location.href);
+    if (url.origin !== window.location.origin || !url.pathname.startsWith("/messages/")) return;
+    const link = Array.from(document.querySelectorAll('a[href]'))
+      .find(a => a.getAttribute("href") === threadKey);
     if (link) {
       link.click();
     } else {
@@ -201,15 +202,46 @@ window.__GOOFY = {
 
   // --- Init ---
 
+  isReady: function () {
+    return !!document.querySelector('[role="navigation"] [role="grid"]');
+  },
+
+  refresh: function () {
+    if (!this.isReady()) return;
+    if (!this.pageReady) {
+      this.pageReady = true;
+      this.postToNative({ type: "ready" });
+    }
+    const firstTab = document.querySelector('[role="tablist"] [role="tab"]');
+    if (firstTab && firstTab.getAttribute("aria-selected") !== "true") return;
+    const unreadCount = this.checkForNewMessages();
+    this.updateBadgeCount(unreadCount);
+  },
+
+  scheduleRefresh: function () {
+    if (this.refreshPending) return;
+    this.refreshPending = true;
+    setTimeout(() => {
+      this.refreshPending = false;
+      this.refresh();
+    }, 100);
+  },
+
   init: function () {
     this.log("Initializing Goofy");
-
-    this.observe('[role="navigation"] [role="grid"]', () => {
-      this.checkForNewMessages();
-      this.updateBadgeCount();
-    }, {
-      onSetup: () => this.updateBadgeCount(),
+    this.observe('[role="navigation"]:has([role="grid"])', () => this.scheduleRefresh(), {
+      onSetup: () => this.refresh(),
       onRemove: () => { this.threadSnapshots = null; },
+    });
+    window.addEventListener("focus", () => this.scheduleRefresh());
+    window.addEventListener("pageshow", (event) => {
+      if (event.persisted) {
+        this.pageReady = false;
+        this.refresh();
+      }
+    });
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") this.scheduleRefresh();
     });
   },
 };

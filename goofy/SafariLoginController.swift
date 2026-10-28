@@ -11,16 +11,16 @@
 import Cocoa
 import WebKit
 
-class SafariLoginController: NSObject, WKNavigationDelegate, WKUIDelegate {
+class SafariLoginController: NSObject, WKNavigationDelegate, WKUIDelegate, NSWindowDelegate {
 
     private var loginWindow: NSWindow?
     private var loginWebView: WKWebView?
-    private var onComplete: (() -> Void)?
+    private var onComplete: ((Bool) -> Void)?
 
     /// Opens a dedicated login window pointing to Facebook login.
     /// After successful authentication (detected by navigating to /messages),
     /// the window closes and `completion` is called so the main WebView can reload.
-    func startLogin(completion: @escaping () -> Void) {
+    func startLogin(completion: @escaping (Bool) -> Void) {
         onComplete = completion
 
         let configuration = WKWebViewConfiguration()
@@ -44,6 +44,7 @@ class SafariLoginController: NSObject, WKNavigationDelegate, WKUIDelegate {
             backing: .buffered,
             defer: false
         )
+        window.delegate = self
         window.isReleasedWhenClosed = false
         window.title = "Login to Facebook"
         window.contentView = webView
@@ -72,9 +73,9 @@ class SafariLoginController: NSObject, WKNavigationDelegate, WKUIDelegate {
         }
 
         // Allow all Facebook/Messenger URLs during login
-        if host.contains("facebook.com") || host.contains("messenger.com") ||
-           host.contains("fbcdn.net") || host.contains("fbsbx.com") ||
-           host.contains("accountkit.com") {
+        if FacebookURL.isTrustedHost(host, domain: "facebook.com") || FacebookURL.isTrustedHost(host, domain: "messenger.com") ||
+           FacebookURL.isTrustedHost(host, domain: "fbcdn.net") || FacebookURL.isTrustedHost(host, domain: "fbsbx.com") ||
+           FacebookURL.isTrustedHost(host, domain: "accountkit.com") {
             decisionHandler(.allow)
             return
         }
@@ -99,17 +100,17 @@ class SafariLoginController: NSObject, WKNavigationDelegate, WKUIDelegate {
         // Skip auth pages - login is still in progress
         let authPaths = ["/login", "/checkpoint", "/two_step_verification", "/recover",
                          "/cookie/consent", "/dialog", "/v2/dialog", "/auth"]
-        if host.contains("facebook.com") && authPaths.contains(where: { path.hasPrefix($0) }) {
+        if FacebookURL.isTrustedHost(host, domain: "facebook.com") && authPaths.contains(where: { path.hasPrefix($0) }) {
             return
         }
 
         // After login, Facebook redirects to / or /messages or messenger.com
         // Check cookies to confirm the user is actually authenticated
-        if host.contains("facebook.com") || host.contains("messenger.com") {
+        if FacebookURL.isTrustedHost(host, domain: "facebook.com") || FacebookURL.isTrustedHost(host, domain: "messenger.com") {
             checkAuthCookies { [weak self] isAuthenticated in
                 guard isAuthenticated else { return }
                 print("[SafariLogin] Login successful (authenticated cookie found), closing login window")
-                self?.completeLogin()
+                self?.completeLogin(success: true)
             }
         }
     }
@@ -118,7 +119,7 @@ class SafariLoginController: NSObject, WKNavigationDelegate, WKUIDelegate {
         WKWebsiteDataStore.default().httpCookieStore.getAllCookies { cookies in
             // Facebook sets c_user cookie when authenticated
             let hasAuthCookie = cookies.contains { cookie in
-                cookie.domain.contains("facebook.com") && cookie.name == "c_user"
+                FacebookURL.isTrustedHost(cookie.domain.trimmingCharacters(in: CharacterSet(charactersIn: ".")), domain: "facebook.com") && cookie.name == "c_user"
             }
             DispatchQueue.main.async {
                 completion(hasAuthCookie)
@@ -126,13 +127,17 @@ class SafariLoginController: NSObject, WKNavigationDelegate, WKUIDelegate {
         }
     }
 
-    private func completeLogin() {
+    func windowWillClose(_ notification: Notification) {
+        completeLogin(success: false)
+    }
+
+    private func completeLogin(success: Bool) {
         guard let completion = onComplete else { return }
         onComplete = nil
         loginWindow?.close()
         loginWindow = nil
         loginWebView = nil
-        completion()
+        completion(success)
     }
 
     // MARK: - WKUIDelegate
